@@ -1,4 +1,4 @@
-### Logger
+# Logger
 
 一个受[patchbay]启发的Web友好的自托管ad-hoc微服务,
 提供基于 HTTP 和 SSE 的日志功能,
@@ -112,7 +112,7 @@ volumes:
 ## Usage
 
 对id的要求: `^[a-zA-Z0-9\.\-_]{1,256}$`
-提供基于日志数量或过期时间的自动删除机制.
+提供基于日志数量或淘汰时间的自动删除机制.
 日志的id格式为`Unix秒时间戳-从0开始的计数器`,
 使用计数器是为了防止在同一秒添加多条日志出现重复.
 同一秒里的计数器数字不会被重用.
@@ -399,11 +399,14 @@ await fetch(`http://localhost:8080/api/logger/${id}/json-schema`, {
 })
 ```
 
-## 日志过期策略(expiration policies)
+## 日志淘汰策略(elimination policies)
 
-Logger同时实施两种日志过期策略:
-- 基于生存时间(TTL, time-to-live)的过期策略, 如果日志到期, 则删除日志
-- 基于数量限制(limit)的过期策略, 如果单个记录器的日志数量达到上限, 则删除旧日志
+Logger同时实施两种日志淘汰策略:
+- 基于生存时间(TTL, time-to-live)的淘汰策略, 如果日志过期, 则删除日志
+- 基于数量限制(limit)的淘汰策略, 如果单个记录器的日志数量达到上限, 则删除旧日志
+
+日志淘汰策略只会在写入新日志时得到执行,
+因此当你查询日志时, 可能会得到已经过期的日志.
 
 可用环境变量`LOGGER_TIME_TO_LIVE`设置日志默认的生存时间, 单位为秒,
 0代表无限, 默认情况下为无限.
@@ -411,15 +414,15 @@ Logger同时实施两种日志过期策略:
 可用环境变量`LOGGER_LIMIT`设置单个记录器的日志数量限制, 单位为个,
 0代表无限, 默认情况下为无限.
 
-### 为记录器单独设置过期策略
+### 为记录器单独设置淘汰策略
 
-为记录器单独设置的过期策略会覆盖由环境变量设置的同一种类的过期策略.
+为记录器单独设置的淘汰策略会覆盖由环境变量设置的同一种类的淘汰策略.
 
-#### 获取所有具有过期策略的记录器id
+#### 获取所有具有淘汰策略的记录器id
 
-`GET /api/logger-with-expiration-policies`
+`GET /api/logger-with-elimination-policies`
 
-获取所有具有过期策略的记录器id, 返回由JSON表示的字符串数组`string[]`
+获取所有具有淘汰策略的记录器id, 返回由JSON表示的字符串数组`string[]`
 
 ##### Example
 
@@ -427,21 +430,21 @@ curl
 ```sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/logger-with-expiration-policies"
+  "http://localhost:8080/api/logger-with-elimination-policies"
 ```
 
 fetch
 ```js
-await fetch('http://localhost:8080/api/logger-with-expiration-policies', {
+await fetch('http://localhost:8080/api/logger-with-elimination-policies', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
 }).then(res => res.json())
 ```
 
-#### 获取过期策略
+#### 获取淘汰策略
 
-`GET /api/logger/<id>/expiration-policies`
+`GET /api/logger/<id>/elimination-policies`
 
 返回JSON:
 ```ts
@@ -457,22 +460,22 @@ curl
 ```sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/logger/$id/expiration-policies"
+  "http://localhost:8080/api/logger/$id/elimination-policies"
 ```
 
 fetch
 ```js
-await fetch(`http://localhost:8080/api/logger/${id}/expiration-policies`, {
+await fetch(`http://localhost:8080/api/logger/${id}/elimination-policies`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
 }).then(res => res.json())
 ```
 
-#### 设置过期策略
+#### 设置淘汰策略
 
-`PUT /api/logger/<id>/expiration-policies/time-to-live`
-`PUT /api/logger/<id>/expiration-policies/limit`
+`PUT /api/logger/<id>/elimination-policies/time-to-live`
+`PUT /api/logger/<id>/elimination-policies/limit`
 
 Payload必须是一个非负整数
 
@@ -490,7 +493,7 @@ curl \
 
 fetch
 ```js
-await fetch(`http://localhost:8080/api/logger/${id}/expiration-policies`, {
+await fetch(`http://localhost:8080/api/logger/${id}/elimination-policies`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -500,10 +503,36 @@ await fetch(`http://localhost:8080/api/logger/${id}/expiration-policies`, {
 })
 ```
 
-#### 移除过期策略
+#### 触发淘汰策略
 
-`DELETE /api/logger/<id>/expiration-policies/time-to-live`
-`DELETE /api/logger/<id>/expiration-policies/limit`
+`POST /api/logger/<id>/eliminate`
+
+你总是可以在设置完淘汰策略后手动触发它们.
+
+##### Example
+
+curl
+```sh
+curl \
+  --request POST \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/eliminate"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/eliminate`, {
+  method: 'POST'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+```
+
+#### 移除淘汰策略
+
+`DELETE /api/logger/<id>/elimination-policies/time-to-live`
+`DELETE /api/logger/<id>/elimination-policies/limit`
 
 ##### Example
 
@@ -512,12 +541,12 @@ curl
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/logger/$id/expiration-policies"
+  "http://localhost:8080/api/logger/$id/elimination-policies"
 ```
 
 fetch
 ```js
-await fetch(`http://localhost:8080/api/logger/${id}/expiration-policies`, {
+await fetch(`http://localhost:8080/api/logger/${id}/elimination-policies`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
