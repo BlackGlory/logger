@@ -1,0 +1,1 @@
+export { DAO } from './config'
