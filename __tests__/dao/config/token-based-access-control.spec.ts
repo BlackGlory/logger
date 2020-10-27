@@ -13,13 +13,16 @@ describe('TBAC(token-based access control)', () => {
       const token1 = 'token-1'
       const id2 = 'id-2'
       const token2 = 'token-2'
-      insert(db, { token: token1, id: id1, follow: true, log: false })
-      insert(db, { token: token2, id: id2, follow: false, log: true })
+      const id3 = 'id-3'
+      const token3 = 'token-3'
+      insert(db, { token: token1, id: id1, follow: true })
+      insert(db, { token: token2, id: id2, log: true })
+      insert(db, { token: token3, id: id3, del: true })
 
       const result = DAO.getAllIdsWithTokens()
 
       // expect.toStrictEqual is broken, I have no idea
-      expect(result).toEqual([id1, id2])
+      expect(result).toEqual([id1, id2, id3])
     })
   })
 
@@ -29,15 +32,18 @@ describe('TBAC(token-based access control)', () => {
       const id = 'id-1'
       const token1 = 'token-1'
       const token2 = 'token-2'
-      insert(db, { token: token1, id, follow: true, log: false })
-      insert(db, { token: token2, id, follow: false, log: true })
+      const token3 = 'token-3'
+      insert(db, { token: token1, id, follow: true })
+      insert(db, { token: token2, id, log: true })
+      insert(db, { token: token3, id, del: true })
 
       const result = DAO.getAllTokens(id)
 
       // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([
-        { token: token1, follow: true, log: false }
-      , { token: token2, follow: false, log: true }
+        { token: token1, follow: true, log: false, delete: false }
+      , { token: token2, follow: false, log: true, delete: false }
+      , { token: token3, follow: false, log: false, delete: true }
       ])
     })
   })
@@ -279,6 +285,97 @@ describe('TBAC(token-based access control)', () => {
       })
     })
   })
+
+  describe('DeleteToken', () => {
+    describe('matchDeleteToken({ token: string; id: string }): boolean', () => {
+      describe('tokens exist', () => {
+        it('return true', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+          insert(db, { token, id, del: true })
+
+          const result = DAO.matchDeleteToken({ token, id })
+
+          expect(result).toBeTrue()
+        })
+      })
+
+      describe('tokens do not exist', () => {
+        it('return false', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+          insert(db, { token, id, del: false })
+
+          const result = DAO.matchDeleteToken({ token, id })
+
+          expect(result).toBeFalse()
+        })
+      })
+    })
+
+    describe('setDeleteToken(token: string, id: string)', () => {
+      describe('token exists', () => {
+        it('update row', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+          insert(db, { token, id, del: false })
+
+          const result = DAO.setDeleteToken({ token, id })
+          const row = select(db, { token, id })
+
+          expect(result).toBeUndefined()
+          expect(row['delete_permission']).toBe(1)
+        })
+      })
+
+      describe('token does not exist', () => {
+        it('insert row', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+
+          const result = DAO.setDeleteToken({ token, id })
+          const row = select(db, { token, id })
+
+          expect(result).toBeUndefined()
+          expect(row['delete_permission']).toBe(1)
+        })
+      })
+    })
+
+    describe('unsetDeleteToken', () => {
+      describe('token exists', () => {
+        it('return undefined', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+          insert(db, { token, id, del: true })
+
+          const result = DAO.unsetDeleteToken({ token, id })
+          const row = select(db, { token, id })
+
+          expect(result).toBeUndefined()
+          expect(row).toBeUndefined()
+        })
+      })
+
+      describe('token does not exist', () => {
+        it('return undefined', async () => {
+          const db = await prepareDatabase()
+          const token = 'token-1'
+          const id = 'id-1'
+
+          const result = DAO.unsetDeleteToken({ token, id })
+
+          expect(result).toBeUndefined()
+          expect(exist(db, { token, id })).toBeFalse()
+        })
+      })
+    })
+  })
 })
 
 function exist(db: Database, { token, id }: { token: string; id: string }) {
@@ -295,20 +392,22 @@ function select(db: Database, { token, id }: { token: string; id: string }) {
 
 function insert(
   db: Database
-, { token, id, follow, log }: {
+, { token, id, follow = false, log = false, del = false }: {
     token: string
     id: string
-    follow: boolean
-    log: boolean
+    follow?: boolean
+    log?: boolean
+    del?: boolean
   }
 ) {
   db.prepare(`
-    INSERT INTO logger_tbac (token, logger_id, follow_permission, log_permission)
-    VALUES ($token, $id, $follow, $log);
+    INSERT INTO logger_tbac (token, logger_id, follow_permission, log_permission, delete_permission)
+    VALUES ($token, $id, $follow, $log, $del);
   `).run({
     token
   , id
   , follow: follow ? 1 : 0
   , log: log ? 1 : 0
+  , del: del ? 1 : 0
   })
 }

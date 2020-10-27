@@ -30,26 +30,6 @@ CREATE TABLE logger_tbac (
 , UNIQUE (token, logger_id)
 );
 
-CREATE TRIGGER auto_delete_after_insert_logger_tbac
- AFTER INSERT ON logger_tbac
-  WHEN NEW.follow_permission = 0
-   AND NEW.log_permission = 0
-   AND NEW.delete_permission = 0
-BEGIN
-  DELETE FROM logger_tbac
-   WHERE logger_tbac.token = NEW.token AND logger_tbac.logger_id = NEW.logger_id;
-END;
-
-CREATE TRIGGER auto_delete_after_update_logger_tbac
- AFTER UPDATE ON logger_tbac
-  WHEN NEW.follow_permission = 0
-   AND NEW.log_permission = 0
-   AND NEW.delete_permission = 0
-BEGIN
-  DELETE FROM logger_tbac
-   WHERE logger_tbac.token = NEW.token AND logger_tbac.logger_id = NEW.logger_id;
-END;
-
 --------------------------------------------------------------------------------
 -- Down
 --------------------------------------------------------------------------------

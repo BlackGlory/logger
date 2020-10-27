@@ -36,6 +36,10 @@ interface ITokenBasedAccessControlDAO {
   matchFollowToken(props: { token: string; id: string }): Promise<boolean>
   setFollowToken(props: { token: string; id: string }): Promise<void>
   unsetFollowToken(props: { token: string; id: string }): Promise<void>
+
+  matchDeleteToken(props: { token: string; id: string }): Promise<boolean>
+  setDeleteToken(props: { token: string; id: string }): Promise<void>
+  unsetDeleteToken(props: { token: string; id: string }): Promise<void>
 }
 
 interface IDataAccessObject extends IBlacklistDAO

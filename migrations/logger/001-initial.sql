@@ -9,18 +9,24 @@ PRAGMA journal_mode = WAL;
 -- logger资源本身是松散的, 没有自己的表
 
 CREATE TABLE logger_log (
-  logger_id     VARCHAR(255) NOT NULL
-, log_timestamp DATETIME     NOT NULL
-, log_number    INTEGER      NOT NULL
-, log_payload   TEXT         NOT NULL
-, PRIMARY KEY (logger_id, log_timestamp, log_number)
-)
+  logger_id VARCHAR(255) NOT NULL
+, timestamp DATETIME     NOT NULL
+, number    INTEGER      NOT NULL
+, payload   TEXT         NOT NULL
+, PRIMARY KEY (logger_id, timestamp, number)
+);
 
 CREATE TABLE logger_counter (
   logger_id         VARCHAR(255) PRIMARY KEY
-, counter_timestamp DATETIME     NOT NULL
-, counter_count     INTEGER      NOT NULL
-)
+, timestamp DATETIME     NOT NULL
+, count     INTEGER      NOT NULL
+);
+
+CREATE TABLE logger_elimination_policy (
+  logger_id    VARCHAR(255) NOT NULL
+, time_to_live INTEGER
+, limit        INTEGER
+);
 
 --------------------------------------------------------------------------------
 -- Down

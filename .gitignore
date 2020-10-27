@@ -58,7 +58,7 @@ typings/
 .env
 
 # Build
-lib
+/lib
 
 # Data
-data
+/data

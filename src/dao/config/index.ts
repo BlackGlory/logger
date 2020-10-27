@@ -37,6 +37,10 @@ const TokenBasedAccessControlDAO: ITokenBasedAccessControlDAO = {
 , matchFollowToken: asyncify(TokenBasedAccessControl.matchFollowToken)
 , setFollowToken: asyncify(TokenBasedAccessControl.setFollowToken)
 , unsetFollowToken: asyncify(TokenBasedAccessControl.unsetFollowToken)
+
+, matchDeleteToken: asyncify(TokenBasedAccessControl.matchDeleteToken)
+, setDeleteToken: asyncify(TokenBasedAccessControl.setDeleteToken)
+, unsetDeleteToken: asyncify(TokenBasedAccessControl.unsetDeleteToken)
 }
 
 export const DAO: IDataAccessObject = {
