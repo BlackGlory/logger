@@ -118,7 +118,7 @@ volumes:
 同一秒里的计数器数字不会被重用.
 由于日志有可能被删除, 因此不应假设计数器的数字是连续的.
 
-### log
+### write
 
 `POST /logger/<id>`
 
@@ -742,17 +742,17 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 一个记录器可以有多个token, 每个token可以单独设置read权限和read权限.
 不同记录器的token不共用.
 
-| 此记录器存在具有read权限的token | 此记录器存在具有read权限的token | 行为 |
+| 此记录器存在具有read权限的token | 此记录器存在具有write权限的token | 行为 |
 | --- | --- | --- |
-| YES | YES | 只有使用具有相关权限的token才能执行操作 |
-| YES | NO | 无token可以follow, 只有具有read权限的token可以read |
-| NO | YES | 无token可以read, 只有具有read权限的token可以follow |
-| NO | NO | 无token可以follow和read |
+| YES | YES | 有read权限才能follow, query, 有write权限才能write |
+| YES | NO | 无token可以write, 有read权限才能follow, query |
+| NO | YES | 无token可以follow,query, 有write权限才可以write |
+| NO | NO | 无token可以write, follow, query |
 
 在开启基于token的访问控制时,
 可以通过将环境变量`LOGGER_DISABLE_NO_TOKENS`设置为`true`将无token的记录器禁用.
 
-基于token的访问控制作出了如下假定, 因此不使用加密和消息验证码(MAC):
+基于token的访问控制作出了以下假设, 因此不使用加密和消息验证码(MAC):
 - token的传输过程是安全的
 - token难以被猜测
 - token的意外泄露可以被迅速处理
