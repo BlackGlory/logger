@@ -1,9 +1,17 @@
-import { getDatabase, reconnectDatabase, migrateDatabase } from '@dao/config/database'
+import { getDatabase as getConfigDatabase, reconnectDatabase as reconnectConfigDatabase, migrateDatabase as migrateConfigDatabase } from '@dao/config/database'
+import { getDatabase as getLoggerDatabase, reconnectDatabase as reconnectLoggerDatabase, migrateDatabase as migrateLoggerDatabase } from '@dao/logger/database'
 
-export async function prepareDatabase() {
-  reconnectDatabase()
-  const db = getDatabase()
-  await migrateDatabase()
+export async function prepareConfigDatabase() {
+  reconnectConfigDatabase()
+  const db = getConfigDatabase()
+  await migrateConfigDatabase()
+  return db
+}
+
+export async function prepareLoggerDatabase() {
+  reconnectLoggerDatabase()
+  const db = getLoggerDatabase()
+  await migrateLoggerDatabase()
   return db
 }
 

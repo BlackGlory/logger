@@ -1,5 +1,5 @@
 import * as DAO from '@dao/config/token-based-access-control'
-import { prepareDatabase } from '@test/utils'
+import { prepareConfigDatabase } from '@test/utils'
 import { Database } from 'better-sqlite3'
 import 'jest-extended'
 
@@ -8,7 +8,7 @@ jest.mock('@dao/config/database')
 describe('TBAC(token-based access control)', () => {
   describe('getAllIdsWithTokens(): string[]', () => {
     it('return string[]', async () => {
-      const db = await prepareDatabase()
+      const db = await prepareConfigDatabase()
       const id1 = 'id-1'
       const token1 = 'token-1'
       const id2 = 'id-2'
@@ -28,7 +28,7 @@ describe('TBAC(token-based access control)', () => {
 
   describe('getAllTokens(id: string): Array<{ token: string; log: boolean; follow: boolean }>', () => {
     it('return Array<{ token: string; log: boolean; follow: boolean }>', async () => {
-      const db = await prepareDatabase()
+      const db = await prepareConfigDatabase()
       const id = 'id-1'
       const token1 = 'token-1'
       const token2 = 'token-2'
@@ -52,7 +52,7 @@ describe('TBAC(token-based access control)', () => {
     describe('hasLogTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
         it('return true', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: false, log: true })
@@ -65,7 +65,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('tokens do not exist', () => {
         it('return false', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: false })
@@ -80,7 +80,7 @@ describe('TBAC(token-based access control)', () => {
     describe('matchLogToken({ token: string; id: string }): boolean', () => {
       describe('token exist', () => {
         it('return true', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: false, log: true })
@@ -93,7 +93,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('return false', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: false })
@@ -108,7 +108,7 @@ describe('TBAC(token-based access control)', () => {
     describe('setLogToken({ token: string; id: string })', () => {
       describe('token exists', () => {
         it('update row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: false })
@@ -123,7 +123,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('insert row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -139,7 +139,7 @@ describe('TBAC(token-based access control)', () => {
     describe('unsetLogToken({ token: string; id: string })', () => {
       describe('token exists', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: true })
@@ -154,7 +154,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -171,7 +171,7 @@ describe('TBAC(token-based access control)', () => {
     describe('hasFollowTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
         it('return true', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: false })
@@ -184,7 +184,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('tokens do not exist', () => {
         it('return false', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: false, log: true })
@@ -199,7 +199,7 @@ describe('TBAC(token-based access control)', () => {
     describe('matchFollowToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
         it('return true', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: false })
@@ -212,7 +212,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('tokens do not exist', () => {
         it('return false', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: false, log: true })
@@ -227,7 +227,7 @@ describe('TBAC(token-based access control)', () => {
     describe('setFollowToken(token: string, id: string)', () => {
       describe('token exists', () => {
         it('update row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: false, log: true })
@@ -242,7 +242,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('insert row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -258,7 +258,7 @@ describe('TBAC(token-based access control)', () => {
     describe('unsetFollowToken', () => {
       describe('token exists', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, follow: true, log: true })
@@ -273,7 +273,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -290,7 +290,7 @@ describe('TBAC(token-based access control)', () => {
     describe('matchDeleteToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
         it('return true', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: true })
@@ -303,7 +303,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('tokens do not exist', () => {
         it('return false', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: false })
@@ -318,7 +318,7 @@ describe('TBAC(token-based access control)', () => {
     describe('setDeleteToken(token: string, id: string)', () => {
       describe('token exists', () => {
         it('update row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: false })
@@ -333,7 +333,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('insert row', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -349,7 +349,7 @@ describe('TBAC(token-based access control)', () => {
     describe('unsetDeleteToken', () => {
       describe('token exists', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: true })
@@ -364,7 +364,7 @@ describe('TBAC(token-based access control)', () => {
 
       describe('token does not exist', () => {
         it('return undefined', async () => {
-          const db = await prepareDatabase()
+          const db = await prepareConfigDatabase()
           const token = 'token-1'
           const id = 'id-1'
 

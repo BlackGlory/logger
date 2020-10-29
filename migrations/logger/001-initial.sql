@@ -17,15 +17,15 @@ CREATE TABLE logger_log (
 );
 
 CREATE TABLE logger_counter (
-  logger_id         VARCHAR(255) PRIMARY KEY
+  logger_id VARCHAR(255) PRIMARY KEY
 , timestamp DATETIME     NOT NULL
 , count     INTEGER      NOT NULL
 );
 
 CREATE TABLE logger_elimination_policy (
-  logger_id    VARCHAR(255) NOT NULL
+  logger_id    VARCHAR(255) NOT NULL UNIQUE
 , time_to_live INTEGER
-, limit        INTEGER
+, number_limit INTEGER
 );
 
 --------------------------------------------------------------------------------

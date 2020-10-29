@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config/json-schema'
 import { Database } from 'better-sqlite3'
-import { prepareDatabase } from '@test/utils'
+import { prepareConfigDatabase } from '@test/utils'
 import 'jest-extended'
 
 jest.mock('@dao/config/database')
@@ -8,7 +8,7 @@ jest.mock('@dao/config/database')
 describe('JSON Schema', () => {
   describe('getAllIdsWithJsonSchema(): string[]', () => {
     it('return string[]', async () => {
-      const db = await prepareDatabase()
+      const db = await prepareConfigDatabase()
       const id = 'id-1'
       const schema = createSchema()
       insert(db, { id, schema })
@@ -23,7 +23,7 @@ describe('JSON Schema', () => {
   describe('getJsonSchema(id: string): string | null', () => {
     describe('exist', () => {
       it('return schema', async () => {
-        const db = await prepareDatabase()
+        const db = await prepareConfigDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -36,7 +36,7 @@ describe('JSON Schema', () => {
 
     describe('not exist', () => {
       it('return null', async () => {
-        await prepareDatabase()
+        await prepareConfigDatabase()
         const id = 'id-1'
 
         const result = DAO.getJsonSchema(id)
@@ -49,7 +49,7 @@ describe('JSON Schema', () => {
   describe('setJsonSchema({ id: string; schema: string })', () => {
     describe('exist', () => {
       it('return undefined', async () => {
-        const db = await prepareDatabase()
+        const db = await prepareConfigDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -63,7 +63,7 @@ describe('JSON Schema', () => {
 
     describe('not exist', () => {
       it('return undefined', async () => {
-        const db = await prepareDatabase()
+        const db = await prepareConfigDatabase()
         const id = 'id-1'
         const schema = createSchema()
 
@@ -78,7 +78,7 @@ describe('JSON Schema', () => {
   describe('removeJsonSchema(id: string)', () => {
     describe('exist', () => {
       it('return undefined', async () => {
-        const db = await prepareDatabase()
+        const db = await prepareConfigDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -92,7 +92,7 @@ describe('JSON Schema', () => {
 
     describe('not exist', () => {
       it('return undefined', async () => {
-        const db = await prepareDatabase()
+        const db = await prepareConfigDatabase()
         const id = 'id-1'
 
         const result = DAO.removeJsonSchema(id)
