@@ -3,15 +3,15 @@ import { concatStrings } from './utils/concat-strings'
 import { parseFrom } from './utils/parse-from'
 import { parseTo } from './utils/parse-to'
 
-export function deleteLogs(id: string, parameters: IQueryParameters): void {
-  if ('head' in parameters) return deleteLogsByHeadSliceParameters(id, parameters)
-  if ('tail' in parameters) return deleteLogsByTailSliceParameters(id, parameters)
-  return deleteLogsBySliceParameters(id, parameters)
+export function deleteLogs(id: string, range: IRange): void {
+  if ('head' in range) return deleteLogsBySliceWithHead(id, range)
+  if ('tail' in range) return deleteLogsBySliceWithTail(id, range)
+  return deleteLogsBySlice(id, range)
 }
 
-function deleteLogsBySliceParameters(id: string, parameters: SliceParameters): void {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function deleteLogsBySlice(id: string, range: ISlice): void {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     DELETE FROM logger_log
      WHERE logger_id = $id
@@ -27,9 +27,9 @@ function deleteLogsBySliceParameters(id: string, parameters: SliceParameters): v
   })
 }
 
-function deleteLogsByHeadSliceParameters(id: string, parameters: IHeadSliceParameters): void {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function deleteLogsBySliceWithHead(id: string, range: ISlice & IHead): void {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     DELETE FROM logger_log
      WHERE logger_id = $id
@@ -45,13 +45,13 @@ function deleteLogsByHeadSliceParameters(id: string, parameters: IHeadSliceParam
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
   , toNumber: to?.number
-  , head: parameters.head
+  , head: range.head
   })
 }
 
-function deleteLogsByTailSliceParameters(id: string, parameters: ITailSliceParameters): void {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function deleteLogsBySliceWithTail(id: string, range: ISlice & ITail): void {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     DELETE FROM logger_log
      WHERE logger_id = $id
@@ -67,6 +67,6 @@ function deleteLogsByTailSliceParameters(id: string, parameters: ITailSliceParam
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
   , toNumber: to?.number
-  , tail: parameters.tail
+  , tail: range.tail
   })
 }

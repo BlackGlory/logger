@@ -1,17 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
-import {
-  LIST_BASED_ACCESS_CONTROL
-, ListBasedAccessControl
-, TOKEN_BASED_ACCESS_CONTROL
-, DISABLE_NO_TOKENS
-} from '@env'
 import websocket from 'fastify-websocket'
 
-export const routes: FastifyPluginAsync<{
-  Logger: ILogger<string>
-  DAO: IDataAccessObject
-}> = async function routes(server, { Logger, DAO }) {
+export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(websocket, {
     options: {
       // pain, see https://github.com/fastify/fastify-websocket/issues/70
@@ -33,31 +24,16 @@ export const routes: FastifyPluginAsync<{
           }
         }
 
-        if (id) {
-          if (LIST_BASED_ACCESS_CONTROL() === ListBasedAccessControl.Blacklist) {
-            if (await DAO.inBlacklist(id)) return next(false)
-          } else if (LIST_BASED_ACCESS_CONTROL() === ListBasedAccessControl.Whitelist) {
-            if (!await DAO.inWhitelist(id)) return next(false)
-          }
+        if (!id) return next(false)
 
-          if (TOKEN_BASED_ACCESS_CONTROL()) {
-            if (await DAO.hasFollowTokens(id)) {
-              if (token) {
-                if (!await DAO.matchFollowToken({ token, id })) return next(false)
-              } else {
-                return next(false)
-              }
-            } else {
-              if (DISABLE_NO_TOKENS()) {
-                if (!await DAO.hasLogTokens(id)) return next(false)
-              }
-            }
-          }
-
-          return next(true)
+        try {
+          await Core.Blacklist.check(id)
+          await Core.Whitelist.check(id)
+          await Core.TBAC.checkReadPermission(id, token)
+        } catch {
+          return next(false)
         }
-
-        next(false)
+        return next(true)
       }
     }
   })
@@ -81,24 +57,15 @@ export const routes: FastifyPluginAsync<{
         const id = req.params.id
         const token = req.query.token
 
-        if (LIST_BASED_ACCESS_CONTROL() === ListBasedAccessControl.Blacklist) {
-          if (await DAO.inBlacklist(id)) return reply.status(403).send()
-        } else if (LIST_BASED_ACCESS_CONTROL() === ListBasedAccessControl.Whitelist) {
-          if (!await DAO.inWhitelist(id)) return reply.status(403).send()
-        }
-
-        if (TOKEN_BASED_ACCESS_CONTROL()) {
-          if (await DAO.hasFollowTokens(id)) {
-            if (token) {
-              if (!await DAO.matchFollowToken({ token, id })) return reply.status(401).send()
-            } else {
-              return reply.status(401).send()
-            }
-          } else {
-            if (DISABLE_NO_TOKENS()) {
-              if (!await DAO.hasLogTokens(id)) return reply.status(403).send()
-            }
-          }
+        try {
+          await Core.Blacklist.check(id)
+          await Core.Whitelist.check(id)
+          await Core.TBAC.checkReadPermission(id, token)
+        } catch (e) {
+          if (e instanceof Core.Error.Unauthorized) return reply.status(401).send()
+          if (e instanceof Core.Error.Forbidden) return reply.status(403).send()
+          if (e instanceof Error) return reply.status(400).send(e.message)
+          throw e
         }
 
         reply.raw.setHeader('Content-Type','text/event-stream')
@@ -109,10 +76,7 @@ export const routes: FastifyPluginAsync<{
         }
         reply.raw.flushHeaders()
 
-        const unfollow = Logger.follow(id, value => {
-          reply.raw.write(`data: ${value}\n\n`)
-        })
-
+        const unfollow = Core.Logger.follow(id, value => reply.raw.write(`data: ${value}\n\n`))
         req.raw.on('close', () => unfollow())
       })()
     }
@@ -121,8 +85,7 @@ export const routes: FastifyPluginAsync<{
   , wsHandler(conn, req, params: Params) {
       const id = params.id
 
-      const unfollow = Logger.follow(id, value => conn.socket.send(value))
-
+      const unfollow = Core.Logger.follow(id, value => conn.socket.send(value))
       conn.socket.on('close', () => unfollow())
       conn.socket.on('message', () => conn.socket.close())
     }

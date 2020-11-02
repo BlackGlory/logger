@@ -1,28 +1,22 @@
-import { Emitter } from './emitter'
-import { Observable } from 'rxjs'
+import { LoggerDAO } from '@dao/logger'
+import { PubSubDAO } from '@dao/pubsub'
 
-export class Logger<T> implements ILogger<T> {
-  #emitter = new Emitter<T>()
+export async function write(id: string, payload: string): Promise<void> {
+  await LoggerDAO.writeLog(id, payload)
+  PubSubDAO.publish(id, payload)
+}
 
-  async log(key: string, value: T) {
-    this.#emitter.emit(key, value)
-  }
+export function follow(id: string, cb: (value: string) => void): () => void {
+  return PubSubDAO.subscribe(id, cb)
+}
 
-  follow(key: string, listener: (value: T) => void) {
-    const observable = new Observable<T>(observer => {
-      const listener = (value: T) => observer.next(value)
-      this.#emitter.on(key, listener)
-      return () => this.#emitter.off(key, listener)
-    })
-    const subscription = observable.subscribe(listener)
-    return () => subscription.unsubscribe()
-  }
+export function query(id: string, range: IRange): Promise<Iterable<{
+  id: string
+  payload: string
+}>> {
+  return LoggerDAO.queryLogs(id, range)
+}
 
-  async delete(key: string, parameters: IParameters) {
-    return undefined
-  }
-
-  async query(key: string, parameters: IParameters) {
-    return { id: 'id', payload: 'payload'}
-  }
+export function remove(id: string, range: IRange): Promise<void> {
+  return LoggerDAO.deleteLogs(id, range)
 }

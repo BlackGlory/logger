@@ -1,6 +1,6 @@
 # Logger
 
-一个受[patchbay]启发的Web友好的自托管ad-hoc微服务,
+一个受[PubSub]启发的Web友好的自托管ad-hoc微服务,
 提供基于 HTTP 和 SSE 的日志功能,
 带有基于token和名单的访问控制策略,
 支持JSON Schema.
@@ -9,7 +9,7 @@
 
 所有URL都采用了反射性的CORS, 没有提供针对`Origin`的访问控制策略.
 
-[patchbay]: https://patchbay.pub/
+[PubSub]: https://github.com/BlackGlory/PubSub
 
 ## Quickstart
 
@@ -49,7 +49,7 @@ yarn --silent start
 ```sh
 docker run \
   --detach \
-  --log 8080:8080 \
+  --publish 8080:8080 \
   blackglory/logger
 ```
 
@@ -74,8 +74,6 @@ services:
   logger:
     image: 'blackglory/logger'
     restart: always
-    environment:
-      - LOGGER_HOST=0.0.0.0
     volumes:
       - 'logger-data:/data'
     ports:
@@ -96,10 +94,11 @@ services:
     image: 'blackglory/logger'
     restart: always
     environment:
-      - LOGGER_HOST=0.0.0.0
       - LOGGER_ADMIN_PASSWORD=password
       - LOGGER_TOKEN_BASED_ACCESS_CONTROL=true
-      - LOGGER_DISABLE_NO_TOKENS=true
+      - LOGGER_WRITE_TOKEN_REQUIRED=true
+      - LOGGER_READ_TOKEN_REQUIRED=true
+      - LOGGER_DELETE_TOKEN_REQUIRED=true
     volumes:
       - 'logger-data:/data'
     ports:
@@ -113,9 +112,9 @@ volumes:
 
 对id的要求: `^[a-zA-Z0-9\.\-_]{1,256}$`
 提供基于日志数量或淘汰时间的自动删除机制.
-日志的id格式为`Unix秒时间戳-从0开始的计数器`,
-使用计数器是为了防止在同一秒添加多条日志出现重复.
-同一秒里的计数器数字不会被重用.
+日志的id格式为`Unix毫秒时间戳-从0开始的计数器`,
+使用计数器是为了防止在同一毫秒添加多条日志出现重复.
+同一毫秒里的计数器数字不会被重用.
 由于日志有可能被删除, 因此不应假设计数器的数字是连续的.
 
 ### write
@@ -213,7 +212,7 @@ SSE具有包括发送中断期间数据的自动重连功能, 而WebSocket只能
 
 websocat
 ```sh
-websocat "ws://localhost:8080/pubsub/$id"
+websocat "ws://localhost:8080/logger/$id"
 ```
 
 JavaScript
@@ -226,17 +225,13 @@ ws.addEventListener('message', event => {
 
 ### query
 
-`GET /logger/<id>/query`
+`GET /logger/<id>/logs` 获取所有日志
 
-操作符head, tail, from, to可以组合使用, 一个查询不能同时有head和tail.
-
-如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
-`/logger/<id>/query?token=<token>`
-
-- `GET /logger/<id>/query?head=<number>` 取开头number个记录.
-- `GET /logger/<id>/query?tail=<number>` 取结尾number个记录.
-- `GET /logger/<id>/query?from=<logId>` 从特定logId开始.
-- `GET /logger/<id>/query?to=<logId>` 至特定logId结束.
+查询(head, tail, from, to可以组合使用, 不能同时有head和tail)
+- `GET /logger/<id>/logs?head=<number>` 取开头number个记录.
+- `GET /logger/<id>/logs?tail=<number>` 取结尾number个记录.
+- `GET /logger/<id>/logs?from=<logId>` 从特定logId开始.
+- `GET /logger/<id>/logs?to=<logId>` 至特定logId结束.
 
 from和to操作符可以使用实际并不存在的logId, 程序会自动匹配至最近的记录.
 省略from相当于从最早的记录开始.
@@ -250,24 +245,33 @@ Array<{
 }>
 ```
 
+如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
+`/logger/<id>/logs?token=<token>`
+
 #### Example
 
 curl
 ```sh
-curl "http://localhost:8080/$id/query"
+curl "http://localhost:8080/$id/logs"
 ```
 
 JavaScript
 ```js
-await fetch(`http://localhost:8080/${id}/query`).then(res => res.json())
+await fetch(`http://localhost:8080/${id}/logs`).then(res => res.json())
 ```
 
 ### delete
 
-`DELETE /logger/<id>?token=<token>` 清空整个记录器
-`DELETE /logger/<id>/query?token=<token>` 根据查询结果删除日志
+`DELETE /logger/<id>/logs` 删除所有日志
 
-清空必须通过具有delete权限的token实现.
+根据查询结果删除日志(head, tail, from, to可以组合使用, 不能同时有head和tail):
+- `DELETE /logger/<id>/logs?from=<logId>` 删除从特定logId开始.
+- `DELETE /logger/<id>/logs?to=<logId>` 删除至特定logId结束.
+- `DELETE /logger/<id>/logs?head=<number>` 删除开头number个记录.
+- `DELETE /logger/<id>/logs?tail=<number>` 删除结尾number个记录.
+
+如果开启基于token的访问控制, 则可能需要在Querystring提供具有delete权限的token:
+`/logger/<id>/logs?token=<token>`
 
 #### Example
 
@@ -275,26 +279,26 @@ curl
 ```sh
 curl \
   --request DELETE \
-  "http://localhost:8080/$id"
+  "http://localhost:8080/$id/logs"
 ```
 
 JavaScript
 ```js
-await fetch(`http://localhost:8080/${id}`)
+await fetch(`http://localhost:8080/${id}/logs`)
 ```
 
-## 为log添加JSON验证
+## 为write添加JSON验证
 
-通过设置环境变量`LOGGER_JSON_VALIDATION=true`可开启log的JSON Schema验证功能.
+通过设置环境变量`LOGGER_JSON_VALIDATION=true`可开启write的JSON Schema验证功能.
 任何带有`Content-Type: application/json`的请求都会被验证,
 即使没有设置JSON Schema, 也会拒绝不合法的JSON文本.
-JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的消息会与log发送的消息相同.
+JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的payload会与write发送的消息相同.
 
 在开启验证功能的情况下, 通过环境变量`LOGGER_DEFAULT_JSON_SCHEMA`可设置默认的JSON Schema,
 该验证仅对带有`Content-Type: application/json`的请求有效.
 
 通过设置环境变量`LOGGER_JSON_PAYLOAD_ONLY=true`,
-可以强制enqueue只接受带有`Content-Type: application/json`的请求.
+可以强制write只接受带有`Content-Type: application/json`的请求.
 此设置在未开启JSON Schema验证的情况下也有效, 但在这种情况下服务器能够接受不合法的JSON.
 
 ### 为记录器单独设置JSON Schema
@@ -486,20 +490,43 @@ curl
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  --header "Content-Type: application/json" \
-  --data "$JSON_SCHEMA" \
-  "http://localhost:8080/api/logger/$id/jsonschema"
+  --data "$LIMIT" \
+  "http://localhost:8080/api/logger/$id/limit"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/limit`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+, body: JSON.stringify(limit)
+})
+```
+
+#### 移除淘汰策略
+
+`DELETE /api/logger/<id>/elimination-policies/time-to-live`
+`DELETE /api/logger/<id>/elimination-policies/limit`
+
+##### Example
+
+curl
+```sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/elimination-policies"
 ```
 
 fetch
 ```js
 await fetch(`http://localhost:8080/api/logger/${id}/elimination-policies`, {
-  method: 'PUT'
+  method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
-    'Content-Type': 'application/json'
   }
-, body: JSON.stringify(jsonSchema)
 })
 ```
 
@@ -529,31 +556,6 @@ await fetch(`http://localhost:8080/api/logger/${id}/eliminate`, {
 })
 ```
 
-#### 移除淘汰策略
-
-`DELETE /api/logger/<id>/elimination-policies/time-to-live`
-`DELETE /api/logger/<id>/elimination-policies/limit`
-
-##### Example
-
-curl
-```sh
-curl \
-  --request DELETE \
-  --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/logger/$id/elimination-policies"
-```
-
-fetch
-```js
-await fetch(`http://localhost:8080/api/logger/${id}/elimination-policies`, {
-  method: 'DELETE'
-, headers: {
-    'Authorization': `Bearer ${adminPassword}`
-  }
-})
-```
-
 ## 访问控制
 
 Logger提供两种访问控制策略, 可以一并使用.
@@ -564,7 +566,7 @@ Logger提供两种访问控制策略, 可以一并使用.
 访问控制规则是通过[WAL模式]的SQLite3持久化的, 开启访问控制后,
 服务器的吞吐量和响应速度会受到硬盘性能的影响.
 
-已经存在的阻塞连接不会受到新的访问控制规则的影响.
+已经打开的连接不会受到新的访问控制规则的影响.
 
 [WAL模式]: https://www.sqlite.org/wal.html
 
@@ -738,24 +740,125 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 
 通过设置环境变量`LOGGER_TOKEN_BASED_ACCESS_CONTROL=true`开启基于token的访问控制.
 
-基于token的访问控制将根据记录器具有的token决定其访问规则, 具体行为见下方表格.
-一个记录器可以有多个token, 每个token可以单独设置read权限和read权限.
-不同记录器的token不共用.
+基于token的访问控制将根据消息队列的token access policy决定其访问规则.
+可通过环境变量`LOGGER_WRITE_TOKEN_REQUIRED`, `LOGGER_READ_TOKEN_REQUIRED`, `LOGGER_DELETE_TOKEN_REQUIRED`设置相关默认值, 未设置情况下为`false`.
 
-| 此记录器存在具有read权限的token | 此记录器存在具有write权限的token | 行为 |
-| --- | --- | --- |
-| YES | YES | 有read权限才能follow, query, 有write权限才能write |
-| YES | NO | 无token可以write, 有read权限才能follow, query |
-| NO | YES | 无token可以follow,query, 有write权限才可以write |
-| NO | NO | 无token可以write, follow, query |
+一个消息队列可以有多个token, 每个token可以单独设置write和read权限, 不同消息队列的token不共用.
 
-在开启基于token的访问控制时,
-可以通过将环境变量`LOGGER_DISABLE_NO_TOKENS`设置为`true`将无token的记录器禁用.
-
-基于token的访问控制作出了以下假设, 因此不使用加密和消息验证码(MAC):
+基于token的访问控制作出了以下假设
 - token的传输过程是安全的
 - token难以被猜测
 - token的意外泄露可以被迅速处理
+
+#### 获取所有具有token策略的频道id
+
+`GET /api/logger-with-token-policies`
+
+获取所有具有token策略的频道id, 返回由JSON表示的字符串数组`string[]`.
+
+##### Example
+
+curl
+```sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger-with-token-policies"
+```
+
+fetch
+```js
+await fetch('http://localhost:8080/api/logger-with-token-policies')
+```
+
+#### 获取特定频道的token策略
+
+`GET /api/logger/<id>/token-policies`
+
+返回JSON:
+```ts
+{
+  writeTokenRequired: boolean | null
+  readTokenRequired: boolean | null
+  deleteTokenRequired: boolean | null
+}
+```
+`null`代表沿用相关默认值.
+
+##### Example
+
+curl
+```sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/token-policies"
+```
+
+fetch
+```js
+await fethc(`http://localhost:8080/api/logger/${id}/token-policies`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+```
+
+#### 设置token策略
+
+`PUT /api/logger/<id>/token-policies/write-token-required`
+`PUT /api/logger/<id>/token-policies/read-token-required`
+`PUT /api/logger/<id>/token-policies/delete-token-required`
+
+Payload必须是一个布尔值.
+
+##### Example
+
+curl
+```sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  --header "Content-Type: application/json" \
+  --data "$WRITE_TOKEN_REQUIRED" \
+  "http://localhost:8080/api/logger/$id/token-policies/write-token-required"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/token-policies/write-token-required`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  , 'Content-Type': 'application/json'
+  }
+, body: JSON.stringify(writeTokenRequired)
+})
+```
+
+#### 移除token策略
+
+`DELETE /api/logger/<id>/token-policies/write-token-required`
+`DELETE /api/logger/<id>/token-policies/read-token-required`
+`DELETE /api/logger/<id>/token-policies/delete-token-required`
+
+##### Example
+
+curl
+```sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/token-policies/write-token-required"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/token-policies/write-token-required`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+```
 
 #### 获取所有具有token的记录器id
 
@@ -786,7 +889,7 @@ await fetch(`http://localhost:8080/api/logger-with-tokens`, {
 `GET /api/logger/<id>/tokens`
 
 获取特定记录器的所有token信息, 返回JSON表示的token信息数组
-`Array<{ token: string, write: boolean, read: boolean }>`.
+`Array<{ token: string, write: boolean, read: boolean, delete: boolean }>`.
 
 ##### Example
 
@@ -910,6 +1013,58 @@ await fetch(`http://localhost:8080/api/logger/${id}/tokens/${token}/read`, {
 })
 ```
 
+#### 为特定记录器的token设置delete权限
+
+`PUT /api/logger/<id>/tokens/<token>/delete`
+
+添加/更新token, 为token设置delete权限.
+
+##### Example
+
+curl
+```sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/tokens/$token/delete"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/tokens/$token/delete`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+```
+
+#### 取消特定记录器的token的delete权限
+
+`DELETE /api/logger/<id>/tokens/<token>/delete`
+
+取消token的delete权限.
+
+##### Example
+
+curl
+```sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/logger/$id/tokens/$token/delete"
+```
+
+fetch
+```js
+await fetch(`http://localhost:8080/api/logger/${id}/tokens/${token}/delete`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+```
+
 ## HTTP/2
 
 Logger支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环境变量`LOGGER_HTTP2=true`开启.
@@ -919,9 +1074,9 @@ Logger支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环�
 
 ## 限制Payload大小
 
-设置环境变量`LOGGER_PAYLOAD_LIMIT`可限制服务接受的单个Payload字节数, 默认值为1048576(1MB).
+设置环境变量`LOGGER_PAYLOAD_LIMIT`可限制服务接受的单个请求的Payload字节数, 默认值为1048576(1MB).
 
-设置环境变量`LOGGER_LOG_PAYLOAD_LIMIT`可限制enqueue接受的单个Payload字节数, 默认值继承自`LOGGER_PAYLOAD_LIMIT`.
+设置环境变量`LOGGER_WRITE_PAYLOAD_LIMIT`可限制write接受的单个请求的Payload字节数, 默认值继承自`LOGGER_PAYLOAD_LIMIT`.
 
 ## 统计信息
 
@@ -930,8 +1085,8 @@ Logger支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环�
 输出JSON:
 ```ts
 {
-  memoryUsage: any // 与Node.js API保持一致
-  cpuUsage: any // 与Node.js API保持一致
-  resourceUsage: any // 与Node.js API保持一致
+  memoryUsage: NodeJS.MemoryUsage
+  cpuUsage: NodeJS.CpuUsage
+  resourceUsage: NodeJS.ResourceUsage
 }
 ```

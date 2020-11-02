@@ -4,8 +4,7 @@ import { routes as logger } from '@services/logger'
 import { routes as api } from '@services/api'
 import { routes as stats } from '@services/stats'
 import { HTTP2, PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env'
-import { DAO } from '@dao'
-import { createLogger } from '@core'
+import { Core } from '@core'
 
 export async function buildServer() {
   const server = fastify(({
@@ -16,14 +15,15 @@ export async function buildServer() {
   , bodyLimit: PAYLOAD_LIMIT()
   }))
   server.register(cors, { origin: true })
-  server.register(logger, { DAO, Logger: await createLogger<string>() })
-  server.register(api, { DAO })
-  server.register(stats)
+  server.register(logger, { Core })
+  server.register(api, { Core })
+  server.register(stats, { Core })
   return server
 }
 
 function getLoggerOptions() {
   switch (NODE_ENV()) {
+    case NodeEnv.Test: return { level: 'error' }
     case NodeEnv.Production: return { level: 'error' }
     case NodeEnv.Development: return { level: 'trace' }
     default: return false

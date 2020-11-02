@@ -1,11 +1,22 @@
 import { getDatabase } from './database'
 
-export function getEliminationPolicies(id: string): { timeToLive: number | null, numberLimit: number | null } {
+export function getAllIdsWithEliminationPolicies(): string[] {
+  const result = getDatabase().prepare(`
+    SELECT logger_id
+      FROM logger_elimination_policy;
+  `).all()
+  return result.map(x => x['logger_id'])
+}
+
+export function getEliminationPolicies(id: string): {
+  timeToLive: number | null
+  numberLimit: number | null
+} {
   const row = getDatabase().prepare(`
     SELECT time_to_live
          , number_limit
       FROM logger_elimination_policy
-     WHERE logger_id = $id
+     WHERE logger_id = $id;
   `).get({ id })
   if (row) {
     return {

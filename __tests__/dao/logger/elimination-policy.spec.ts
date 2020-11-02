@@ -6,6 +6,20 @@ import 'jest-extended'
 jest.mock('@dao/logger/database')
 
 describe('EliminationPolicy', () => {
+  describe('getAllIdsWithEliminationPolicies(): string[]', () => {
+    it('return string[]', async () => {
+      const db = await prepareLoggerDatabase()
+      const id = 'id'
+      const timeToLive = 100
+      const numberLimit = 200
+      insert(db, id, { timeToLive, numberLimit })
+
+      const result = DAO.getAllIdsWithEliminationPolicies()
+
+      expect(result).toEqual([id])
+    })
+  })
+
   describe('getEliminationPolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
       it('return', async () => {

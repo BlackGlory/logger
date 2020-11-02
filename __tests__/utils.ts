@@ -1,10 +1,30 @@
-import { getDatabase as getConfigDatabase, reconnectDatabase as reconnectConfigDatabase, migrateDatabase as migrateConfigDatabase } from '@dao/config/database'
-import { getDatabase as getLoggerDatabase, reconnectDatabase as reconnectLoggerDatabase, migrateDatabase as migrateLoggerDatabase } from '@dao/logger/database'
+import {
+  getDatabase as getAccessControlDatabase
+, reconnectDatabase as reconnectAccessControlDatabase
+, migrateDatabase as migrateAccessControlDatabase
+} from '@dao/access-control/database'
+import {
+  getDatabase as getJsonSchemaDatabase
+, reconnectDatabase as reconnectJsonSchemaDatabase
+, migrateDatabase as migrateJsonSchemaDatabase
+} from '@dao/json-schema/database'
+import {
+  getDatabase as getLoggerDatabase
+, reconnectDatabase as reconnectLoggerDatabase
+, migrateDatabase as migrateLoggerDatabase
+} from '@dao/logger/database'
 
-export async function prepareConfigDatabase() {
-  reconnectConfigDatabase()
-  const db = getConfigDatabase()
-  await migrateConfigDatabase()
+export async function prepareAccessControlDatabase() {
+  reconnectAccessControlDatabase()
+  const db = getAccessControlDatabase()
+  await migrateAccessControlDatabase()
+  return db
+}
+
+export async function prepareJsonSchemaDatabase() {
+  reconnectJsonSchemaDatabase()
+  const db = getJsonSchemaDatabase()
+  await migrateJsonSchemaDatabase()
   return db
 }
 
@@ -24,7 +44,9 @@ export async function resetEnvironment() {
   delete process.env.LOGGER_ADMIN_PASSWORD
   delete process.env.LOGGER_LIST_BASED_ACCESS_CONTROL
   delete process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL
-  delete process.env.LOGGER_DISABLE_NO_TOKENS
+  delete process.env.LOGGER_WRITE_TOKEN_REQUIRED
+  delete process.env.LOGGER_READ_TOKEN_REQUIRED
+  delete process.env.LOGGER_DELETE_TOKEN_REQUIRED
   delete process.env.LOGGER_JSON_VALIDATION
   delete process.env.LOGGER_DEFAULT_JSON_SCHEMA
   delete process.env.LOGGER_JSON_PAYLOAD_ONLY

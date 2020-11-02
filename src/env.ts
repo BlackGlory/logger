@@ -19,7 +19,11 @@ export function NODE_ENV(): NodeEnv | undefined {
 }
 
 export function PORT(): number {
-  return Number(process.env.LOGGER_PORT) || 8080
+  if (process.env.LOGGER_PORT) {
+    return Number(process.env.LOGGER_PORT)
+  } else {
+    return 8080
+  }
 }
 
 export function HOST(): string {
@@ -42,8 +46,16 @@ export function TOKEN_BASED_ACCESS_CONTROL(): boolean {
   return process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL === 'true'
 }
 
-export function DISABLE_NO_TOKENS(): boolean {
-  return process.env.LOGGER_DISABLE_NO_TOKENS === 'true'
+export function WRITE_TOKEN_REQUIRED(): boolean {
+  return process.env.LOGGER_WRITE_TOKEN_REQUIRED === 'true'
+}
+
+export function READ_TOKEN_REQUIRED(): boolean {
+  return process.env.LOGGER_READ_TOKEN_REQUIRED === 'true'
+}
+
+export function DELETE_TOKEN_REQUIRED(): boolean {
+  return process.env.LOGGER_DELETE_TOKEN_REQUIRED === 'true'
 }
 
 export function HTTP2(): boolean {
@@ -67,16 +79,16 @@ export function CI(): boolean {
 }
 
 export function PAYLOAD_LIMIT(): number {
-  if (process.env.MPMC_PAYLOAD_LIMIT) {
-    return Number(process.env.MPMC_PAYLOAD_LIMIT)
+  if (process.env.LOGGER_PAYLOAD_LIMIT) {
+    return Number(process.env.LOGGER_PAYLOAD_LIMIT)
   } else {
     return 1048576
   }
 }
 
-export function LOG_PAYLOAD_LIMIT(): number {
-  if (process.env.LOGGER_LOG_PAYLOAD_LIMIT) {
-    return Number(process.env.LOGGER_LOG_PAYLOAD_LIMIT)
+export function WRITE_PAYLOAD_LIMIT(): number {
+  if (process.env.LOGGER_WRITE_PAYLOAD_LIMIT) {
+    return Number(process.env.LOGGER_WRITE_PAYLOAD_LIMIT)
   } else {
     return PAYLOAD_LIMIT()
   }

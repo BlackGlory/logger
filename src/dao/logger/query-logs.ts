@@ -3,15 +3,15 @@ import { concatStrings } from './utils/concat-strings'
 import { parseFrom } from './utils/parse-from'
 import { parseTo } from './utils/parse-to'
 
-export function queryLogs(id: string, parameters: IQueryParameters): Iterable<{ id: string; payload: string }> {
-  if ('head' in parameters) return queryLogsByHeadSliceParameters(id, parameters)
-  if ('tail' in parameters) return queryLogsByTailSliceParameters(id, parameters)
-  return queryLogsBySliceParameters(id, parameters)
+export function queryLogs(id: string, range: IRange): Iterable<{ id: string; payload: string }> {
+  if ('head' in range) return queryLogsBySliceWithHead(id, range)
+  if ('tail' in range) return queryLogsBySliceWithTail(id, range)
+  return queryLogsBySlice(id, range)
 }
 
-function queryLogsBySliceParameters(id: string, parameters: SliceParameters): Iterable<{ id: string; payload: string }> {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function queryLogsBySlice(id: string, range: ISlice): Iterable<{ id: string; payload: string }> {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     SELECT timestamp || '-' || number AS id
          , payload
@@ -32,9 +32,9 @@ function queryLogsBySliceParameters(id: string, parameters: SliceParameters): It
   return rows
 }
 
-function queryLogsByHeadSliceParameters(id: string, parameters: IHeadSliceParameters): Iterable<{ id: string; payload: string }> {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function queryLogsBySliceWithHead(id: string, range: ISlice & IHead): Iterable<{ id: string; payload: string }> {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     SELECT timestamp || '-' || number AS id
          , payload
@@ -52,14 +52,14 @@ function queryLogsByHeadSliceParameters(id: string, parameters: IHeadSliceParame
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
   , toNumber: to?.number
-  , head: parameters.head
+  , head: range.head
   })
   return rows
 }
 
-function queryLogsByTailSliceParameters(id: string, parameters: ITailSliceParameters): Iterable<{ id: string; payload: string }> {
-  const from = parseFrom(parameters)
-  const to = parseTo(parameters)
+function queryLogsBySliceWithTail(id: string, range: ISlice & ITail): Iterable<{ id: string; payload: string }> {
+  const from = parseFrom(range)
+  const to = parseTo(range)
   const sql = concatStrings`
     SELECT timestamp || '-' || number AS id
          , payload
@@ -84,7 +84,7 @@ function queryLogsByTailSliceParameters(id: string, parameters: ITailSliceParame
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
   , toNumber: to?.number
-  , tail: parameters.tail
+  , tail: range.tail
   })
   return rows
 }

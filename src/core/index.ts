@@ -1,5 +1,19 @@
-import { Logger } from './logger'
+import { isAdmin } from './admin'
+import { stats } from './stats'
+import * as Error from './error'
+import * as Logger from './logger'
+import * as Blacklist from './blacklist'
+import * as Whitelist from './whitelist'
+import * as JsonSchema from './json-schema'
+import { TBAC } from './token-based-access-control'
 
-export async function createLogger<T>() {
-  return new Logger<T>()
+export const Core: ICore = {
+  isAdmin
+, stats
+, Logger
+, Blacklist
+, Whitelist
+, JsonSchema
+, TBAC
+, Error
 }

@@ -17,6 +17,8 @@ RUN yarn build \
  && mkdir /data \
  && ln -s /data data
 
+ENV LOGGER_HOST=0.0.0.0
+ENV LOGGER_PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["yarn"]
 CMD ["--silent", "start"]
