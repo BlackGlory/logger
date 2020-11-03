@@ -5,6 +5,7 @@ import { routes as blacklistRoutes } from './blacklist'
 import { routes as whitelistRoutes } from './whitelist'
 import { routes as tokenPolicyRoutes } from './token-policy'
 import { routes as tokenRoutes } from './token'
+import { routes as purgePolicyRoutes } from './purge-policy'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.addContentTypeParser(
@@ -24,4 +25,5 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.register(whitelistRoutes, { prefix: '/api', Core })
   server.register(tokenPolicyRoutes, { prefix: '/api', Core })
   server.register(tokenRoutes, { prefix: '/api', Core })
+  server.register(purgePolicyRoutes, { prefix: '/api', Core })
 }

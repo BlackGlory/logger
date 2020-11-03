@@ -29,29 +29,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { id: idSchema }
       , response: {
           200: {
-            type: 'array'
-          , items: {
-              type: 'object'
-            , properties: {
-                writeTokenRequired: {
-                  oneOf: [
-                    { type: 'boolean' }
-                  , { type: 'null' }
-                  ]
-                }
-              , readTokenRequired: {
-                  oneOf: [
-                    { type: 'boolean' }
-                  , { type: 'null' }
-                  ]
-                }
-              , deleteTokenRequired: {
-                  oneOf: [
-                    { type: 'boolean' }
-                  , { type: 'null' }
-                  ]
-                }
-              }
+            writeTokenRequired: {
+              oneOf: [
+                { type: 'boolean' }
+              , { type: 'null' }
+              ]
+            }
+          , readTokenRequired: {
+              oneOf: [
+                { type: 'boolean' }
+              , { type: 'null' }
+              ]
+            }
+          , deleteTokenRequired: {
+              oneOf: [
+                { type: 'boolean' }
+              , { type: 'null' }
+              ]
             }
           }
         }

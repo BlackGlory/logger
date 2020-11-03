@@ -12,8 +12,8 @@ beforeEach(async () => {
   await prepareDatabase()
 })
 
-describe('TokenPolicy', () => {
-  describe('GET /api/logger-with-token-policies', () => {
+describe('PurgePolicy', () => {
+  describe('GET /api/logger-with-purge-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -21,14 +21,30 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: '/api/logger-with-token-policies'
+        , url: '/api/logger-with-purge-policies'
         , headers: createAuthHeaders()
         })
 
         expect(res.statusCode).toBe(200)
         expect(res.json()).toMatchSchema({
           type: 'array'
-        , items: { type: 'string' }
+        , items: {
+            type: 'object'
+          , properties: {
+              timeToLive: {
+                oneOf: [
+                  { type: 'number' }
+                , { type: 'null' }
+                ]
+              }
+            , limit: {
+                oneOf: [
+                  { type: 'number' }
+                , { type: 'null' }
+                ]
+              }
+            }
+          }
         })
       })
     })
@@ -39,7 +55,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: '/api/logger-with-token-policies'
+        , url: '/api/logger-with-purge-policies'
         })
 
         expect(res.statusCode).toBe(401)
@@ -53,7 +69,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: '/api/logger-with-token-policies'
+        , url: '/api/logger-with-purge-policies'
         , headers: createAuthHeaders('bad')
         })
 
@@ -62,7 +78,7 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('GET /api/logger/:id/token-policies', () => {
+  describe('GET /api/logger/:id/purge-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -71,7 +87,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: `/api/logger/${id}/token-policies`
+        , url: `/api/logger/${id}/purge-policies`
         , headers: createAuthHeaders()
         })
 
@@ -79,15 +95,15 @@ describe('TokenPolicy', () => {
         expect(res.json()).toMatchSchema({
           type: 'object'
         , properties: {
-            writeTokenRequired: {
+            timeToLive: {
               oneOf: [
-                { type: 'boolean' }
+                { type: 'number' }
               , { type: 'null' }
               ]
             }
-          , readTokenRequired: {
+          , limit: {
               oneOf: [
-                { type: 'boolean' }
+                { type: 'number' }
               , { type: 'null' }
               ]
             }
@@ -103,7 +119,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: `/api/logger/${id}/token-policies`
+        , url: `/api/logger/${id}/purge-policies`
         })
 
         expect(res.statusCode).toBe(401)
@@ -118,8 +134,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'GET'
-        , url: `/api/logger/${id}/token-policies`
-        , headers: createAuthHeaders('bad')
+        , url: `/api/logger/${id}/purge-policies`
         })
 
         expect(res.statusCode).toBe(401)
@@ -127,17 +142,17 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/token-policies/write-token-required', () => {
+  describe('PUT /api/logger/:id/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
         const server = await buildServer()
         const id = 'id'
-        const val = true
+        const val = 1
 
         const res = await server.inject({
           method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
         , payload: JSON.stringify(val)
         , headers: {
             ...createJsonHeaders()
@@ -153,74 +168,11 @@ describe('TokenPolicy', () => {
       it('401', async () => {
         const server = await buildServer()
         const id = 'id'
-        const val = true
+        const val = 1
 
         const res = await server.inject({
           method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          }
-        })
-
-        expect(res.statusCode).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
-        const id = 'id'
-        const val = true
-
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders('bad')
-          }
-        })
-
-        expect(res.statusCode).toBe(401)
-      })
-    })
-  })
-
-  describe('PUT /api/logger/:id/token-policies/read-token-required', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
-        const id = 'id'
-        const val = true
-
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
-
-        expect(res.statusCode).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const server = await buildServer()
-        const id = 'id'
-        const val = true
-
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
         , payload: JSON.stringify(val)
         , headers: createJsonHeaders()
         })
@@ -234,11 +186,11 @@ describe('TokenPolicy', () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
         const server = await buildServer()
         const id = 'id'
-        const val = true
+        const val = 1
 
         const res = await server.inject({
           method: 'PUT'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
         , payload: JSON.stringify(val)
         , headers: {
             ...createJsonHeaders()
@@ -251,17 +203,22 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/token-policies/write-token-required', () => {
+  describe('PUT /api/logger/:id/purge-policies/limit', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
         const server = await buildServer()
         const id = 'id'
+        const val = 1
 
         const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
-        , headers: createAuthHeaders()
+          method: 'PUT'
+        , url: `/api/logger/${id}/purge-policies/limit`
+        , payload: JSON.stringify(val)
+        , headers: {
+            ...createJsonHeaders()
+          , ...createAuthHeaders()
+          }
         })
 
         expect(res.statusCode).toBe(204)
@@ -272,10 +229,13 @@ describe('TokenPolicy', () => {
       it('401', async () => {
         const server = await buildServer()
         const id = 'id'
+        const val = 1
 
         const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
+          method: 'PUT'
+        , url: `/api/logger/${id}/purge-policies/limit`
+        , payload: JSON.stringify(val)
+        , headers: createJsonHeaders()
         })
 
         expect(res.statusCode).toBe(401)
@@ -287,10 +247,12 @@ describe('TokenPolicy', () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
         const server = await buildServer()
         const id = 'id'
+        const val = 1
 
         const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/write-token-required`
+          method: 'PUT'
+        , url: `/api/logger/${id}/purge-policies/limit`
+        , payload: JSON.stringify(val)
         , headers: createAuthHeaders('bad')
         })
 
@@ -299,7 +261,7 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/token-policies/read-token-required', () => {
+  describe('DELETE /api/logger/:id/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -308,7 +270,7 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
         , headers: createAuthHeaders()
         })
 
@@ -323,7 +285,8 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
+        , headers: createJsonHeaders()
         })
 
         expect(res.statusCode).toBe(401)
@@ -338,7 +301,55 @@ describe('TokenPolicy', () => {
 
         const res = await server.inject({
           method: 'DELETE'
-        , url: `/api/logger/${id}/token-policies/read-token-required`
+        , url: `/api/logger/${id}/purge-policies/time-to-live`
+        , headers: createAuthHeaders('bad')
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+  })
+
+  describe('DELETE /api/logger/:id/purge-policies/limit', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/purge-policies/limit`
+        , headers: createAuthHeaders()
+        })
+
+        expect(res.statusCode).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/purge-policies/limit`
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/purge-policies/limit`
         , headers: createAuthHeaders('bad')
         })
 
