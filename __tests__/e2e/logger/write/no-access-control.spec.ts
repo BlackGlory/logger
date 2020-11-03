@@ -1,16 +1,16 @@
 import { buildServer } from '@src/server'
-import { prepareAccessControlDatabase, prepareJsonSchemaDatabase, resetEnvironment } from '@test/utils'
+import { prepareDatabase, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { JsonSchemaDAO } from '@dao'
 
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
+jest.mock('@dao/logger/database')
 expect.extend(matchers)
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareAccessControlDatabase()
-  await prepareJsonSchemaDatabase()
+  await prepareDatabase()
 })
 
 describe('no access control', () => {

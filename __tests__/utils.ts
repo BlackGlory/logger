@@ -14,6 +14,12 @@ import {
 , migrateDatabase as migrateLoggerDatabase
 } from '@dao/logger/database'
 
+export async function prepareDatabase() {
+  await prepareAccessControlDatabase()
+  await prepareJsonSchemaDatabase()
+  await prepareLoggerDatabase()
+}
+
 export async function prepareAccessControlDatabase() {
   reconnectAccessControlDatabase()
   const db = getAccessControlDatabase()

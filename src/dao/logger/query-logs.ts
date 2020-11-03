@@ -22,7 +22,7 @@ function queryLogsBySlice(id: string, range: ISlice): Iterable<{ id: string; pay
      ORDER BY timestamp ASC
             , number    ASC;
   `
-  const rows = getDatabase().prepare(sql).iterate({
+  const rows = getDatabase().prepare(sql).all({
     id
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number

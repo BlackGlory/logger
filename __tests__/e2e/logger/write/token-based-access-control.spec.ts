@@ -1,14 +1,16 @@
 import { buildServer } from '@src/server'
-import { prepareAccessControlDatabase, resetEnvironment } from '@test/utils'
+import { prepareDatabase, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 
 jest.mock('@dao/access-control/database')
+jest.mock('@dao/json-schema/database')
+jest.mock('@dao/logger/database')
 expect.extend(matchers)
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareAccessControlDatabase()
+  await prepareDatabase()
 })
 
 describe('token-based access control', () => {
@@ -111,6 +113,7 @@ describe('token-based access control', () => {
       describe('WRITE_TOKEN_REQUIRED=false', () => {
         it('204', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
+          process.env.LOGGER_WRITE_TOKEN_REQUIRED = 'false'
           const id = 'id'
           const message = 'message'
           const server = await buildServer()
