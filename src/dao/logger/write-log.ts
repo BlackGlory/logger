@@ -1,11 +1,11 @@
 import { getDatabase } from './database'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function writeLog(id: string, payload: string): void {
+export function writeLog(id: string, payload: string): { id: string, payload: string } {
+  let number
+  const timestamp = getTimestamp()
   const db = getDatabase()
   db.transaction(() => {
-    const timestamp = getTimestamp()
-    let number
     const row: { number: number } = db.prepare(`
       SELECT count AS number
         FROM logger_counter
@@ -35,4 +35,5 @@ export function writeLog(id: string, payload: string): void {
       VALUES ($id, $timestamp, $number, $payload)
     `).run({ id, timestamp, number, payload })
   })()
+  return { id: `${timestamp}-${number}`, payload }
 }

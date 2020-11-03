@@ -27,8 +27,14 @@ describe('writeLog(id: string, payload: string): void', () => {
         const result2 = DAO.writeLog(id, payload2)
         const rows = select(db, id)
 
-        expect(result1).toBeUndefined()
-        expect(result2).toBeUndefined()
+        expect(result1).toEqual({
+          id: `${timestamp}-0`
+        , payload: payload1
+        })
+        expect(result2).toEqual({
+          id: `${timestamp}-1`
+        , payload: payload2
+        })
         expect(rows).toEqual([
           { logger_id: id, payload: payload1, timestamp, number: 0 }
         , { logger_id: id, payload: payload2, timestamp, number: 1 }
@@ -51,8 +57,14 @@ describe('writeLog(id: string, payload: string): void', () => {
         const result2 = DAO.writeLog(id, payload2)
         const rows = select(db, id)
 
-        expect(result1).toBeUndefined()
-        expect(result2).toBeUndefined()
+        expect(result1).toEqual({
+          id: `${timestamp1}-0`
+        , payload: payload1
+        })
+        expect(result2).toEqual({
+          id: `${timestamp2}-0`
+        , payload: payload2
+        })
         expect(rows).toEqual([
           { logger_id: id, payload: payload1, timestamp: timestamp1, number: 0 }
         , { logger_id: id, payload: payload2, timestamp: timestamp2, number: 0 }

@@ -7,24 +7,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     options: {
       // pain, see https://github.com/fastify/fastify-websocket/issues/70
       async verifyClient(info, next) {
-        const noTokenRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})$/
-        const tokenRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})\?token=(?<token>[a-zA-Z0-9\.\-\_]{1,256})$/
-
         const url = info.req.url!
-        const noTokenResult = url.match(noTokenRegExp)
-        let id: string | undefined
-        let token: string | undefined
-        if (noTokenResult) {
-          id = noTokenResult.groups!.id
-        } else {
-          const tokenResult = url.match(tokenRegExp)
-          if (tokenResult) {
-            id = tokenResult.groups!.id
-            token = tokenResult.groups!.token
-          }
-        }
+        const pathnameRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})$/
+        const result = getPathname(url).match(pathnameRegExp)
+        if (!result) return next(false)
 
-        if (!id) return next(false)
+        const id = result.groups!.id
+        const token = parseQuerystring<{ token?: string }>(url).token
 
         try {
           await Core.Blacklist.check(id)
@@ -40,13 +29,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
   server.route<{
     Params: { id: string }
-    Querystring: { token?: string }
+    Querystring: { token?: string; since?: string }
   }>({
     method: 'GET'
   , url: '/logger/:id'
   , schema: {
       params: { id: idSchema }
-    , querystring: { token: tokenSchema }
+    , querystring: { token: tokenSchema, since: idSchema }
     }
   // Server-Sent Events
   , handler(req, reply) {
@@ -73,18 +62,55 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         }
         reply.raw.flushHeaders()
 
-        const unfollow = Core.Logger.follow(id, value => reply.raw.write(`data: ${value}\n\n`))
+        const unfollow = Core.Logger.follow(id, log => {
+          const data = JSON.stringify(log)
+          reply.raw.write(`data: ${data}\n\n`)
+        })
         req.raw.on('close', () => unfollow())
+
+        const since = req.query.since
+        if (since) {
+          const logs = await Core.Logger.query(id, { from: since })
+          for await (const log of logs) {
+            if (log.id === req.query.since) continue
+            const data = JSON.stringify(log)
+            reply.raw.write(`data: ${data}\n\n`)
+          }
+        }
       })()
     }
   // WebSocket
   // @ts-ignore Do not want to waste time to fight the terrible types of fastify.
-  , wsHandler(conn, req, params: Params) {
+  , async wsHandler(conn, req, params: Params) {
       const id = params.id
 
-      const unfollow = Core.Logger.follow(id, value => conn.socket.send(value))
+      const unfollow = Core.Logger.follow(id, log => {
+        const data = JSON.stringify(log)
+        conn.socket.send(data)
+      })
       conn.socket.on('close', () => unfollow())
       conn.socket.on('message', () => conn.socket.close())
+
+      const since = parseQuerystring<{ since?: string }>(req.url!).since
+      if (since) {
+        const logs = await Core.Logger.query(id, { from: since })
+        for await (const log of logs) {
+          if (log.id === since) continue
+          const data = JSON.stringify(log)
+          conn.socket.send(data)
+        }
+      }
     }
   })
+}
+
+function getPathname(url: string): string {
+  const urlObject = new URL(url, 'http://localhost/')
+  return urlObject.pathname
+}
+
+function parseQuerystring<T extends NodeJS.Dict<string | string[]>>(url: string): T {
+  const urlObject = new URL(url, 'http://localhost/')
+  const result = Object.fromEntries(urlObject.searchParams.entries()) as T
+  return result
 }

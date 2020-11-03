@@ -151,7 +151,7 @@ fetch(`http://localhost:8080/logger/${id}`, {
 
 从特定记录器跟随日志.
 id用于标识记录器.
-可用`since=<logId>`在订阅前先接收特定日志(logId)之后的日志.
+可用`since=<logId>`一并接收特定日志(logId)之后的日志, 若在接收完日志前就有新的日志被写入, 则可能在接收的途中收到新日志.
 
 接收到的日志格式如下:
 ```ts
@@ -162,7 +162,7 @@ id用于标识记录器.
 ```
 
 SSE的`Last-Event-Id`请求头(值等同于logId)可用于断开后的重新连接(在浏览器里会自动重连),
-Logger将按顺序发送自Last-Event-Id之后的所有日志.
+Logger将发送自Last-Event-Id之后的所有日志.
 需要注意的是, 如果Logger从未发回过日志, 则客户端将无法获得Last-Event-Id, 因此会错过重新连接之前的日志.
 如果同时存在`since`和`Last-Event-Id`, 会优先使用`Last-Event-Id`.
 
@@ -191,7 +191,7 @@ es.addEventListener('message', event => {
 
 从特定记录器跟随日志.
 id用于标识记录器.
-可用`since=<logId>`在订阅前先接收特定日志(logId)之后的日志.
+可用`since=<logId>`一并接收特定日志(logId)之后的日志, 若在接收完日志前就有新的日志被写入, 则可能在接收的途中收到新日志.
 
 接收到的日志格式如下:
 ```ts
