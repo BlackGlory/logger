@@ -47,9 +47,6 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , schema: {
       params: { id: idSchema }
     , querystring: { token: tokenSchema }
-    , response: {
-        200: { type: 'null' }
-      }
     }
   // Server-Sent Events
   , handler(req, reply) {

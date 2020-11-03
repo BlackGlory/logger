@@ -20,10 +20,10 @@ interface ICore {
   Logger: {
     write(key: string, value: string): Promise<void>
     follow(key: string, listener: (value: string) => void): IUnfollow
-    query(id: string, range: IRange): Promise<Iterable<{
+    query(id: string, range: IRange): AsyncIterable<{
       id: string
       payload: string
-    }>>
+    }>
     remove(id: string, range: IRange): Promise<void>
   }
 

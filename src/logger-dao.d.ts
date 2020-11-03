@@ -18,10 +18,10 @@ type IRange =
 
 interface ILoggerDAO {
   writeLog(id: string, payload: string): Promise<void>
-  queryLogs(id: string, range: IRange): Promise<Iterable<{
+  queryLogs(id: string, range: IRange): AsyncIterable<{
     id: string
     payload: string
-  }>>
+  }>
   deleteLogs(id: string, range: IRange): Promise<void>
 
   eliminateByTimestamp(id: string, timestamp: number): Promise<void>

@@ -10,10 +10,10 @@ export function follow(id: string, cb: (value: string) => void): () => void {
   return PubSubDAO.subscribe(id, cb)
 }
 
-export function query(id: string, range: IRange): Promise<Iterable<{
+export function query(id: string, range: IRange): AsyncIterable<{
   id: string
   payload: string
-}>> {
+}> {
   return LoggerDAO.queryLogs(id, range)
 }
 
