@@ -146,7 +146,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const id = req.params.id
-      await Core.Logger.purge(id)
+      await Core.PurgePolicy.purge(id)
       reply.status(204).send()
     }
   )

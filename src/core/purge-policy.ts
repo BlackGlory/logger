@@ -1,4 +1,5 @@
 import { LoggerDAO } from '@dao'
+import { LOGGER_LOGS_LIMIT, LOGGER_LOGS_TIME_TO_LIVE } from '@env'
 
 export function getAllIds(): Promise<string[]> {
   return LoggerDAO.getAllIdsWithPurgePolicies()
@@ -29,4 +30,19 @@ export function setLimit(id: string, limit: number): Promise<void> {
 
 export function unsetLimit(id: string): Promise<void> {
   return LoggerDAO.unsetNumberLimit(id)
+}
+
+export async function purge(id: string): Promise<void> {
+  const policies = await LoggerDAO.getPurgePolicies(id)
+  const limit = policies.numberLimit ?? LOGGER_LOGS_LIMIT()
+  const timeToLive = policies.timeToLive ?? LOGGER_LOGS_TIME_TO_LIVE()
+  if (limit > 0) await LoggerDAO.purgeByLimit(id, limit)
+  if (timeToLive > 0) {
+    const timestamp = getTimestamp() - timeToLive
+    await LoggerDAO.purgeByTimestamp(id, timestamp)
+  }
+}
+
+export function getTimestamp() {
+  return Date.now()
 }

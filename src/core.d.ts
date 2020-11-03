@@ -25,10 +25,11 @@ interface ICore {
       payload: string
     }>
     remove(id: string, range: IRange): Promise<void>
-    purge(id: string): Promise<void>
   }
 
   PurgePolicy: {
+    purge(id: string): Promise<void>
+
     getAllIds(): Promise<string[]>
     get(id: string): Promise<{
       timeToLive: number | null
