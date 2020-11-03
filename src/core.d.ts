@@ -25,6 +25,21 @@ interface ICore {
       payload: string
     }>
     remove(id: string, range: IRange): Promise<void>
+    purge(id: string): Promise<void>
+  }
+
+  PurgePolicy: {
+    getAllIds(): Promise<string[]>
+    get(id: string): Promise<{
+      timeToLive: number | null
+      limit: number | null
+    }>
+
+    setTimeToLive(id: string, timeToLive: number): Promise<void>
+    unsetTimeToLive(id: string): Promise<void>
+
+    setLimit(id: string, limit: number): Promise<void>
+    unsetLimit(id: string): Promise<void>
   }
 
   Blacklist: {

@@ -1,6 +1,6 @@
 import { getDatabase } from './database'
 
-export function eliminateByTimestamp(id: string, timestamp: number): void {
+export function purgeByTimestamp(id: string, timestamp: number): void {
   getDatabase().prepare(`
     DELETE FROM logger_log
      WHERE logger_id = $id
@@ -8,7 +8,7 @@ export function eliminateByTimestamp(id: string, timestamp: number): void {
   `).run({ id, timestamp })
 }
 
-export function eliminateByLimit(id: string, limit: number): void {
+export function purgeByLimit(id: string, limit: number): void {
   getDatabase().prepare(`
     DELETE FROM logger_log
      WHERE logger_id = $id

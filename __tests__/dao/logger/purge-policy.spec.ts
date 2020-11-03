@@ -1,12 +1,12 @@
-import * as DAO from '@dao/logger/elimination-policy'
+import * as DAO from '@dao/logger/purge-policy'
 import { prepareLoggerDatabase } from '@test/utils'
 import { Database } from 'better-sqlite3'
 import 'jest-extended'
 
 jest.mock('@dao/logger/database')
 
-describe('EliminationPolicy', () => {
-  describe('getAllIdsWithEliminationPolicies(): string[]', () => {
+describe('PurgePolicy', () => {
+  describe('getAllIdsWithPurgePolicies(): string[]', () => {
     it('return string[]', async () => {
       const db = await prepareLoggerDatabase()
       const id = 'id'
@@ -14,13 +14,13 @@ describe('EliminationPolicy', () => {
       const numberLimit = 200
       insert(db, id, { timeToLive, numberLimit })
 
-      const result = DAO.getAllIdsWithEliminationPolicies()
+      const result = DAO.getAllIdsWithPurgePolicies()
 
       expect(result).toEqual([id])
     })
   })
 
-  describe('getEliminationPolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
+  describe('getPurgePolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
       it('return', async () => {
         const db = await prepareLoggerDatabase()
@@ -29,7 +29,7 @@ describe('EliminationPolicy', () => {
         const numberLimit = 200
         insert(db, id, { timeToLive, numberLimit })
 
-        const result = DAO.getEliminationPolicies(id)
+        const result = DAO.getPurgePolicies(id)
 
         expect(result).toEqual({
           timeToLive
@@ -43,7 +43,7 @@ describe('EliminationPolicy', () => {
         const db = await prepareLoggerDatabase()
         const id = 'id'
 
-        const result = DAO.getEliminationPolicies(id)
+        const result = DAO.getPurgePolicies(id)
 
         expect(result).toEqual({
           timeToLive: null
@@ -145,14 +145,14 @@ function exist(db: Database, id: string) {
 function select(db: Database, id: string) {
   return db.prepare(`
     SELECT *
-      FROM logger_elimination_policy
+      FROM logger_purge_policy
      WHERE logger_id = $id;
   `).get({ id })
 }
 
 function insert(db: Database, id: string, { timeToLive, numberLimit }: { timeToLive?: number,  numberLimit?: number }) {
   db.prepare(`
-    INSERT INTO logger_elimination_policy (logger_id, time_to_live, number_limit)
+    INSERT INTO logger_purge_policy (logger_id, time_to_live, number_limit)
     VALUES ($id, $timeToLive, $numberLimit);
   `).run({
     id

@@ -24,10 +24,11 @@ interface ILoggerDAO {
   }>
   deleteLogs(id: string, range: IRange): Promise<void>
 
-  eliminateByTimestamp(id: string, timestamp: number): Promise<void>
-  eliminateByLimit(id: string, limit: number): Promise<void>
+  purgeByTimestamp(id: string, timestamp: number): Promise<void>
+  purgeByLimit(id: string, limit: number): Promise<void>
 
-  getEliminationPolicies(id: string): Promise<{
+  getAllIdsWithPurgePolicies(): Promise<string[]>
+  getPurgePolicies(id: string): Promise<{
     timeToLive: number | null
     numberLimit: number | null
   }>

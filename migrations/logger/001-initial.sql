@@ -22,7 +22,7 @@ CREATE TABLE logger_counter (
 , count     INTEGER      NOT NULL
 );
 
-CREATE TABLE logger_elimination_policy (
+CREATE TABLE logger_purge_policy (
   logger_id    VARCHAR(255) NOT NULL UNIQUE
 , time_to_live INTEGER
 , number_limit INTEGER

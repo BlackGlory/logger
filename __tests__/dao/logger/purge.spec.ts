@@ -1,10 +1,10 @@
-import * as DAO from '@dao/logger/eliminate'
+import * as DAO from '@dao/logger/purge'
 import { prepareLoggerDatabase } from '@test/utils'
 import { Database } from 'better-sqlite3'
 
 jest.mock('@dao/logger/database')
 
-describe('eliminateByTimestamp(id: string, timestamp: number): void', () => {
+describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', async () => {
     const db = await prepareLoggerDatabase()
     const id = 'id'
@@ -12,7 +12,7 @@ describe('eliminateByTimestamp(id: string, timestamp: number): void', () => {
     insert(db, { id, payload: 'payload2', timestamp: 1, number: 0 })
     const timestamp = 1
 
-    const result = DAO.eliminateByTimestamp(id, timestamp)
+    const result = DAO.purgeByTimestamp(id, timestamp)
     const rows = select(db, id)
 
     expect(result).toBeUndefined()
@@ -22,7 +22,7 @@ describe('eliminateByTimestamp(id: string, timestamp: number): void', () => {
   })
 })
 
-describe('eliminateByLimit(id: string, limit: number): void', () => {
+describe('purgeByLimit(id: string, limit: number): void', () => {
   it('return undefined', async () => {
     const db = await prepareLoggerDatabase()
     const id = 'id'
@@ -30,7 +30,7 @@ describe('eliminateByLimit(id: string, limit: number): void', () => {
     insert(db, { id, payload: 'payload2', timestamp: 0, number: 1 })
     const limit = 1
 
-    const result = DAO.eliminateByLimit(id, limit)
+    const result = DAO.purgeByLimit(id, limit)
     const rows = select(db, id)
 
     expect(result).toBeUndefined()

@@ -1,16 +1,19 @@
 import { writeLog } from './write-log'
 import { queryLogs } from './query-logs'
 import { deleteLogs } from './delete-logs'
-import { eliminateByLimit, eliminateByTimestamp } from './eliminate'
-import { getEliminationPolicies, setNumberLimit, setTimeToLive, unsetNumberLimit, unsetTimeToLive } from './elimination-policy'
+import { purgeByLimit, purgeByTimestamp } from './purge'
+import { getAllIdsWithPurgePolicies, getPurgePolicies, setNumberLimit, setTimeToLive, unsetNumberLimit, unsetTimeToLive } from './purge-policy'
 
 export const LoggerDAO: ILoggerDAO = {
   writeLog: asyncify(writeLog)
 , queryLogs: asyncifyIterable(queryLogs)
 , deleteLogs: asyncify(deleteLogs)
-, eliminateByTimestamp: asyncify(eliminateByTimestamp)
-, eliminateByLimit: asyncify(eliminateByLimit)
-, getEliminationPolicies: asyncify(getEliminationPolicies)
+
+, purgeByTimestamp: asyncify(purgeByTimestamp)
+, purgeByLimit: asyncify(purgeByLimit)
+
+, getAllIdsWithPurgePolicies: asyncify(getAllIdsWithPurgePolicies)
+, getPurgePolicies: asyncify(getPurgePolicies)
 , setTimeToLive: asyncify(setTimeToLive)
 , unsetTimeToLive: asyncify(unsetTimeToLive)
 , setNumberLimit: asyncify(setNumberLimit)

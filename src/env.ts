@@ -93,3 +93,19 @@ export function WRITE_PAYLOAD_LIMIT(): number {
     return PAYLOAD_LIMIT()
   }
 }
+
+export function LOGGER_LOGS_TIME_TO_LIVE(): number {
+  if (process.env.LOGGER_LOGS_TIME_TO_LIVE) {
+    return Number(process.env.LOGGER_LOGS_TIME_TO_LIVE)
+  } else {
+    return 0
+  }
+}
+
+export function LOGGER_LOGS_LIMIT(): number {
+  if (process.env.LOGGER_LOGS_LIMIT) {
+    return Number(process.env.LOGGER_LOGS_LIMIT)
+  } else {
+    return 0
+  }
+}

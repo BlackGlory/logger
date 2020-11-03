@@ -66,7 +66,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
   server.put<{
     Params: { id: string }
-  , Body: boolean
+    Body: boolean
   }>(
     '/logger/:id/token-policies/write-token-required'
   , {
@@ -107,7 +107,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
   server.put<{
     Params: { id: string }
-  , Body: boolean
+    Body: boolean
   }>(
     '/logger/:id/token-policies/read-token-required'
   , {
@@ -148,7 +148,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
   server.put<{
     Params: { id: string }
-  , Body: boolean
+    Body: boolean
   }>(
     '/logger/:id/token-policies/delete-token-required'
   , {
