@@ -30,18 +30,28 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.route<{
     Params: { id: string }
     Querystring: { token?: string; since?: string }
+    Headers: { 'Last-Event-ID'?: string }
   }>({
     method: 'GET'
   , url: '/logger/:id'
   , schema: {
       params: { id: idSchema }
     , querystring: { token: tokenSchema, since: idSchema }
+    , headers: {
+        'Last-Event-ID': {
+          oneOf: [
+            idSchema
+          , { type: 'null' }
+          ]
+        }
+      }
     }
   // Server-Sent Events
   , handler(req, reply) {
       ;(async () => {
         const id = req.params.id
         const token = req.query.token
+        const lastEventId = req.headers['Last-Event-ID']
 
         try {
           await Core.Blacklist.check(id)
@@ -64,17 +74,21 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         const unfollow = Core.Logger.follow(id, log => {
           const data = JSON.stringify(log)
-          reply.raw.write(`data: ${data}\n\n`)
+          for (const message of generateSSEData(data)) {
+            reply.raw.write(message)
+          }
         })
         req.raw.on('close', () => unfollow())
 
-        const since = req.query.since
+        const since = lastEventId ?? req.query.since
         if (since) {
           const logs = await Core.Logger.query(id, { from: since })
           for await (const log of logs) {
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)
-            reply.raw.write(`data: ${data}\n\n`)
+            for (const message of generateSSEData(data)) {
+              reply.raw.write(message)
+            }
           }
         }
       })()
@@ -113,4 +127,20 @@ function parseQuerystring<T extends NodeJS.Dict<string | string[]>>(url: string)
   const urlObject = new URL(url, 'http://localhost/')
   const result = Object.fromEntries(urlObject.searchParams.entries()) as T
   return result
+}
+
+function lastIndex(arr: Array<unknown>): number {
+  return arr.length - 1
+}
+
+function* generateSSEData(text: string): Iterable<string> {
+  const lines = text.split('\n')
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (i === lastIndex(lines)) {
+      yield `data: ${line}\n\n`
+    } else {
+      yield `data: ${line}\n`
+    }
+  }
 }
