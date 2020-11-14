@@ -248,16 +248,21 @@ Array<{
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
 `/logger/<id>/logs?token=<token>`
 
+如果返回的日志量很大, 客户端可能需要JSON流([JSON streaming]), 因此也支持返回[ndjson]格式, 只需要在请求头中设置`Accept: application/x-ndjson`.
+
+[JSON streaming]: https://en.wikipedia.org/wiki/JSON_streaming
+[ndjson]: https://github.com/ndjson/ndjson-spec
+
 #### Example
 
 curl
 ```sh
-curl "http://localhost:8080/$id/logs"
+curl "http://localhost:8080/logger/$id/logs"
 ```
 
 JavaScript
 ```js
-await fetch(`http://localhost:8080/${id}/logs`).then(res => res.json())
+await fetch(`http://localhost:8080/logger/${id}/logs`).then(res => res.json())
 ```
 
 ### delete
@@ -279,12 +284,12 @@ curl
 ```sh
 curl \
   --request DELETE \
-  "http://localhost:8080/$id/logs"
+  "http://localhost:8080/logger/$id/logs"
 ```
 
 JavaScript
 ```js
-await fetch(`http://localhost:8080/${id}/logs`)
+await fetch(`http://localhost:8080/logger/${id}/logs`)
 ```
 
 ## 为write添加JSON验证
