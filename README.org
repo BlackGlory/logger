@@ -124,7 +124,7 @@ curl \
 
 ****** JavaScript
 #+BEGIN_SRC js
-fetch(`http://localhost:8080/logger/${id}`, {
+await fetch(`http://localhost:8080/logger/${id}`, {
   method: 'POST'
 , body: 'message'
 })
