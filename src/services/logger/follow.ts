@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
 import websocket from 'fastify-websocket'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(websocket, {
@@ -72,10 +73,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         }
         reply.raw.flushHeaders()
 
-        const unfollow = Core.Logger.follow(id, log => {
+        const unfollow = Core.Logger.follow(id, async log => {
           const data = JSON.stringify(log)
           for (const message of generateSSEData(data)) {
-            reply.raw.write(message)
+            if (!reply.raw.write(message)) {
+              await waitForEventEmitter(reply.raw, 'drain')
+            }
           }
         })
         req.raw.on('close', () => unfollow())
@@ -87,7 +90,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)
             for (const message of generateSSEData(data)) {
-              reply.raw.write(message)
+              if (!reply.raw.write(message)) {
+                await waitForEventEmitter(reply.raw, 'drain')
+              }
             }
           }
         }
@@ -96,6 +101,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   // WebSocket
   // @ts-ignore Do not want to waste time to fight the terrible types of fastify.
   , async wsHandler(conn, req, params: Params) {
+      // conn: WebSocketStream https://github.com/websockets/ws/blob/master/doc/ws.md#websocketcreatewebsocketstreamwebsocket-options
+      // conn.socket: WebSocket.Server https://github.com/websockets/ws/blob/master/doc/ws.md#class-websocketserver
       const id = params.id
 
       const unfollow = Core.Logger.follow(id, log => {
@@ -111,7 +118,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         for await (const log of logs) {
           if (log.id === since) continue
           const data = JSON.stringify(log)
-          conn.socket.send(data)
+          if (!conn.write(data)) await waitForEventEmitter(conn, 'drain')
         }
       }
     }
