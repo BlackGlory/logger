@@ -2,7 +2,7 @@ import { buildServer } from '@src/server'
 import { prepareDatabase, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import EventSource = require('eventsource')
-import { waitForEvent } from '@blackglory/wait-for'
+import { waitForEventTarget } from '@blackglory/wait-for'
 
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
@@ -22,7 +22,7 @@ describe('no access control', () => {
 
     try {
       const es = new EventSource(`${address}/logger/${id}`)
-      await waitForEvent(es as EventTarget, 'open')
+      await waitForEventTarget(es as EventTarget, 'open')
       es.close()
     } finally {
       await server.close()

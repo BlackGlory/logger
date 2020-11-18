@@ -3,7 +3,7 @@ import { prepareDatabase, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import WebSocket = require('ws')
-import { waitForEvent } from '@blackglory/wait-for'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
@@ -30,7 +30,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}?token=${token}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'open')
+            await waitForEventEmitter(ws, 'open')
           } finally {
             await server.close()
           }
@@ -49,7 +49,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}?token=bad`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'error')
+            await waitForEventEmitter(ws, 'error')
           } finally {
             await server.close()
           }
@@ -68,7 +68,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'error')
+            await waitForEventEmitter(ws, 'error')
           } finally {
             await server.close()
           }
@@ -87,7 +87,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'error')
+            await waitForEventEmitter(ws, 'error')
           } finally {
             await server.close()
           }
@@ -104,7 +104,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'open')
+            await waitForEventEmitter(ws, 'open')
           } finally {
             await server.close()
           }
@@ -126,7 +126,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'open')
+            await waitForEventEmitter(ws, 'open')
           } finally {
             await server.close()
           }
@@ -144,7 +144,7 @@ describe('token-based access control', () => {
 
           try {
             const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEvent(ws as unknown as EventTarget, 'open')
+            await waitForEventEmitter(ws, 'open')
           } finally {
             await server.close()
           }

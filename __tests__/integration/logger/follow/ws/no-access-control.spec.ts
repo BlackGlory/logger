@@ -2,7 +2,7 @@ import { buildServer } from '@src/server'
 import { prepareDatabase, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import WebSocket = require('ws')
-import { waitForEvent } from '@blackglory/wait-for'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
@@ -22,7 +22,7 @@ describe('no access control', () => {
 
     try {
       const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-      await waitForEvent(ws as unknown as EventTarget, 'open')
+      await waitForEventEmitter(ws, 'open')
     } finally {
       await server.close()
     }
