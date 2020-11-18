@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema, logIdSchema } from '@src/schema'
 import accepts from 'fastify-accepts'
+import { Readable } from 'stream'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(accepts)
@@ -47,30 +48,37 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
         if (accept === 'application/x-ndjson') {
           reply.raw.setHeader('Content-Type', 'application/x-ndjson')
-          const asyncIter = Core.Logger.query(id, range)[Symbol.asyncIterator]()
-          const firstResult = await asyncIter.next()
-          if (!firstResult.done) reply.raw.write(JSON.stringify(firstResult.value))
-          while (true) {
-            const result = await asyncIter.next()
-            if (result.done) break
-            reply.raw.write('\n' + JSON.stringify(result.value))
-          }
-          reply.raw.end()
+          Readable.from(generateNDJson(id, range)).pipe(reply.raw)
         } else {
           reply.raw.setHeader('Content-Type', 'application/json')
-          const asyncIter = Core.Logger.query(id, range)[Symbol.asyncIterator]()
-          const firstResult = await asyncIter.next()
-          reply.raw.write('[')
-          if (!firstResult.done) reply.raw.write(JSON.stringify(firstResult.value))
-          while (true) {
-            const result = await asyncIter.next()
-            if (result.done) break
-            reply.raw.write(',' + JSON.stringify(result.value))
-          }
-          reply.raw.write(']')
-          reply.raw.end()
+          Readable.from(generateJSON(id, range)).pipe(reply.raw)
         }
       })()
+
     }
   )
+
+  async function* generateNDJson(id: string, range: ISlice): AsyncIterable<string> {
+    const asyncIter = Core.Logger.query(id, range)[Symbol.asyncIterator]()
+    const firstResult = await asyncIter.next()
+    if (!firstResult.done) yield JSON.stringify(firstResult.value)
+    while (true) {
+      const result = await asyncIter.next()
+      if (result.done) break
+      yield '\n' + JSON.stringify(result.value)
+    }
+  }
+
+  async function* generateJSON(id: string, range: ISlice): AsyncIterable<string> {
+    const asyncIter = Core.Logger.query(id, range)[Symbol.asyncIterator]()
+    const firstResult = await asyncIter.next()
+    yield '['
+    if (!firstResult.done) yield JSON.stringify(firstResult.value)
+    while (true) {
+      const result = await asyncIter.next()
+      if (result.done) break
+      yield ',' + JSON.stringify(result.value)
+    }
+    yield ']'
+  }
 }
