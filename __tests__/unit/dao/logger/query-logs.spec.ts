@@ -1,9 +1,16 @@
 import { Database } from 'better-sqlite3'
-import { prepareLoggerDatabase } from '@test/utils'
+import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/logger/query-logs'
 import '@blackglory/jest-matchers'
 
 jest.mock('@dao/logger/database')
+jest.mock('@dao/access-control/database')
+jest.mock('@dao/json-schema/database')
+
+beforeEach(async () => {
+  resetEnvironment()
+  await prepareDatabases()
+})
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {

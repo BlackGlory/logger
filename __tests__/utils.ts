@@ -14,7 +14,7 @@ import {
 , migrateDatabase as migrateLoggerDatabase
 } from '@dao/logger/database'
 
-export async function prepareDatabase() {
+export async function prepareDatabases() {
   await prepareAccessControlDatabase()
   await prepareJsonSchemaDatabase()
   await prepareLoggerDatabase()
@@ -41,7 +41,7 @@ export async function prepareLoggerDatabase() {
   return db
 }
 
-export async function resetEnvironment() {
+export function resetEnvironment() {
   // assigning a property on `process.env` will implicitly convert the value to a string.
   // use `delete` to delete a property from `process.env`.
   // sjee also: https://nodejs.org/api/process.html#process_process_env

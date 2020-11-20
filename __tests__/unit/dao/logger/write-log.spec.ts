@@ -1,16 +1,23 @@
 import * as DAO from '@dao/logger/write-log'
 import { Database } from 'better-sqlite3'
-import { prepareLoggerDatabase } from '@test/utils'
+import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
 import 'jest-extended'
 
 let timestamp = Date.now()
 
 jest.mock('@dao/logger/database')
+jest.mock('@dao/json-schema/database')
+jest.mock('@dao/access-control/database')
 jest.mock('@dao/logger/utils/get-timestamp', () => ({
   getTimestamp() {
     return timestamp
   }
 }))
+
+beforeEach(async () => {
+  resetEnvironment()
+  await prepareDatabases()
+})
 
 describe('writeLog(id: string, payload: string): void', () => {
   describe('no limit', () => {

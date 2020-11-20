@@ -1,8 +1,15 @@
 import * as DAO from '@dao/logger/purge'
-import { prepareLoggerDatabase } from '@test/utils'
+import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
 import { Database } from 'better-sqlite3'
 
 jest.mock('@dao/logger/database')
+jest.mock('@dao/access-control/database')
+jest.mock('@dao/json-schema/database')
+
+beforeEach(async () => {
+  resetEnvironment()
+  await prepareDatabases()
+})
 
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', async () => {
