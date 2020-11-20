@@ -1,15 +1,15 @@
-import { migrateDatabase as migrateAccessControlDatabase } from '@src/dao/access-control/database'
-import { migrateDatabase as migrateJsonSchemaDatabase } from '@src/dao/json-schema/database'
-import { migrateDatabase as migrateLoggerDatabase } from '@src/dao/logger/database'
+import { prepareDatabase as prepareAccessControlDatabase } from '@src/dao/access-control/database'
+import { prepareDatabase as prepareJsonSchemaDatabase } from '@src/dao/json-schema/database'
+import { prepareDatabase as prepareLoggerDatabase } from '@src/dao/logger/database'
 import { buildServer } from './server'
 import { PORT, HOST, CI } from '@env'
 
 process.on('SIGHUP', () => process.exit(1))
 
 ;(async () => {
-  await migrateAccessControlDatabase()
-  await migrateJsonSchemaDatabase()
-  await migrateLoggerDatabase()
+  await prepareAccessControlDatabase()
+  await prepareJsonSchemaDatabase()
+  await prepareLoggerDatabase()
 
   const server = await buildServer()
   await server.listen(PORT(), HOST())

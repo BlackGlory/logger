@@ -1,6 +1,7 @@
 import { Database } from 'better-sqlite3'
-import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
+import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/logger/delete-logs'
+import { getDatabase } from '@dao/logger/database'
 import '@blackglory/jest-matchers'
 
 jest.mock('@dao/logger/database')
@@ -9,13 +10,13 @@ jest.mock('@dao/json-schema/database')
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): void', () => {
   describe('ignore from and to', () => {
     it('delete all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -36,7 +37,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
   describe('ignore from', () => {
     describe('real id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -58,7 +59,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
 
     describe('fake id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -83,7 +84,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
   describe('ignore to', () => {
     describe('real id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -105,7 +106,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
 
     describe('fake id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -131,7 +132,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
 describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: string }): void', () => {
   describe('ignore from and to', () => {
     it('delete all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -155,7 +156,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
   describe('ignore from', () => {
     describe('real id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -178,7 +179,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
 
     describe('fake id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -204,7 +205,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
   describe('ignore to', () => {
     describe('real id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -227,7 +228,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
 
     describe('fake id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -254,7 +255,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
 describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: string }): void', () => {
   describe('ignore from and to', () => {
     it('delete all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -278,7 +279,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
   describe('ignore from', () => {
     describe('real id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -301,7 +302,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
 
     describe('fake id', () => {
       it('delete rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -327,7 +328,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
   describe('ignore to', () => {
     describe('real id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -350,7 +351,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
 
     describe('fake id', () => {
       it('delete rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1

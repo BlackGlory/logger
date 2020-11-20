@@ -1,6 +1,7 @@
 import { Database } from 'better-sqlite3'
-import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
+import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/logger/query-logs'
+import { getDatabase } from '@dao/logger/database'
 import '@blackglory/jest-matchers'
 
 jest.mock('@dao/logger/database')
@@ -9,13 +10,13 @@ jest.mock('@dao/json-schema/database')
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -41,7 +42,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -65,7 +66,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
     describe('fake id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -90,7 +91,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -114,7 +115,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
     describe('fake id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -140,7 +141,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -164,7 +165,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -187,7 +188,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
     describe('fake id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -211,7 +212,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -234,7 +235,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
     describe('fake id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -259,7 +260,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -283,7 +284,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -306,7 +307,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
     describe('fake id', () => {
       it('return rows[:to]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -330,7 +331,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -353,7 +354,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
     describe('fake id', () => {
       it('return rows[from:]', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1

@@ -1,5 +1,5 @@
 import { buildServer } from '@src/server'
-import { prepareDatabases, resetEnvironment } from '@test/utils'
+import { resetDatabases, resetEnvironment } from '@test/utils'
 import { AccessControlDAO } from '@dao'
 
 jest.mock('@dao/access-control/database')
@@ -8,7 +8,7 @@ jest.mock('@dao/logger/database')
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('token-based access control', () => {

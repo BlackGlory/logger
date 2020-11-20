@@ -1,5 +1,6 @@
 import * as DAO from '@dao/logger/purge'
-import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
+import { getDatabase } from '@dao/logger/database'
+import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
 import { Database } from 'better-sqlite3'
 
 jest.mock('@dao/logger/database')
@@ -8,12 +9,12 @@ jest.mock('@dao/json-schema/database')
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', async () => {
-    const db = await prepareLoggerDatabase()
+    const db = await getDatabase()
     const id = 'id'
     insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
     insert(db, { id, payload: 'payload2', timestamp: 1, number: 0 })
@@ -31,7 +32,7 @@ describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
 
 describe('purgeByLimit(id: string, limit: number): void', () => {
   it('return undefined', async () => {
-    const db = await prepareLoggerDatabase()
+    const db = await getDatabase()
     const id = 'id'
     insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
     insert(db, { id, payload: 'payload2', timestamp: 0, number: 1 })

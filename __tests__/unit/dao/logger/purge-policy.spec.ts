@@ -1,5 +1,6 @@
 import * as DAO from '@dao/logger/purge-policy'
-import { prepareLoggerDatabase, prepareDatabases, resetEnvironment } from '@test/utils'
+import { getDatabase } from '@dao/logger/database'
+import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
 import { Database } from 'better-sqlite3'
 import 'jest-extended'
 
@@ -9,13 +10,13 @@ jest.mock('@dao/json-schema/database')
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('PurgePolicy', () => {
   describe('getAllIdsWithPurgePolicies(): string[]', () => {
     it('return string[]', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timeToLive = 100
       const numberLimit = 200
@@ -30,7 +31,7 @@ describe('PurgePolicy', () => {
   describe('getPurgePolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
       it('return', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         const timeToLive = 100
         const numberLimit = 200
@@ -47,7 +48,6 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return', async () => {
-        const db = await prepareLoggerDatabase()
         const id = 'id'
 
         const result = DAO.getPurgePolicies(id)
@@ -62,7 +62,7 @@ describe('PurgePolicy', () => {
 
   describe('setTimeToLive(id: string, timeToLive: number): void', () => {
     it('return undefined', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const timeToLive = 100
 
@@ -77,7 +77,7 @@ describe('PurgePolicy', () => {
   describe('unsetTimeToLive(id: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         insert(db, id, { timeToLive: 100, numberLimit: 100 })
 
@@ -91,7 +91,7 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return undefined', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
 
         const result = DAO.unsetTimeToLive(id)
@@ -104,7 +104,7 @@ describe('PurgePolicy', () => {
 
   describe('setNumberLimit(id: string, numberLimit: number): void', () => {
     it('return undefined', async () => {
-      const db = await prepareLoggerDatabase()
+      const db = await getDatabase()
       const id = 'id'
       const numberLimit = 100
 
@@ -119,7 +119,7 @@ describe('PurgePolicy', () => {
   describe('unsetNumberLimit(id: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
         insert(db, id, { timeToLive: 100, numberLimit: 100 })
 
@@ -133,7 +133,7 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return undefined', async () => {
-        const db = await prepareLoggerDatabase()
+        const db = await getDatabase()
         const id = 'id'
 
         const result = DAO.unsetNumberLimit(id)

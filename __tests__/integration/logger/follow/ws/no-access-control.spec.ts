@@ -1,5 +1,5 @@
 import { buildServer } from '@src/server'
-import { prepareDatabases, resetEnvironment } from '@test/utils'
+import { resetDatabases, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import WebSocket = require('ws')
 import { waitForEventEmitter } from '@blackglory/wait-for'
@@ -11,7 +11,7 @@ expect.extend(matchers)
 
 beforeEach(async () => {
   resetEnvironment()
-  await prepareDatabases()
+  await resetDatabases()
 })
 
 describe('no access control', () => {
