@@ -1,12 +1,13 @@
-import * as DAO from '@dao/logger/purge-policy'
-import { getDatabase } from '@dao/logger/database'
-import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
+import * as DAO from '@dao/purge-policy/purge-policy'
+import { getDatabase } from '@dao/purge-policy/database'
+import { resetDatabases, resetEnvironment } from '@test/utils'
 import { Database } from 'better-sqlite3'
 import 'jest-extended'
 
 jest.mock('@dao/logger/database')
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
+jest.mock('@dao/purge-policy/database')
 
 beforeEach(async () => {
   resetEnvironment()

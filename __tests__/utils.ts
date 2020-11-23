@@ -1,11 +1,13 @@
 import * as AccessControlDatabase from '@dao/access-control/database'
 import * as JsonSchemaDatabase from '@dao/json-schema/database'
 import * as LoggerDatabase from '@dao/logger/database'
+import * as PurgePolicyDatabase from '@dao/purge-policy/database'
 
 export async function resetDatabases() {
   await resetAccessControlDatabase()
   await resetJsonSchemaDatabase()
   await resetLoggerDatabase()
+  await resetPurgePolicyDatabase()
 }
 
 export async function resetAccessControlDatabase() {
@@ -21,6 +23,11 @@ export async function resetJsonSchemaDatabase() {
 export async function resetLoggerDatabase() {
   LoggerDatabase.closeDatabase()
   await LoggerDatabase.prepareDatabase()
+}
+
+export async function resetPurgePolicyDatabase() {
+  PurgePolicyDatabase.closeDatabase()
+  await PurgePolicyDatabase.prepareDatabase()
 }
 
 export function resetEnvironment() {

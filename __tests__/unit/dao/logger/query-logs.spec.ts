@@ -1,5 +1,5 @@
 import { Database } from 'better-sqlite3'
-import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
+import { resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/logger/query-logs'
 import { getDatabase } from '@dao/logger/database'
 import '@blackglory/jest-matchers'
@@ -7,6 +7,7 @@ import '@blackglory/jest-matchers'
 jest.mock('@dao/logger/database')
 jest.mock('@dao/access-control/database')
 jest.mock('@dao/json-schema/database')
+jest.mock('@dao/purge-policy/database')
 
 beforeEach(async () => {
   resetEnvironment()

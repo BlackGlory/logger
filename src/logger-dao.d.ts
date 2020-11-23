@@ -23,14 +23,4 @@ interface ILoggerDAO {
 
   purgeByTimestamp(id: string, timestamp: number): Promise<void>
   purgeByLimit(id: string, limit: number): Promise<void>
-
-  getAllIdsWithPurgePolicies(): Promise<string[]>
-  getPurgePolicies(id: string): Promise<{
-    timeToLive: number | null
-    numberLimit: number | null
-  }>
-  setTimeToLive(id: string, timeToLive: number): Promise<void>
-  unsetTimeToLive(id: string): Promise<void>
-  setNumberLimit(id: string, numberLimit: number): Promise<void>
-  unsetNumberLimit(id: string): Promise<void>
 }

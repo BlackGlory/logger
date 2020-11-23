@@ -1,7 +1,7 @@
 import * as DAO from '@dao/logger/write-log'
 import { getDatabase } from '@dao/logger/database'
 import { Database } from 'better-sqlite3'
-import { resetLoggerDatabase, resetDatabases, resetEnvironment } from '@test/utils'
+import { resetDatabases, resetEnvironment } from '@test/utils'
 import 'jest-extended'
 
 let timestamp = Date.now()
@@ -9,6 +9,7 @@ let timestamp = Date.now()
 jest.mock('@dao/logger/database')
 jest.mock('@dao/json-schema/database')
 jest.mock('@dao/access-control/database')
+jest.mock('@dao/purge-policy/database')
 jest.mock('@dao/logger/utils/get-timestamp', () => ({
   getTimestamp() {
     return timestamp
