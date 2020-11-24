@@ -140,6 +140,47 @@ describe('TokenPolicy', () => {
       })
     })
   })
+
+  describe('setDeleteTokenRequired(id: string, val: boolean): void', () => {
+    it('return undefined', async () => {
+      const db = await getDatabase()
+      const id = 'id'
+
+      const result = DAO.setDeleteTokenRequired(id, true)
+      const row = select(db, id)
+
+      expect(result).toBeUndefined()
+      expect(row['delete_token_required']).toBe(1)
+    })
+  })
+
+  describe('unsetDeleteTokenRequired(id: string): void', () => {
+    describe('policy exists', () => {
+      it('return undefined', async () => {
+        const db = await getDatabase()
+        const id = 'id'
+        insert(db, id, { readTokenRequired: 1, writeTokenRequired: 1, deleteTokenRequired: 1 })
+
+        const result = DAO.unsetDeleteTokenRequired(id)
+        const row = select(db, id)
+
+        expect(result).toBeUndefined()
+        expect(row['delete_token_required']).toBeNull()
+      })
+    })
+
+    describe('policy does not exist', () => {
+      it('return undefined', async () => {
+        const db = await getDatabase()
+        const id = 'id'
+
+        const result = DAO.unsetDeleteTokenRequired(id)
+
+        expect(result).toBeUndefined()
+        expect(exist(db, id)).toBeFalse()
+      })
+    })
+  })
 })
 
 function exist(db: Database, id: string) {
