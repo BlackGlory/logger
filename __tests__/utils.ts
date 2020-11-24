@@ -19,7 +19,7 @@ export async function resetConfigInSqlite3Database() {
 export function resetEnvironment() {
   // assigning a property on `process.env` will implicitly convert the value to a string.
   // use `delete` to delete a property from `process.env`.
-  // sjee also: https://nodejs.org/api/process.html#process_process_env
+  // see also: https://nodejs.org/api/process.html#process_process_env
   delete process.env.LOGGER_HOST
   delete process.env.LOGGER_PORT
   delete process.env.LOGGER_ADMIN_PASSWORD
