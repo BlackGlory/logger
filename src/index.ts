@@ -1,17 +1,13 @@
-import { prepareDatabase as prepareAccessControlDatabase } from '@dao/access-control/database'
-import { prepareDatabase as prepareJsonSchemaDatabase } from '@dao/json-schema/database'
-import { prepareDatabase as prepareLoggerDatabase } from '@dao/logger/database'
-import { prepareDatabase as preparePurgePolicyDatabase } from '@dao/purge-policy/database'
+import { prepareDatabase as prepareDataInSqlite3Database } from '@dao/data-in-sqlite3/database'
+import { prepareDatabase as prepareConfigInSqlite3Database } from '@dao/config-in-sqlite3/database'
 import { buildServer } from './server'
 import { PORT, HOST, CI } from '@env'
 
 process.on('SIGHUP', () => process.exit(1))
 
 ;(async () => {
-  await prepareAccessControlDatabase()
-  await prepareJsonSchemaDatabase()
-  await prepareLoggerDatabase()
-  await preparePurgePolicyDatabase()
+  await prepareDataInSqlite3Database()
+  await prepareConfigInSqlite3Database()
 
   const server = await buildServer()
   await server.listen(PORT(), HOST())

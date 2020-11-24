@@ -1,5 +1,5 @@
-import { LoggerDAO } from '@dao/logger'
-import { PubSubDAO } from '@dao/pubsub'
+import { LoggerDAO } from '@dao/data-in-sqlite3/logger'
+import { PubSubDAO } from '@dao/data-in-memory/pubsub'
 import { purge } from './purge-policy'
 
 export async function write(id: string, payload: string): Promise<ILog> {

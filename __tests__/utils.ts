@@ -1,33 +1,19 @@
-import * as AccessControlDatabase from '@dao/access-control/database'
-import * as JsonSchemaDatabase from '@dao/json-schema/database'
-import * as LoggerDatabase from '@dao/logger/database'
-import * as PurgePolicyDatabase from '@dao/purge-policy/database'
+import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
+import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 
 export async function resetDatabases() {
-  await resetAccessControlDatabase()
-  await resetJsonSchemaDatabase()
-  await resetLoggerDatabase()
-  await resetPurgePolicyDatabase()
+  await resetDataInSqlite3Database()
+  await resetConfigInSqlite3Database()
 }
 
-export async function resetAccessControlDatabase() {
-  AccessControlDatabase.closeDatabase()
-  await AccessControlDatabase.prepareDatabase()
+export async function resetDataInSqlite3Database() {
+  DataInSqlite3.closeDatabase()
+  await DataInSqlite3.prepareDatabase()
 }
 
-export async function resetJsonSchemaDatabase() {
-  JsonSchemaDatabase.closeDatabase()
-  await JsonSchemaDatabase.prepareDatabase()
-}
-
-export async function resetLoggerDatabase() {
-  LoggerDatabase.closeDatabase()
-  await LoggerDatabase.prepareDatabase()
-}
-
-export async function resetPurgePolicyDatabase() {
-  PurgePolicyDatabase.closeDatabase()
-  await PurgePolicyDatabase.prepareDatabase()
+export async function resetConfigInSqlite3Database() {
+  ConfigInSqlite3.closeDatabase()
+  await ConfigInSqlite3.prepareDatabase()
 }
 
 export function resetEnvironment() {

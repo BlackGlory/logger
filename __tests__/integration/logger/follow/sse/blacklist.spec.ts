@@ -5,10 +5,8 @@ import { AccessControlDAO } from '@dao'
 import EventSource = require('eventsource')
 import { waitForEventTarget } from '@blackglory/wait-for'
 
-jest.mock('@dao/access-control/database')
-jest.mock('@dao/json-schema/database')
-jest.mock('@dao/logger/database')
-jest.mock('@dao/purge-policy/database')
+jest.mock('@dao/config-in-sqlite3/database')
+jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
 beforeEach(async () => {
