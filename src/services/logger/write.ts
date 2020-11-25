@@ -60,7 +60,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.Logger.write(req.params.id, req.body)
+      await Core.Logger.write(id, payload)
       reply.status(204).send()
 
       function isJSONPayload(): boolean {

@@ -38,14 +38,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , schema: {
       params: { id: idSchema }
     , querystring: { token: tokenSchema, since: idSchema }
-    , headers: {
-        'Last-Event-ID': {
-          oneOf: [
-            idSchema
-          , { type: 'null' }
-          ]
-        }
-      }
+    , headers: { 'Last-Event-ID': idSchema }
     }
   // Server-Sent Events
   , handler(req, reply) {
