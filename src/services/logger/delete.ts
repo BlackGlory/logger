@@ -9,9 +9,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     '/logger/:id/logs'
   , {
       schema: {
-        params: {
-          id: idSchema
-        }
+        params: { id: idSchema }
       , querystring: {
           token: tokenSchema
         , from: logIdSchema
