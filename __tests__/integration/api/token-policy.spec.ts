@@ -250,6 +250,67 @@ describe('TokenPolicy', () => {
     })
   })
 
+  describe('PUT /api/logger/:id/token-policies/delete-token-required', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+        const val = true
+
+        const res = await server.inject({
+          method: 'PUT'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
+        , payload: JSON.stringify(val)
+        , headers: {
+            ...createJsonHeaders()
+          , ...createAuthHeaders()
+          }
+        })
+
+        expect(res.statusCode).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const server = await buildServer()
+        const id = 'id'
+        const val = true
+
+        const res = await server.inject({
+          method: 'PUT'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
+        , payload: JSON.stringify(val)
+        , headers: createJsonHeaders()
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+        const val = true
+
+        const res = await server.inject({
+          method: 'PUT'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
+        , payload: JSON.stringify(val)
+        , headers: {
+            ...createJsonHeaders()
+          , ...createAuthHeaders('bad')
+          }
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+  })
+
   describe('DELETE /api/logger/:id/token-policies/write-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
@@ -338,6 +399,54 @@ describe('TokenPolicy', () => {
         const res = await server.inject({
           method: 'DELETE'
         , url: `/api/logger/${id}/token-policies/read-token-required`
+        , headers: createAuthHeaders('bad')
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+  })
+
+  describe('DELETE /api/logger/:id/token-policies/delete-token-required', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
+        , headers: createAuthHeaders()
+        })
+
+        expect(res.statusCode).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'DELETE'
+        , url: `/api/logger/${id}/token-policies/delete-token-required`
         , headers: createAuthHeaders('bad')
         })
 
