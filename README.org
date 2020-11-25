@@ -1,5 +1,5 @@
 * Logger
-一个受[[https://github.com/BlackGlory/PubSub][PubSub]]启发的Web友好的自托管ad-hoc微服务,
+一个受[[https://github.com/BlackGlory/pubsub][PubSub]]启发的Web友好的自托管ad-hoc微服务,
 提供基于 HTTP 和 SSE 的日志功能,
 带有基于token和名单的访问控制策略,
 支持JSON Schema.
@@ -1019,4 +1019,3 @@ Logger支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环�
 
 设置环境变量 =LOGGER_WRITE_PAYLOAD_LIMIT= 可限制write接受的单个请求的Payload字节数,
 默认值继承自 =LOGGER_PAYLOAD_LIMIT=.
-
