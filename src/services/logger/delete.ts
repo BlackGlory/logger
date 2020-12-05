@@ -41,7 +41,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       if ('head' in req.query) (range as ISlice & IHead).head = req.query.head
       if ('tail' in req.query) (range as ISlice & ITail).tail = req.query.tail
 
-      await Core.Logger.remove(id, range)
+      await Core.Logger.del(id, range)
       reply.status(204).send()
     }
   )

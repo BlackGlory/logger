@@ -20,6 +20,6 @@ export function query(id: string, range: IRange): AsyncIterable<{
   return LoggerDAO.queryLogs(id, range)
 }
 
-export function remove(id: string, range: IRange): Promise<void> {
+export function del(id: string, range: IRange): Promise<void> {
   return LoggerDAO.deleteLogs(id, range)
 }
