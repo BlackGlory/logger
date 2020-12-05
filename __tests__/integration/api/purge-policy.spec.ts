@@ -356,6 +356,54 @@ describe('PurgePolicy', () => {
       })
     })
   })
+
+  describe('POST /api/logger/:id/purge-policies', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'POST'
+        , url: `/api/logger/${id}/purge-policies`
+        , headers: createAuthHeaders()
+        })
+
+        expect(res.statusCode).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'POST'
+        , url: `/api/logger/${id}/purge-policies`
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.LOGGER_ADMIN_PASSWORD = 'password'
+        const server = await buildServer()
+        const id = 'id'
+
+        const res = await server.inject({
+          method: 'POST'
+        , url: `/api/logger/${id}/purge-policies`
+        , headers: createAuthHeaders('bad')
+        })
+
+        expect(res.statusCode).toBe(401)
+      })
+    })
+  })
 })
 
 function createAuthHeaders(adminPassword?: string) {

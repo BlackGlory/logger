@@ -517,8 +517,8 @@ await fetch(`http://localhost:8080/api/logger/${id}/purge-policies`, {
 })
 #+END_SRC
 
-****** 触发清除策略
-=POST /api/logger/<id>/purge=
+****** 手动触发清除策略
+=POST /api/logger/<id>/purge-policies=
 
 你总是可以在设置完清除策略后手动触发它们.
 
@@ -528,12 +528,12 @@ await fetch(`http://localhost:8080/api/logger/${id}/purge-policies`, {
 curl \
   --request POST \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/logger/$id/purge"
+  "http://localhost:8080/api/logger/$id/purge-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/logger/${id}/purge`, {
+await fetch(`http://localhost:8080/api/logger/${id}/purge-policies`, {
   method: 'POST'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`

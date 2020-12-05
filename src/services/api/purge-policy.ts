@@ -135,7 +135,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.post<{
     Params: { id: string }
   }>(
-    '/logger/:id/purge'
+    '/logger/:id/purge-policies'
   , {
       schema: {
         params: { id: idSchema }
