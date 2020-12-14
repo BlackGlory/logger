@@ -1,3 +1,4 @@
+import { buildServer } from '@src/server'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as Env from '@env'

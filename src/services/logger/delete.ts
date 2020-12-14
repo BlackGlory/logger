@@ -4,7 +4,13 @@ import { idSchema, tokenSchema, logIdSchema } from '@src/schema'
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.delete<{
     Params: { id: string }
-    Querystring: { token?: string } & IRange
+    Querystring: {
+      token?: string
+      from?: string
+      to?: string
+      tail?: number
+      head?: number
+    }
   }>(
     '/logger/:id/logs'
   , {
@@ -25,6 +31,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const id = req.params.id
       const token = req.query.token
+      const range: IRange = {
+        from: req.query.from
+      , to: req.query.to
+      }
+      if (req.query.head) (range as ISlice & IHead).head = req.query.head
+      if (req.query.tail) (range as ISlice & ITail).tail = req.query.tail
 
       try {
         await Core.Blacklist.check(id)
@@ -37,13 +49,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const range: IRange = { from: req.query.from, to: req.query.to }
-      if ('head' in req.query) (range as ISlice & IHead).head = req.query.head
-      if ('tail' in req.query) (range as ISlice & ITail).tail = req.query.tail
-
       await Core.Logger.del(id, range)
       reply.status(204).send()
     }
   )
-  return undefined
 }
