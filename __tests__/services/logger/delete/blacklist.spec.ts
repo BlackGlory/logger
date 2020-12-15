@@ -18,14 +18,12 @@ describe('blacklist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const id = 'id'
-        const message = 'message'
         const server = await buildServer()
         await AccessControlDAO.addBlacklistItem(id)
 
         const res = await server.inject({
           method: 'DELETE'
         , url: `/logger/${id}/logs`
-        , payload: message
         })
 
         expect(res.statusCode).toBe(403)
@@ -36,13 +34,11 @@ describe('blacklist', () => {
       it('204', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const id = 'id'
-        const message = 'message'
         const server = await buildServer()
 
         const res = await server.inject({
           method: 'DELETE'
         , url: `/logger/${id}/logs`
-        , payload: message
         })
 
         expect(res.statusCode).toBe(204)
@@ -54,14 +50,12 @@ describe('blacklist', () => {
     describe('id in blacklist', () => {
       it('204', async () => {
         const id = 'id'
-        const message = 'message'
         const server = await buildServer()
         await AccessControlDAO.addBlacklistItem(id)
 
         const res = await server.inject({
           method: 'DELETE'
         , url: `/logger/${id}/logs`
-        , payload: message
         })
 
         expect(res.statusCode).toBe(204)
