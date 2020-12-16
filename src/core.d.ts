@@ -1,4 +1,6 @@
 type IUnfollow = () => void
+type CustomErrorConsturctor = import('@blackglory/errors').CustomErrorConstructor
+type Json = import('@blackglory/types').Json
 
 interface ILog {
   id: string
@@ -49,7 +51,7 @@ interface ICore {
      */
     check(id: string): Promise<void>
 
-    Forbidden: new () => import('@blackglory/errors').CustomError
+    Forbidden: CustomErrorConsturctor
   }
 
   Whitelist: {
@@ -64,14 +66,14 @@ interface ICore {
      */
     check(id: string): Promise<void>
 
-    Forbidden: new () => import('@blackglory/errors').CustomError
+    Forbidden: CustomErrorConsturctor
   }
 
   JsonSchema: {
     isEnabled(): boolean
     getAllIds(): Promise<string[]>
     get(id: string): Promise<string | null>
-    set(id: string, schema: import('@blackglory/types').Json): Promise<void>
+    set(id: string, schema: Json): Promise<void>
     remove(id: string): Promise<void>
 
     /**
@@ -79,7 +81,7 @@ interface ICore {
      */
     validate(id: string, payload: string): Promise<void>
 
-    InvalidPayload: new () => import('@blackglory/errors').CustomError
+    InvalidPayload: CustomErrorConsturctor
   }
 
   TBAC: {
@@ -100,7 +102,7 @@ interface ICore {
      */
     checkDeletePermission(id: string, token?: string): Promise<void>
 
-    Unauthorized: new () => import('@blackglory/errors').CustomError
+    Unauthorized: CustomErrorConsturctor
 
     Token: {
       getAllIds(): Promise<string[]>
