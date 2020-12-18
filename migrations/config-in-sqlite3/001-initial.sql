@@ -12,9 +12,15 @@ CREATE TABLE logger_blacklist (
   logger_id VARCHAR(255) NOT NULL UNIQUE
 );
 
+CREATE UNIQUE INDEX logger_blacklist_logger_id
+    ON logger_blacklist(logger_id);
+
 CREATE TABLE logger_whitelist (
   logger_id VARCHAR(255) NOT NULL UNIQUE
 );
+
+CREATE UNIQUE INDEX logger_whitelist_logger_id
+    ON logger_whitelist(logger_id);
 
 CREATE TABLE logger_token_policy (
   logger_id             VARCHAR(255) NOT NULL UNIQUE
@@ -22,6 +28,9 @@ CREATE TABLE logger_token_policy (
 , read_token_required   BOOLEAN
 , delete_token_required BOOLEAN
 );
+
+CREATE UNIQUE INDEX logger_token_policy_logger_id
+    ON logger_token_policy(logger_id);
 
 CREATE TABLE logger_token (
   logger_id         VARCHAR(255) NOT NULL
@@ -32,16 +41,25 @@ CREATE TABLE logger_token (
 , UNIQUE (token, logger_id)
 );
 
+CREATE UNIQUE INDEX logger_token_logger_id_token
+    ON logger_token(logger_id,token);
+
 CREATE TABLE logger_json_schema (
   logger_id   VARCHAR(255) NOT NULL UNIQUE
 , json_schema TEXT         NOT NULL
 );
+
+CREATE UNIQUE INDEX logger_json_schema_logger_id
+    ON logger_json_schema(logger_id);
 
 CREATE TABLE logger_purge_policy (
   logger_id    VARCHAR(255) NOT NULL UNIQUE
 , time_to_live INTEGER
 , number_limit INTEGER
 );
+
+CREATE UNIQUE INDEX logger_purge_policy_logger_id
+    ON logger_purge_policy(logger_id);
 
 --------------------------------------------------------------------------------
 -- Down
