@@ -77,6 +77,7 @@
     "better-sqlite3": "^7.1.2",
     "common-tags": "^1.8.0",
     "dotenv": "^8.2.0",
+    "env-var": "^7.0.0",
     "extra-promise": "^0.13.7",
     "fastify": "^3.9.2",
     "fastify-accepts": "^2.0.1",

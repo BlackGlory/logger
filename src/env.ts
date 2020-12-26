@@ -1,4 +1,6 @@
 import { memoize } from 'lodash'
+import * as env from 'env-var'
+import { Getter } from '@blackglory/types'
 
 export enum ListBasedAccessControl {
   Disable
@@ -12,102 +14,119 @@ export enum NodeEnv {
 , Production
 }
 
-export const NODE_ENV = memoize(function (): NodeEnv | undefined {
-  switch (process.env.NODE_ENV) {
+export const NODE_ENV: Getter<NodeEnv | undefined> = memoize(() => {
+  const val = env.get('NODE_ENV')
+                 .asEnum(['test', 'development', 'production'])
+
+  switch (val) {
     case 'test': return NodeEnv.Test
     case 'development': return NodeEnv.Development
     case 'production': return NodeEnv.Production
   }
 })
 
-export const PORT = memoize(function (): number {
-  if (process.env.LOGGER_PORT) {
-    return Number(process.env.LOGGER_PORT)
-  } else {
-    return 8080
-  }
-})
+export const CI: Getter<boolean> = memoize(() =>
+  env.get('CI')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const HOST = memoize(function (): string {
-  return process.env.LOGGER_HOST || 'localhost'
-})
+export const HOST: Getter<string> = memoize(() =>
+  env.get('LOGGER_HOST')
+     .default('localhost')
+     .asString()
+)
 
-export const ADMIN_PASSWORD = memoize(function (): string | undefined {
-  return process.env.LOGGER_ADMIN_PASSWORD
-})
+export const PORT: Getter<number> = memoize(() =>
+  env.get('LOGGER_PORT')
+     .default(8080)
+     .asPortNumber()
+)
 
-export const LIST_BASED_ACCESS_CONTROL = memoize(function (): ListBasedAccessControl {
-  switch (process.env.LOGGER_LIST_BASED_ACCESS_CONTROL) {
+export const HTTP2: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_HTTP2')
+     .default('false')
+     .asBoolStrict()
+)
+
+export const PAYLOAD_LIMIT: Getter<number> = memoize(() =>
+  env.get('LOGGER_PAYLOAD_LIMIT')
+     .default(1048576)
+     .asIntPositive()
+)
+
+export const WRITE_PAYLOAD_LIMIT: Getter<number> = memoize(() =>
+  env.get('LOGGER_WRITE_PAYLOAD_LIMIT')
+     .default(PAYLOAD_LIMIT())
+     .asIntPositive()
+)
+
+
+export const ADMIN_PASSWORD: Getter<string | undefined> = memoize(() =>
+  env.get('LOGGER_ADMIN_PASSWORD')
+     .asString()
+)
+
+export const LIST_BASED_ACCESS_CONTROL: Getter<ListBasedAccessControl> = memoize(() => {
+  const val = env.get('LOGGER_LIST_BASED_ACCESS_CONTROL')
+                 .asEnum(['whitelist', 'blacklist'])
+
+  switch (val) {
     case 'whitelist': return ListBasedAccessControl.Whitelist
     case 'blacklist': return ListBasedAccessControl.Blacklist
     default: return ListBasedAccessControl.Disable
   }
 })
 
-export const TOKEN_BASED_ACCESS_CONTROL = memoize(function (): boolean {
-  return process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL === 'true'
-})
+export const TOKEN_BASED_ACCESS_CONTROL: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_TOKEN_BASED_ACCESS_CONTROL')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const WRITE_TOKEN_REQUIRED = memoize(function (): boolean {
-  return process.env.LOGGER_WRITE_TOKEN_REQUIRED === 'true'
-})
+export const WRITE_TOKEN_REQUIRED: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_WRITE_TOKEN_REQUIRED')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const READ_TOKEN_REQUIRED = memoize(function (): boolean {
-  return process.env.LOGGER_READ_TOKEN_REQUIRED === 'true'
-})
+export const READ_TOKEN_REQUIRED: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_READ_TOKEN_REQUIRED')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const DELETE_TOKEN_REQUIRED = memoize(function (): boolean {
-  return process.env.LOGGER_DELETE_TOKEN_REQUIRED === 'true'
-})
+export const DELETE_TOKEN_REQUIRED: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_DELETE_TOKEN_REQUIRED')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const HTTP2 = memoize(function (): boolean {
-  return process.env.LOGGER_HTTP2 === 'true'
-})
+export const JSON_VALIDATION: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_JSON_VALIDATION')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const JSON_VALIDATION = memoize(function (): boolean {
-  return process.env.LOGGER_JSON_VALIDATION === 'true'
-})
+export const DEFAULT_JSON_SCHEMA: Getter<object | undefined> = memoize(() =>
+  env.get('LOGGER_DEFAULT_JSON_SCHEMA')
+     .asJsonObject()
+)
 
-export const DEFAULT_JSON_SCHEMA = memoize(function (): string | undefined {
-  return process.env.LOGGER_DEFAULT_JSON_SCHEMA
-})
+export const JSON_PAYLOAD_ONLY: Getter<boolean> = memoize(() =>
+  env.get('LOGGER_JSON_PAYLOAD_ONLY')
+     .default('false')
+     .asBoolStrict()
+)
 
-export const JSON_PAYLOAD_ONLY = memoize(function (): boolean {
-  return process.env.LOGGER_JSON_PAYLOAD_ONLY === 'true'
-})
+export const LOGGER_LOGS_TIME_TO_LIVE: Getter<number> = memoize(() =>
+  env.get('LOGGER_LOGS_TIME_TO_LIVE')
+     .default(0)
+     .asInt()
+)
 
-export const CI = memoize(function (): boolean {
-  return process.env.CI === 'true'
-})
-
-export const PAYLOAD_LIMIT = memoize(function (): number {
-  if (process.env.LOGGER_PAYLOAD_LIMIT) {
-    return Number(process.env.LOGGER_PAYLOAD_LIMIT)
-  } else {
-    return 1048576
-  }
-})
-
-export const WRITE_PAYLOAD_LIMIT = memoize(function (): number {
-  if (process.env.LOGGER_WRITE_PAYLOAD_LIMIT) {
-    return Number(process.env.LOGGER_WRITE_PAYLOAD_LIMIT)
-  } else {
-    return PAYLOAD_LIMIT()
-  }
-})
-
-export const LOGGER_LOGS_TIME_TO_LIVE = memoize(function (): number {
-  if (process.env.LOGGER_LOGS_TIME_TO_LIVE) {
-    return Number(process.env.LOGGER_LOGS_TIME_TO_LIVE)
-  } else {
-    return 0
-  }
-})
-
-export const LOGGER_LOGS_LIMIT = memoize(function (): number {
-  if (process.env.LOGGER_LOGS_LIMIT) {
-    return Number(process.env.LOGGER_LOGS_LIMIT)
-  } else {
-    return 0
-  }
-})
+export const LOGGER_LOGS_LIMIT: Getter<number> = memoize(() =>
+  env.get('LOGGER_LOGS_LIMIT')
+     .default(0)
+     .asInt()
+)
