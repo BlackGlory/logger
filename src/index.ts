@@ -1,25 +1,22 @@
-import {
-  prepareDatabase as prepareDataInSqlite3Database
-, closeDatabase as closeDataInSqlite3Database
-} from '@dao/data-in-sqlite3/database'
-import {
-  prepareDatabase as prepareConfigInSqlite3Database
-, closeDatabase as closeConfigInSqlite3Database
-} from '@dao/config-in-sqlite3/database'
+import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
+import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import { buildServer } from './server'
 import { PORT, HOST, CI } from '@env'
 
 process.on('exit', () => {
-  closeDataInSqlite3Database()
-  closeConfigInSqlite3Database()
+  DataInSqlite3.closeDatabase()
+  ConfigInSqlite3.closeDatabase()
 })
 process.on('SIGHUP', () => process.exit(128 + 1))
 process.on('SIGINT', () => process.exit(128 + 2))
 process.on('SIGTERM', () => process.exit(128 + 15))
 
 ;(async () => {
-  await prepareConfigInSqlite3Database()
-  await prepareDataInSqlite3Database()
+  ConfigInSqlite3.openDatabase()
+  ConfigInSqlite3.prepareDatabase()
+
+  DataInSqlite3.openDatabase()
+  DataInSqlite3.prepareDatabase()
 
   const server = await buildServer()
   await server.listen(PORT(), HOST())

@@ -14,8 +14,8 @@ beforeEach(async () => {
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
-    it('return all rows', async () => {
-      const db = await getDatabase()
+    it('return all rows', () => {
+      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -40,8 +40,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
   describe('ignore from', () => {
     describe('real id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -64,8 +64,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
     })
 
     describe('fake id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -89,8 +89,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
   describe('ignore to', () => {
     describe('real id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -113,8 +113,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
     })
 
     describe('fake id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -139,8 +139,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
-    it('return all rows', async () => {
-      const db = await getDatabase()
+    it('return all rows', () => {
+      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -163,8 +163,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
   describe('ignore from', () => {
     describe('real id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -186,8 +186,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
     })
 
     describe('fake id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -210,8 +210,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
   describe('ignore to', () => {
     describe('real id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -233,8 +233,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
     })
 
     describe('fake id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -258,8 +258,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
-    it('return all rows', async () => {
-      const db = await getDatabase()
+    it('return all rows', () => {
+      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
@@ -282,8 +282,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
   describe('ignore from', () => {
     describe('real id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -305,8 +305,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
     })
 
     describe('fake id', () => {
-      it('return rows[:to]', async () => {
-        const db = await getDatabase()
+      it('return rows[:to]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -329,8 +329,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
   describe('ignore to', () => {
     describe('real id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
@@ -352,8 +352,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
     })
 
     describe('fake id', () => {
-      it('return rows[from:]', async () => {
-        const db = await getDatabase()
+      it('return rows[from:]', () => {
+        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1

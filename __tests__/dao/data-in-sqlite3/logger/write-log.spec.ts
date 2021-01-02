@@ -22,8 +22,8 @@ beforeEach(async () => {
 describe('writeLog(id: string, payload: string): void', () => {
   describe('no limit', () => {
     describe('write two logs in the same second', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
@@ -50,8 +50,8 @@ describe('writeLog(id: string, payload: string): void', () => {
     })
 
     describe('write two logs in the different second', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'

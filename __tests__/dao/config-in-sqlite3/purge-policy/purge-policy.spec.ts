@@ -14,8 +14,8 @@ beforeEach(async () => {
 
 describe('PurgePolicy', () => {
   describe('getAllIdsWithPurgePolicies(): string[]', () => {
-    it('return string[]', async () => {
-      const db = await getDatabase()
+    it('return string[]', () => {
+      const db = getDatabase()
       const id = 'id'
       const timeToLive = 100
       const numberLimit = 200
@@ -29,8 +29,8 @@ describe('PurgePolicy', () => {
 
   describe('getPurgePolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
-      it('return', async () => {
-        const db = await getDatabase()
+      it('return', () => {
+        const db = getDatabase()
         const id = 'id'
         const timeToLive = 100
         const numberLimit = 200
@@ -46,7 +46,7 @@ describe('PurgePolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return', async () => {
+      it('return', () => {
         const id = 'id'
 
         const result = DAO.getPurgePolicies(id)
@@ -60,8 +60,8 @@ describe('PurgePolicy', () => {
   })
 
   describe('setTimeToLive(id: string, timeToLive: number): void', () => {
-    it('return undefined', async () => {
-      const db = await getDatabase()
+    it('return undefined', () => {
+      const db = getDatabase()
       const id = 'id'
       const timeToLive = 100
 
@@ -75,8 +75,8 @@ describe('PurgePolicy', () => {
 
   describe('unsetTimeToLive(id: string): void', () => {
     describe('policy exists', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { timeToLive: 100, numberLimit: 100 })
 
@@ -89,8 +89,8 @@ describe('PurgePolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetTimeToLive(id)
@@ -102,8 +102,8 @@ describe('PurgePolicy', () => {
   })
 
   describe('setNumberLimit(id: string, numberLimit: number): void', () => {
-    it('return undefined', async () => {
-      const db = await getDatabase()
+    it('return undefined', () => {
+      const db = getDatabase()
       const id = 'id'
       const numberLimit = 100
 
@@ -117,8 +117,8 @@ describe('PurgePolicy', () => {
 
   describe('unsetNumberLimit(id: string): void', () => {
     describe('policy exists', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { timeToLive: 100, numberLimit: 100 })
 
@@ -131,8 +131,8 @@ describe('PurgePolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetNumberLimit(id)

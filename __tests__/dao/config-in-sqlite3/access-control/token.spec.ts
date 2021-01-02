@@ -14,8 +14,8 @@ beforeEach(async () => {
 
 describe('token-based access control', () => {
   describe('getAllIdsWithTokens(): string[]', () => {
-    it('return string[]', async () => {
-      const db = await getDatabase()
+    it('return string[]', () => {
+      const db = getDatabase()
       const id1 = 'id-1'
       const token1 = 'token-1'
       const id2 = 'id-2'
@@ -34,8 +34,8 @@ describe('token-based access control', () => {
   })
 
   describe('getAllTokens(id: string): Array<{ token: string; write: boolean; read: boolean; delete: boolean }>', () => {
-    it('return Array<{ token: string; write: boolean; read: boolean; delete: boolean }>', async () => {
-      const db = await getDatabase()
+    it('return Array<{ token: string; write: boolean; read: boolean; delete: boolean }>', () => {
+      const db = getDatabase()
       const id = 'id-1'
       const token1 = 'token-1'
       const token2 = 'token-2'
@@ -58,8 +58,8 @@ describe('token-based access control', () => {
   describe('WriteToken', () => {
     describe('hasWriteTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = await getDatabase()
+        it('return true', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: false, write: true })
@@ -71,8 +71,8 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = await getDatabase()
+        it('return false', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: false })
@@ -86,8 +86,8 @@ describe('token-based access control', () => {
 
     describe('matchWriteToken({ token: string; id: string }): boolean', () => {
       describe('token exist', () => {
-        it('return true', async () => {
-          const db = await getDatabase()
+        it('return true', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: false, write: true })
@@ -99,8 +99,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return false', async () => {
-          const db = await getDatabase()
+        it('return false', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: false })
@@ -114,8 +114,8 @@ describe('token-based access control', () => {
 
     describe('setWriteToken({ token: string; id: string })', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = await getDatabase()
+        it('update row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: false })
@@ -129,8 +129,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = await getDatabase()
+        it('insert row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -145,8 +145,8 @@ describe('token-based access control', () => {
 
     describe('unsetWriteToken({ token: string; id: string })', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: true })
@@ -160,8 +160,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -177,8 +177,8 @@ describe('token-based access control', () => {
   describe('ReadToken', () => {
     describe('hasReadTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = await getDatabase()
+        it('return true', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: false })
@@ -190,8 +190,8 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = await getDatabase()
+        it('return false', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: false, write: true })
@@ -205,8 +205,8 @@ describe('token-based access control', () => {
 
     describe('matchReadToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = await getDatabase()
+        it('return true', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: false })
@@ -218,8 +218,8 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = await getDatabase()
+        it('return false', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: false, write: true })
@@ -233,8 +233,8 @@ describe('token-based access control', () => {
 
     describe('setReadToken(token: string, id: string)', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = await getDatabase()
+        it('update row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: false, write: true })
@@ -248,8 +248,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = await getDatabase()
+        it('insert row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -264,8 +264,8 @@ describe('token-based access control', () => {
 
     describe('unsetReadToken', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, read: true, write: true })
@@ -279,8 +279,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -296,8 +296,8 @@ describe('token-based access control', () => {
   describe('DeleteToken', () => {
     describe('matchDeleteToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = await getDatabase()
+        it('return true', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: true })
@@ -309,8 +309,8 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = await getDatabase()
+        it('return false', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: false })
@@ -324,8 +324,8 @@ describe('token-based access control', () => {
 
     describe('setDeleteToken(token: string, id: string)', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = await getDatabase()
+        it('update row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: false })
@@ -339,8 +339,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = await getDatabase()
+        it('insert row', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 
@@ -355,8 +355,8 @@ describe('token-based access control', () => {
 
     describe('unsetDeleteToken', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
           insert(db, { token, id, del: true })
@@ -370,8 +370,8 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = await getDatabase()
+        it('return undefined', () => {
+          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
 

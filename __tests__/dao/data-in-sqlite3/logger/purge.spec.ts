@@ -12,8 +12,8 @@ beforeEach(async () => {
 })
 
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const id = 'id'
     insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
     insert(db, { id, payload: 'payload2', timestamp: 1, number: 0 })
@@ -30,8 +30,8 @@ describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
 })
 
 describe('purgeByLimit(id: string, limit: number): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const id = 'id'
     insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
     insert(db, { id, payload: 'payload2', timestamp: 0, number: 1 })

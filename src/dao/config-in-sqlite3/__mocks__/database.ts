@@ -1,22 +1,25 @@
 import Database = require('better-sqlite3')
 import type { Database as IDatabase } from 'better-sqlite3'
-import { migrateDatabase } from '../utils'
+import { enableAutoVacuum, migrateDatabase } from '../utils'
+import { strict as assert } from 'assert'
 
 let db: IDatabase
 
-export function getDatabase() {
-  return db
+export function openDatabase(): void {
+  db = new Database(':memory:')
+  enableAutoVacuum(db)
 }
 
-export function closeDatabase() {
-  if (db) db.close()
-}
-
-export async function prepareDatabase() {
-  db = connectDatabase()
+export async function prepareDatabase(): Promise<void> {
+  assert(db)
   await migrateDatabase(db)
 }
 
-function connectDatabase(): IDatabase {
-  return new Database(':memory:')
+export function getDatabase(): IDatabase {
+  assert(db)
+  return db
+}
+
+export function closeDatabase(): void {
+  if (db) db.close()
 }

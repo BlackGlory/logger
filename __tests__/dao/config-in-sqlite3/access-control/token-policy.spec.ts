@@ -14,8 +14,8 @@ beforeEach(async () => {
 
 describe('TokenPolicy', () => {
   describe('getAllIdsWithTokenPolicies(): string[]', () => {
-    it('return string[]', async () => {
-      const db = await getDatabase()
+    it('return string[]', () => {
+      const db = getDatabase()
       const id = 'id'
       insert(db, id, { writeTokenRequired: 1, readTokenRequired: 1, deleteTokenRequired: 1 })
 
@@ -27,8 +27,8 @@ describe('TokenPolicy', () => {
 
   describe('getTokenPolicies(id: string): { writeTokenRequired: boolean | null, readTokenRequired: boolean | null', () => {
     describe('policy exists', () => {
-      it('return', async () => {
-        const db = await getDatabase()
+      it('return', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { writeTokenRequired: 1, readTokenRequired: 1, deleteTokenRequired: 1 })
 
@@ -43,7 +43,7 @@ describe('TokenPolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return', async () => {
+      it('return', () => {
         const id = 'id'
 
         const result = DAO.getTokenPolicies(id)
@@ -58,8 +58,8 @@ describe('TokenPolicy', () => {
   })
 
   describe('setWriteTokenRequired(id: string, val: boolean): void', () => {
-    it('return undefined', async () => {
-      const db = await getDatabase()
+    it('return undefined', () => {
+      const db = getDatabase()
       const id = 'id'
 
       const result = DAO.setWriteTokenRequired(id, true)
@@ -72,8 +72,8 @@ describe('TokenPolicy', () => {
 
   describe('unsetWriteTokenRequired(id: string): void', () => {
     describe('policy exists', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { readTokenRequired: 1, writeTokenRequired: 1, deleteTokenRequired: 1 })
 
@@ -86,8 +86,8 @@ describe('TokenPolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetWriteTokenRequired(id)
@@ -99,8 +99,8 @@ describe('TokenPolicy', () => {
   })
 
   describe('setReadTokenRequired(id: string, val: boolean): void', () => {
-    it('return undefined', async () => {
-      const db = await getDatabase()
+    it('return undefined', () => {
+      const db = getDatabase()
       const id = 'id'
 
       const result = DAO.setReadTokenRequired(id, true)
@@ -113,8 +113,8 @@ describe('TokenPolicy', () => {
 
   describe('unsetReadTokenRequired(id: string): void', () => {
     describe('policy exists', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { readTokenRequired: 1, writeTokenRequired: 1, deleteTokenRequired: 1 })
 
@@ -127,8 +127,8 @@ describe('TokenPolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetReadTokenRequired(id)
@@ -140,8 +140,8 @@ describe('TokenPolicy', () => {
   })
 
   describe('setDeleteTokenRequired(id: string, val: boolean): void', () => {
-    it('return undefined', async () => {
-      const db = await getDatabase()
+    it('return undefined', () => {
+      const db = getDatabase()
       const id = 'id'
 
       const result = DAO.setDeleteTokenRequired(id, true)
@@ -154,8 +154,8 @@ describe('TokenPolicy', () => {
 
   describe('unsetDeleteTokenRequired(id: string): void', () => {
     describe('policy exists', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
         insert(db, id, { readTokenRequired: 1, writeTokenRequired: 1, deleteTokenRequired: 1 })
 
@@ -168,8 +168,8 @@ describe('TokenPolicy', () => {
     })
 
     describe('policy does not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetDeleteTokenRequired(id)
