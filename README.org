@@ -14,7 +14,7 @@
 
 #+BEGIN_SRC sh
 # 运行
-docker run --detach --log 8080:8080 blackglory/logger
+docker run --detach --publish 8080:8080 blackglory/logger
 
 # 打开第一个终端
 sse-cat http://localhost:8080/logger/hello-world
