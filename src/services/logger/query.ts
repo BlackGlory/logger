@@ -53,14 +53,14 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           throw e
         }
 
-        const asyncIterable = Core.Logger.query(id, range)
+        const logs = Core.Logger.query(id, range)
         const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
         if (accept === 'application/x-ndjson') {
-          reply.raw.setHeader('Content-Type', 'application/x-ndjson')
-          Readable.from(generateNDJson(asyncIterable)).pipe(reply.raw)
-        } else {asyncIterable
-          reply.raw.setHeader('Content-Type', 'application/json')
-          Readable.from(generateJSON(asyncIterable)).pipe(reply.raw)
+          reply.header('Content-Type', 'application/x-ndjson')
+          reply.send(Readable.from(generateNDJson(logs)))
+        } else {logs
+          reply.header('Content-Type', 'application/json')
+          reply.send(Readable.from(generateJSON(logs)))
         }
       })()
     }
@@ -68,23 +68,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 }
 
 async function* generateNDJson(asyncIterable: AsyncIterable<ILog>): AsyncIterable<string> {
-  const asyncIter = asyncIterable[Symbol.asyncIterator]()
-  const firstResult = await asyncIter.next()
+  const iter = asyncIterable[Symbol.asyncIterator]()
+  const firstResult = await iter.next()
   if (!firstResult.done) yield JSON.stringify(firstResult.value)
   while (true) {
-    const result = await asyncIter.next()
+    const result = await iter.next()
     if (result.done) break
     yield '\n' + JSON.stringify(result.value)
   }
 }
 
 async function* generateJSON(asyncIterable: AsyncIterable<ILog>): AsyncIterable<string> {
-  const asyncIter = asyncIterable[Symbol.asyncIterator]()
-  const firstResult = await asyncIter.next()
+  const iter = asyncIterable[Symbol.asyncIterator]()
+  const firstResult = await iter.next()
   yield '['
   if (!firstResult.done) yield JSON.stringify(firstResult.value)
   while (true) {
-    const result = await asyncIter.next()
+    const result = await iter.next()
     if (result.done) break
     yield ',' + JSON.stringify(result.value)
   }
