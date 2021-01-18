@@ -270,8 +270,8 @@ curl \
 await fetch(`http://localhost:8080/logger/${id}/logs`)
 #+END_SRC
 
-**** 统计信息
-=GET /stats=
+**** metrics
+=GET /metrics=
 
 输出JSON:
 #+BEGIN_SRC ts
@@ -285,12 +285,12 @@ await fetch(`http://localhost:8080/logger/${id}/logs`)
 ***** Example
 ****** curl
 #+BEGIN_SRC sh
-curl 'http://localhost:8080/stats'
+curl 'http://localhost:8080/metrics'
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/stats').then(res => res.json())
+await fetch('http://localhost:8080/metrics').then(res => res.json())
 #+END_SRC
 
 *** Private
