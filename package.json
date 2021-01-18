@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src __tests__",
     "test": "jest --config jest.config.js",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "coverage": "jest --coverage --config jest.config.js",
+    "test:coverage": "jest --coverage --config jest.config.js",
     "dev": "nodemon",
     "dev:http2": "LOGGER_HTTP2=true nodemon",
     "clean": "rimraf lib",
