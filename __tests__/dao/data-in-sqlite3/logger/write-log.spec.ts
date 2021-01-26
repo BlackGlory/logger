@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/write-log'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
-import { Database } from 'better-sqlite3'
 import { resetDatabases, resetEnvironment } from '@test/utils'
+import { getAllRawLogs } from './utils'
 import 'jest-extended'
 
 let timestamp = Date.now()
@@ -23,7 +22,6 @@ describe('writeLog(id: string, payload: string): void', () => {
   describe('no limit', () => {
     describe('write two logs in the same second', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
@@ -32,7 +30,7 @@ describe('writeLog(id: string, payload: string): void', () => {
         setTimestamp(timestamp)
         const result1 = DAO.writeLog(id, payload1)
         const result2 = DAO.writeLog(id, payload2)
-        const rows = select(db, id)
+        const rows = getAllRawLogs(id)
 
         expect(result1).toEqual({
           id: `${timestamp}-0`
@@ -42,7 +40,7 @@ describe('writeLog(id: string, payload: string): void', () => {
           id: `${timestamp}-1`
         , payload: payload2
         })
-        expect(rows).toEqual([
+        expect(rows).toMatchObject([
           { logger_id: id, payload: payload1, timestamp, number: 0 }
         , { logger_id: id, payload: payload2, timestamp, number: 1 }
         ])
@@ -51,7 +49,6 @@ describe('writeLog(id: string, payload: string): void', () => {
 
     describe('write two logs in the different second', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
@@ -62,7 +59,7 @@ describe('writeLog(id: string, payload: string): void', () => {
         const result1 = DAO.writeLog(id, payload1)
         setTimestamp(timestamp2)
         const result2 = DAO.writeLog(id, payload2)
-        const rows = select(db, id)
+        const rows = getAllRawLogs(id)
 
         expect(result1).toEqual({
           id: `${timestamp1}-0`
@@ -80,10 +77,6 @@ describe('writeLog(id: string, payload: string): void', () => {
     })
   })
 })
-
-function select(db: Database, id: string) {
-  return db.prepare('SELECT * FROM logger_log WHERE logger_id = $id;').all({ id })
-}
 
 function setTimestamp(value: number) {
   timestamp = value

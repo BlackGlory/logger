@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/purge'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { Database } from 'better-sqlite3'
+import { setRawLog, getAllRawLogs } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,17 +12,26 @@ beforeEach(async () => {
 
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const id = 'id'
-    insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
-    insert(db, { id, payload: 'payload2', timestamp: 1, number: 0 })
+    setRawLog({
+      logger_id: id
+    , payload: 'payload1'
+    , timestamp: 0
+    , number: 0
+    })
+    setRawLog({
+      logger_id: id
+    , payload: 'payload2'
+    , timestamp: 1
+    , number: 0
+    })
     const timestamp = 1
 
     const result = DAO.purgeByTimestamp(id, timestamp)
-    const rows = select(db, id)
+    const rows = getAllRawLogs(id)
 
     expect(result).toBeUndefined()
-    expect(rows).toEqual([
+    expect(rows).toMatchObject([
       { payload: 'payload2', timestamp: 1, number: 0}
     ])
   })
@@ -31,39 +39,27 @@ describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
 
 describe('purgeByLimit(id: string, limit: number): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const id = 'id'
-    insert(db, { id, payload: 'payload1', timestamp: 0, number: 0 })
-    insert(db, { id, payload: 'payload2', timestamp: 0, number: 1 })
+    setRawLog({
+      logger_id: id
+    , payload: 'payload1'
+    , timestamp: 0
+    , number: 0
+    })
+    setRawLog({
+      logger_id: id
+    , payload: 'payload2'
+    , timestamp: 0
+    , number: 1
+    })
     const limit = 1
 
     const result = DAO.purgeByLimit(id, limit)
-    const rows = select(db, id)
+    const rows = getAllRawLogs(id)
 
     expect(result).toBeUndefined()
-    expect(rows).toEqual([
+    expect(rows).toMatchObject([
       { payload: 'payload2', timestamp: 0, number: 1 }
     ])
   })
 })
-
-function insert(db: Database, { id, payload, timestamp, number }: { id: string; payload: string; timestamp: number; number: number }) {
-  db.prepare(`
-    INSERT INTO logger_log (logger_id, payload, timestamp, number)
-    VALUES ($id, $payload, $timestamp, $number);
-  `).run({ id, payload, timestamp, number })
-}
-
-function select(db: Database, id: string): Array<{ timestamp: number; number: number; payload: string }> {
-  return db.prepare(`
-    SELECT *
-      FROM logger_log
-     WHERE logger_id = $id
-     ORDER BY timestamp ASC
-            , number    ASC;
-  `).all({ id }).map(x => ({
-    timestamp: x.timestamp
-  , number: x.number
-  , payload: x.payload
-  }))
-}

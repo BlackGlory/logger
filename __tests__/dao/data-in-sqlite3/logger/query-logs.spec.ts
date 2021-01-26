@@ -1,7 +1,7 @@
-import { Database } from 'better-sqlite3'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/data-in-sqlite3/logger/query-logs'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
+import { toArray } from 'iterable-operator'
+import { setRawLog } from './utils'
 import '@blackglory/jest-matchers'
 
 jest.mock('@dao/data-in-sqlite3/database')
@@ -15,15 +15,34 @@ beforeEach(async () => {
 describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', () => {
-      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
       const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-      insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-      insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-      insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+      setRawLog({
+        logger_id: id
+      , payload: payload[0]
+      , timestamp: timestamp1
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[1]
+      , timestamp: timestamp1
+      , number: 1
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[2]
+      , timestamp: timestamp2
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[3]
+      , timestamp: timestamp2
+      , number: 1
+      })
 
       const iter = DAO.queryLogs(id, {})
       const rows = toArray(iter)
@@ -41,15 +60,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { to: `${timestamp2}-0` })
         const rows = toArray(iter)
@@ -65,15 +103,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
     describe('fake id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { to: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -90,15 +147,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { from: `${timestamp1}-1` })
         const rows = toArray(iter)
@@ -114,15 +190,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
     describe('fake id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { from: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -140,15 +235,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', () => {
-      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
       const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-      insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-      insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-      insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+      setRawLog({
+        logger_id: id
+      , payload: payload[0]
+      , timestamp: timestamp1
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[1]
+      , timestamp: timestamp1
+      , number: 1
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[2]
+      , timestamp: timestamp2
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[3]
+      , timestamp: timestamp2
+      , number: 1
+      })
 
       const iter = DAO.queryLogs(id, { head: 2 })
       const rows = toArray(iter)
@@ -164,15 +278,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { head: 2, to: `${timestamp2}-0` })
         const rows = toArray(iter)
@@ -187,15 +320,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
     describe('fake id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { head: 1, to: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -211,15 +363,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { head: 2, from: `${timestamp1}-1` })
         const rows = toArray(iter)
@@ -234,15 +405,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
     describe('fake id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { head: 1, from: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -259,15 +449,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {
     it('return all rows', () => {
-      const db = getDatabase()
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
       const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-      insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-      insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-      insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+      setRawLog({
+        logger_id: id
+      , payload: payload[0]
+      , timestamp: timestamp1
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[1]
+      , timestamp: timestamp1
+      , number: 1
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[2]
+      , timestamp: timestamp2
+      , number: 0
+      })
+      setRawLog({
+        logger_id: id
+      , payload: payload[3]
+      , timestamp: timestamp2
+      , number: 1
+      })
 
       const iter = DAO.queryLogs(id, { tail: 2 })
       const rows = toArray(iter)
@@ -283,15 +492,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
   describe('ignore from', () => {
     describe('real id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { tail: 2, to: `${timestamp2}-0` })
         const rows = toArray(iter)
@@ -306,15 +534,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
     describe('fake id', () => {
       it('return rows[:to]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { tail: 1, to: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -330,15 +577,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
   describe('ignore to', () => {
     describe('real id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { tail: 2, from: `${timestamp1}-1` })
         const rows = toArray(iter)
@@ -353,15 +619,34 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
     describe('fake id', () => {
       it('return rows[from:]', () => {
-        const db = getDatabase()
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
         const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        insert(db, { id, payload: payload[0], timestamp: timestamp1, number: 0 })
-        insert(db, { id, payload: payload[1], timestamp: timestamp1, number: 1 })
-        insert(db, { id, payload: payload[2], timestamp: timestamp2, number: 0 })
-        insert(db, { id, payload: payload[3], timestamp: timestamp2, number: 1 })
+        setRawLog({
+          logger_id: id
+        , payload: payload[0]
+        , timestamp: timestamp1
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[1]
+        , timestamp: timestamp1
+        , number: 1
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[2]
+        , timestamp: timestamp2
+        , number: 0
+        })
+        setRawLog({
+          logger_id: id
+        , payload: payload[3]
+        , timestamp: timestamp2
+        , number: 1
+        })
 
         const iter = DAO.queryLogs(id, { tail: 1, from: `${timestamp1}-2` })
         const rows = toArray(iter)
@@ -374,14 +659,3 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
     })
   })
 })
-
-function toArray<T>(iter: Iterable<T>): T[] {
-  return Array.from(iter)
-}
-
-function insert(db: Database, { id, payload, timestamp, number }: { id: string; payload: string; timestamp: number; number: number }) {
-  db.prepare(`
-    INSERT INTO logger_log (logger_id, payload, timestamp, number)
-    VALUES ($id, $payload, $timestamp, $number);
-  `).run({ id, payload, timestamp, number })
-}
