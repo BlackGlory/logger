@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/purge-policy/purge-policy'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { Database } from 'better-sqlite3'
+import { getRawPurgePolicy, hasRawPurgePolicy, setRawPurgePolicy } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,11 +14,12 @@ beforeEach(async () => {
 describe('PurgePolicy', () => {
   describe('getAllIdsWithPurgePolicies(): string[]', () => {
     it('return string[]', () => {
-      const db = getDatabase()
       const id = 'id'
-      const timeToLive = 100
-      const numberLimit = 200
-      insert(db, id, { timeToLive, numberLimit })
+      setRawPurgePolicy({
+        logger_id: id
+      , time_to_live: 100
+      , number_limit: 200
+      })
 
       const result = DAO.getAllIdsWithPurgePolicies()
 
@@ -30,11 +30,14 @@ describe('PurgePolicy', () => {
   describe('getPurgePolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
       it('return', () => {
-        const db = getDatabase()
         const id = 'id'
         const timeToLive = 100
         const numberLimit = 200
-        insert(db, id, { timeToLive, numberLimit })
+        setRawPurgePolicy({
+          logger_id: id
+        , time_to_live: timeToLive
+        , number_limit: numberLimit
+        })
 
         const result = DAO.getPurgePolicies(id)
 
@@ -61,108 +64,91 @@ describe('PurgePolicy', () => {
 
   describe('setTimeToLive(id: string, timeToLive: number): void', () => {
     it('return undefined', () => {
-      const db = getDatabase()
       const id = 'id'
       const timeToLive = 100
 
       const result = DAO.setTimeToLive(id, timeToLive)
-      const row = select(db, id)
+      const row = getRawPurgePolicy(id)
 
       expect(result).toBeUndefined()
-      expect(row['time_to_live']).toBe(timeToLive)
+      expect(row).not.toBeNull()
+      expect(row!['time_to_live']).toBe(timeToLive)
     })
   })
 
   describe('unsetTimeToLive(id: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
-        insert(db, id, { timeToLive: 100, numberLimit: 100 })
+        setRawPurgePolicy({
+          logger_id: id
+        , time_to_live: 100
+        , number_limit: 100
+        })
 
         const result = DAO.unsetTimeToLive(id)
-        const row = select(db, id)
+        const row = getRawPurgePolicy(id)
 
         expect(result).toBeUndefined()
-        expect(row['time_to_live']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['time_to_live']).toBeNull()
       })
     })
 
     describe('policy does not exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetTimeToLive(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(hasRawPurgePolicy(id)).toBeFalse()
       })
     })
   })
 
   describe('setNumberLimit(id: string, numberLimit: number): void', () => {
     it('return undefined', () => {
-      const db = getDatabase()
       const id = 'id'
       const numberLimit = 100
 
       const result = DAO.setNumberLimit(id, numberLimit)
-      const row = select(db, id)
+      const row = getRawPurgePolicy(id)
 
       expect(result).toBeUndefined()
-      expect(row['number_limit']).toBe(numberLimit)
+      expect(row).not.toBeNull()
+      expect(row!['number_limit']).toBe(numberLimit)
     })
   })
 
   describe('unsetNumberLimit(id: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
-        insert(db, id, { timeToLive: 100, numberLimit: 100 })
+        setRawPurgePolicy({
+          logger_id: id
+        , time_to_live: 100
+        , number_limit: 100
+        })
 
         const result = DAO.unsetNumberLimit(id)
-        const row = select(db, id)
+        const row = getRawPurgePolicy(id)
 
         expect(result).toBeUndefined()
-        expect(row['number_limit']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['number_limit']).toBeNull()
       })
     })
 
     describe('policy does not exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id'
 
         const result = DAO.unsetNumberLimit(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(hasRawPurgePolicy(id)).toBeFalse()
       })
     })
   })
 })
-
-function exist(db: Database, id: string) {
-  return !!select(db, id)
-}
-
-function select(db: Database, id: string) {
-  return db.prepare(`
-    SELECT *
-      FROM logger_purge_policy
-     WHERE logger_id = $id;
-  `).get({ id })
-}
-
-function insert(db: Database, id: string, { timeToLive, numberLimit }: { timeToLive?: number,  numberLimit?: number }) {
-  db.prepare(`
-    INSERT INTO logger_purge_policy (logger_id, time_to_live, number_limit)
-    VALUES ($id, $timeToLive, $numberLimit);
-  `).run({
-    id
-  , timeToLive
-  , numberLimit
-  })
-}

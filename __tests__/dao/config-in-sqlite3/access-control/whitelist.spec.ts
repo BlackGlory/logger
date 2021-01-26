@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/whitelist'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
-import { Database } from 'better-sqlite3'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { resetEnvironment, resetDatabases } from '@test/utils'
+import { hasRawWhitelist, setRawWhitelist } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,13 +14,11 @@ beforeEach(async () => {
 describe('whitelist', () => {
   describe('getAllWhitelistItems(): string[]', () => {
     it('return string[]', () => {
-      const db = getDatabase()
       const id = 'id-1'
-      insert(db, id)
+      setRawWhitelist({ logger_id: id })
 
       const result = DAO.getAllWhitelistItems()
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([id])
     })
   })
@@ -29,9 +26,8 @@ describe('whitelist', () => {
   describe('inWhitelist(id: string): boolean', () => {
     describe('exist', () => {
       it('return true', () => {
-        const db = getDatabase()
         const id = 'id-1'
-        insert(db, id)
+        setRawWhitelist({ logger_id: id })
 
         const result = DAO.inWhitelist(id)
 
@@ -53,26 +49,24 @@ describe('whitelist', () => {
   describe('addWhitelistItem', () => {
     describe('exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id-1'
-        insert(db, id)
+        setRawWhitelist({ logger_id: id })
 
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(hasRawWhitelist(id)).toBeTrue()
       })
     })
 
     describe('not exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id-1'
 
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(hasRawWhitelist(id)).toBeTrue()
       })
     })
   })
@@ -80,39 +74,25 @@ describe('whitelist', () => {
   describe('removeWhitelistItem', () => {
     describe('exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id-1'
-        insert(db, id)
+        setRawWhitelist({ logger_id: id })
 
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(hasRawWhitelist(id)).toBeFalse()
       })
     })
 
     describe('not exist', () => {
       it('return undefined', () => {
-        const db = getDatabase()
         const id = 'id-1'
 
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(hasRawWhitelist(id)).toBeFalse()
       })
     })
   })
 })
-
-function exist(db: Database, id: string) {
-  return !!select(db, id)
-}
-
-function insert(db: Database, id: string) {
-  db.prepare('INSERT INTO logger_whitelist (logger_id) VALUES ($id);').run({ id });
-}
-
-function select(db: Database, id: string) {
-  return db.prepare('SELECT * FROM logger_whitelist WHERE logger_id = $id;').get({ id })
-}
