@@ -208,8 +208,9 @@ ws.addEventListener('message', event => {
 #+END_SRC
 
 **** query
-=GET /logger/<id>/logs= 获取所有日志
+=GET /logger/<id>/logs=
 
+获取所有日志.
 查询(head, tail, from, to可以组合使用, 不能同时有head和tail)
 - =GET /logger/<id>/logs?head=<number>= 取开头number个记录.
 - =GET /logger/<id>/logs?tail=<number>= 取结尾number个记录.
@@ -246,8 +247,9 @@ await fetch(`http://localhost:8080/logger/${id}/logs`).then(res => res.json())
 #+END_SRC
 
 **** delete
-=DELETE /logger/<id>/logs= 删除所有日志
+=DELETE /logger/<id>/logs=
 
+删除所有日志.
 根据查询结果删除日志(head, tail, from, to可以组合使用, 不能同时有head和tail):
 - =DELETE /logger/<id>/logs?from=<logId>= 删除从特定logId开始.
 - =DELETE /logger/<id>/logs?to=<logId>= 删除至特定logId结束.
@@ -268,6 +270,23 @@ curl \
 ****** JavaScript
 #+BEGIN_SRC js
 await fetch(`http://localhost:8080/logger/${id}/logs`)
+#+END_SRC
+
+**** list
+=GET /logger=
+
+列出所有的logger id.
+输出JSON =Array<string>=.
+
+*****  Example
+****** curl
+#+BEGIN_SRC sh
+curl 'http://localhost:8080/logger'
+#+END_SRC
+
+****** JavaScript
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/store').then(res => res.json())
 #+END_SRC
 
 **** metrics

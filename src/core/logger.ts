@@ -23,3 +23,7 @@ export function query(id: string, range: IRange): AsyncIterable<{
 export function del(id: string, range: IRange): Promise<void> {
   return LoggerDAO.deleteLogs(id, range)
 }
+
+export function list(): AsyncIterable<string> {
+  return LoggerDAO.listAllLoggerIds()
+}
