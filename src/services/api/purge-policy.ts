@@ -30,13 +30,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , response: {
           200: {
             timeToLive: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]
             }
           , limit: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]

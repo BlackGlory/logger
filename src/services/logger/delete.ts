@@ -20,8 +20,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           token: tokenSchema
         , from: logIdSchema
         , to: logIdSchema
-        , head: { type: 'number' }
-        , tail: { type: 'number' }
+        , head: { type: 'integer' }
+        , tail: { type: 'integer' }
         }
       , response: {
           204: { type: 'null' }
