@@ -6,26 +6,30 @@ import { waitForEventEmitter } from '@blackglory/wait-for'
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(websocket, {
     options: {
-      // pain, see https://github.com/fastify/fastify-websocket/issues/70
-      async verifyClient(info, next) {
-        const url = info.req.url!
-        const pathnameRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})$/
-        const result = getPathname(url).match(pathnameRegExp)
-        if (!result) return next(false)
-
-        const id = result.groups!.id
-        const token = parseQuerystring<{ token?: string }>(url).token
-
-        try {
-          await Core.Blacklist.check(id)
-          await Core.Whitelist.check(id)
-          await Core.TBAC.checkReadPermission(id, token)
-        } catch {
-          return next(false)
-        }
-        return next(true)
-      }
+      noServer: true
     }
+  })
+
+  server.server.on('upgrade', async (req, socket, head) => {
+    const url = req.url
+    const pathnameRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})$/
+    const result = getPathname(url).match(pathnameRegExp)
+    if (!result) return socket.destroy()
+
+    const id = result.groups!.id
+    const token = parseQuerystring<{ token?: string }>(url).token
+
+    try {
+      await Core.Blacklist.check(id)
+      await Core.Whitelist.check(id)
+      await Core.TBAC.checkReadPermission(id, token)
+    } catch {
+      return socket.destroy()
+    }
+
+    server.websocketServer.handleUpgrade(req, socket, head, async ws => {
+      server.websocketServer.emit('connection', ws, req)
+    })
   })
 
   server.route<{
