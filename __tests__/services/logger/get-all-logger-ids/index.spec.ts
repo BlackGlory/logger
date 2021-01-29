@@ -14,8 +14,9 @@ beforeEach(async () => {
 
 describe('no access control', () => {
   it('200', async () => {
+    const loggerIds = ['logger-id']
     const server = await buildServer()
-    prepareLoggers(['logger-id'])
+    prepareLoggers(loggerIds)
 
     const res = await server.inject({
       method: 'GET'
@@ -23,6 +24,6 @@ describe('no access control', () => {
     })
 
     expect(res.statusCode).toBe(200)
-    expect(res.json()).toEqual(['logger-id'])
+    expect(res.json()).toStrictEqual(loggerIds)
   })
 })
