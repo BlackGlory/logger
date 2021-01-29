@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
-import websocket from 'fastify-websocket'
 import { waitForEventEmitter } from '@blackglory/wait-for'
+import { sse } from 'extra-generator'
+import websocket from 'fastify-websocket'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(websocket, {
@@ -72,7 +73,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         const unfollow = Core.Logger.follow(id, async log => {
           const data = JSON.stringify(log)
-          for (const message of generateSSEData(data)) {
+          for (const message of sse(data)) {
             if (!reply.raw.write(message)) {
               await waitForEventEmitter(reply.raw, 'drain')
             }
@@ -86,7 +87,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           for await (const log of logs) {
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)
-            for (const message of generateSSEData(data)) {
+            for (const message of sse(data)) {
               if (!reply.raw.write(message)) {
                 await waitForEventEmitter(reply.raw, 'drain')
               }
@@ -115,7 +116,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         for await (const log of logs) {
           if (log.id === since) continue
           const data = JSON.stringify(log)
-          if (!conn.write(data)) await waitForEventEmitter(conn, 'drain')
+          if (!conn.write(data)) {
+            await waitForEventEmitter(conn, 'drain')
+          }
         }
       }
     }
@@ -131,20 +134,4 @@ function parseQuerystring<T extends NodeJS.Dict<string | string[]>>(url: string)
   const urlObject = new URL(url, 'http://localhost/')
   const result = Object.fromEntries(urlObject.searchParams.entries()) as T
   return result
-}
-
-function lastIndex(arr: Array<unknown>): number {
-  return arr.length - 1
-}
-
-function* generateSSEData(text: string): Iterable<string> {
-  const lines = text.split('\n')
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    if (i === lastIndex(lines)) {
-      yield `data: ${line}\n\n`
-    } else {
-      yield `data: ${line}\n`
-    }
-  }
 }

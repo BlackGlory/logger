@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema, logIdSchema } from '@src/schema'
-import accepts from 'fastify-accepts'
 import { Readable } from 'stream'
+import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
+import accepts from 'fastify-accepts'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(accepts)
@@ -57,36 +58,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
         if (accept === 'application/x-ndjson') {
           reply.header('Content-Type', 'application/x-ndjson')
-          reply.send(Readable.from(generateNDJson(logs)))
+          reply.send(Readable.from(stringifyNDJSONStreamAsync(logs)))
         } else {logs
           reply.header('Content-Type', 'application/json')
-          reply.send(Readable.from(generateJSON(logs)))
+          reply.send(Readable.from(stringifyJSONStreamAsync(logs)))
         }
       })()
     }
   )
-}
-
-async function* generateNDJson(asyncIterable: AsyncIterable<ILog>): AsyncIterable<string> {
-  const iter = asyncIterable[Symbol.asyncIterator]()
-  const firstResult = await iter.next()
-  if (!firstResult.done) yield JSON.stringify(firstResult.value)
-  while (true) {
-    const result = await iter.next()
-    if (result.done) break
-    yield '\n' + JSON.stringify(result.value)
-  }
-}
-
-async function* generateJSON(asyncIterable: AsyncIterable<ILog>): AsyncIterable<string> {
-  const iter = asyncIterable[Symbol.asyncIterator]()
-  const firstResult = await iter.next()
-  yield '['
-  if (!firstResult.done) yield JSON.stringify(firstResult.value)
-  while (true) {
-    const result = await iter.next()
-    if (result.done) break
-    yield ',' + JSON.stringify(result.value)
-  }
-  yield ']'
 }
