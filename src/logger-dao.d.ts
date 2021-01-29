@@ -21,7 +21,7 @@ interface ILoggerDAO {
   queryLogs(id: string, range: IRange): AsyncIterable<ILog>
   deleteLogs(id: string, range: IRange): Promise<void>
 
-  listAllLoggerIds(): AsyncIterable<string>
+  getAllLoggerIds(): AsyncIterable<string>
 
   purgeByTimestamp(id: string, timestamp: number): Promise<void>
   purgeByLimit(id: string, limit: number): Promise<void>

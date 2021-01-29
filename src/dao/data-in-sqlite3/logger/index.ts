@@ -9,7 +9,7 @@ export const LoggerDAO: ILoggerDAO = {
 , queryLogs: asyncifyIterable(queryLogs)
 , deleteLogs: asyncify(deleteLogs)
 
-, listAllLoggerIds: asyncifyIterable(listAllLoggerIds)
+, getAllLoggerIds: asyncifyIterable(listAllLoggerIds)
 
 , purgeByTimestamp: asyncify(purgeByTimestamp)
 , purgeByLimit: asyncify(purgeByLimit)

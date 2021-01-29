@@ -24,6 +24,6 @@ export function del(id: string, range: IRange): Promise<void> {
   return LoggerDAO.deleteLogs(id, range)
 }
 
-export function list(): AsyncIterable<string> {
-  return LoggerDAO.listAllLoggerIds()
+export function getAllLoggerIds(): AsyncIterable<string> {
+  return LoggerDAO.getAllLoggerIds()
 }

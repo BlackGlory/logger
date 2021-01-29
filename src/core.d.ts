@@ -21,7 +21,8 @@ interface ICore {
     follow(key: string, listener: (log: ILog) => void): IUnfollow
     query(id: string, range: IRange): AsyncIterable<ILog>
     del(id: string, range: IRange): Promise<void>
-    list(): AsyncIterable<string>
+
+    getAllLoggerIds(): AsyncIterable<string>
   }
 
   PurgePolicy: {
