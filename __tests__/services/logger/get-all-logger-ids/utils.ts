@@ -1,4 +1,4 @@
-import { LoggerDAO } from '@dao/data-in-sqlite3/logger'
+import { LoggerDAO } from '@dao'
 
 export function prepareLoggers() {
   LoggerDAO.writeLog('id', 'payload')

@@ -2,7 +2,7 @@ import { buildServer } from '@src/server'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { logIdSchema } from '@src/schema'
-import { prepareLoggers } from '@test/services/logger/utils'
+import { prepareLoggers } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
