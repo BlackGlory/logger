@@ -12,6 +12,7 @@ export function writeLog(id: string, payload: string): { id: string, payload: st
        WHERE logger_id = $id
          AND timestamp = $timestamp
     `).get({ id, timestamp })
+
     if (row) {
       number = row['number']
       db.prepare(`
@@ -30,6 +31,7 @@ export function writeLog(id: string, payload: string): { id: string, payload: st
                         , count = 1
       `).run({ id, timestamp })
     }
+
     db.prepare(`
       INSERT INTO logger_log (logger_id, timestamp, number, payload)
       VALUES ($id, $timestamp, $number, $payload)

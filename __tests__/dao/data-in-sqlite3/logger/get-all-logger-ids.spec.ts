@@ -1,4 +1,4 @@
-import * as DAO from '@dao/data-in-sqlite3/logger/list-all-logger-ids'
+import * as DAO from '@dao/data-in-sqlite3/logger/get-all-logger-ids'
 import { toArray } from 'iterable-operator'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawLog } from './utils'
@@ -12,10 +12,10 @@ beforeEach(async () => {
   await resetDatabases()
 })
 
-describe('listAllLoggerIds(): Iterable<string>', () => {
+describe('getAllLoggerIds(): Iterable<string>', () => {
   describe('empty', () => {
     it('return Iterable<string>', () => {
-      const iter = DAO.listAllLoggerIds()
+      const iter = DAO.getAllLoggerIds()
       const result = toArray(iter)
 
       expect(iter).toBeIterable()
@@ -33,7 +33,7 @@ describe('listAllLoggerIds(): Iterable<string>', () => {
       , number: 0
       })
 
-      const iter = DAO.listAllLoggerIds()
+      const iter = DAO.getAllLoggerIds()
       const result = toArray(iter)
 
       expect(iter).toBeIterable()

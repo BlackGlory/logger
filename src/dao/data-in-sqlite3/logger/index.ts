@@ -2,14 +2,14 @@ import { writeLog } from './write-log'
 import { queryLogs } from './query-logs'
 import { deleteLogs } from './delete-logs'
 import { purgeByLimit, purgeByTimestamp } from './purge'
-import { listAllLoggerIds } from './list-all-logger-ids'
+import { getAllLoggerIds } from './get-all-logger-ids'
 
 export const LoggerDAO: ILoggerDAO = {
   writeLog: asyncify(writeLog)
 , queryLogs: asyncifyIterable(queryLogs)
 , deleteLogs: asyncify(deleteLogs)
 
-, getAllLoggerIds: asyncifyIterable(listAllLoggerIds)
+, getAllLoggerIds: asyncifyIterable(getAllLoggerIds)
 
 , purgeByTimestamp: asyncify(purgeByTimestamp)
 , purgeByLimit: asyncify(purgeByLimit)

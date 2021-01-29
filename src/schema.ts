@@ -10,5 +10,5 @@ export const idSchema = {
 
 export const logIdSchema = {
   type: 'string'
-, pattern: '^\d+-\d+$'
+, pattern: '^\\d+-\\d+$'
 }
