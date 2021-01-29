@@ -2,11 +2,10 @@ import { LoggerDAO } from '@dao/data-in-sqlite3/logger'
 import { PubSubDAO } from '@dao/data-in-memory/pubsub'
 import { purge } from './purge-policy'
 
-export async function write(id: string, payload: string): Promise<ILog> {
+export async function write(id: string, payload: string): Promise<void> {
   const result = await LoggerDAO.writeLog(id, payload)
   PubSubDAO.publish(id, result)
-  purge(id).catch()
-  return result
+  await purge(id).catch()
 }
 
 export function follow(id: string, cb: (value: ILog) => void): () => void {

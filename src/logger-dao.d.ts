@@ -17,7 +17,7 @@ type IRange =
 | (ISlice & ITail)
 
 interface ILoggerDAO {
-  writeLog(id: string, payload: string): Promise<ILog>
+  writeLog(id: string, payload: string): Promise<string>
   queryLogs(id: string, range: IRange): AsyncIterable<ILog>
   deleteLogs(id: string, range: IRange): Promise<void>
 

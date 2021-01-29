@@ -17,7 +17,7 @@ interface ICore {
   }
 
   Logger: {
-    write(key: string, value: string): Promise<ILog>
+    write(key: string, value: string): Promise<void>
     follow(key: string, listener: (log: ILog) => void): IUnfollow
     query(id: string, range: IRange): AsyncIterable<ILog>
     del(id: string, range: IRange): Promise<void>

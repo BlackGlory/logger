@@ -1,10 +1,11 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function writeLog(id: string, payload: string): { id: string, payload: string } {
+export function writeLog(id: string, payload: string): string {
   let number
   const timestamp = getTimestamp()
   const db = getDatabase()
+
   db.transaction(() => {
     const row: { number: number } = db.prepare(`
       SELECT count AS number
@@ -37,5 +38,6 @@ export function writeLog(id: string, payload: string): { id: string, payload: st
       VALUES ($id, $timestamp, $number, $payload)
     `).run({ id, timestamp, number, payload })
   })()
-  return { id: `${timestamp}-${number}`, payload }
+
+  return `${timestamp}-${number}`
 }

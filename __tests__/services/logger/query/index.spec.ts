@@ -17,7 +17,7 @@ describe('no access control', () => {
   it('200', async () => {
     const server = await buildServer()
     const id = 'id'
-    prepareLoggers()
+    prepareLoggers(['logger-id'])
 
     const res = await server.inject({
       method: 'GET'
