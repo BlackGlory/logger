@@ -232,8 +232,7 @@ Array<{
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
 =/logger/<id>/logs?token=<token>=
 
-如果返回的日志量很大, 客户端可能需要JSON流([[https://en.wikipedia.org/wiki/JSON_streaming][JSON streaming]]), 因此也支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式,
-只需要在请求头中设置 =Accept: application/x-ndjson=.
+此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
 
 ***** Example
 ****** curl
