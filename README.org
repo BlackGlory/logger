@@ -272,7 +272,7 @@ curl \
 await fetch(`http://localhost:8080/logger/${id}/logs`)
 #+END_SRC
 
-**** list
+**** get all logger ids
 =GET /logger=
 
 列出所有的logger id.
