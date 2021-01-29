@@ -277,6 +277,8 @@ await fetch(`http://localhost:8080/logger/${id}/logs`)
 列出所有的logger id.
 输出JSON =Array<string>=.
 
+此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
+
 *****  Example
 ****** curl
 #+BEGIN_SRC sh
