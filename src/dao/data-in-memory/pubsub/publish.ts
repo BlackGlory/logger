@@ -1,6 +1,6 @@
-import { getPubSubEmitter } from './pubsub-emitter'
+import { getEmitter } from './emitter-instance'
 
-export function publish(key: string, value: unknown): void {
-  const emitter = getPubSubEmitter()
+export function publish(key: string, value: ILog): void {
+  const emitter = getEmitter()
   emitter.emit(key, value)
 }

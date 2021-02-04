@@ -3,13 +3,16 @@ import { PubSubDAO } from '@dao/data-in-memory/pubsub'
 import { purge } from './purge-policy'
 
 export async function write(id: string, payload: string): Promise<void> {
-  const result = await LoggerDAO.writeLog(id, payload)
-  PubSubDAO.publish(id, result)
+  const logId = await LoggerDAO.writeLog(id, payload)
+  PubSubDAO.publish(id, {
+    id: logId
+  , payload
+  })
   await purge(id).catch()
 }
 
 export function follow(id: string, cb: (value: ILog) => void): () => void {
-  return PubSubDAO.subscribe(id, value => cb(value as ILog))
+  return PubSubDAO.subscribe(id, cb)
 }
 
 export function query(id: string, range: IRange): AsyncIterable<{
