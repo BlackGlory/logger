@@ -6,5 +6,6 @@ export function getAllLoggerIds(): Iterable<string> {
     SELECT DISTINCT logger_id
       FROM logger_log;
   `).iterate()
+
   return map(iter, row => row['logger_id'])
 }

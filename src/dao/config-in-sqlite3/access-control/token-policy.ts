@@ -29,18 +29,15 @@ export function getTokenPolicies(id: string): {
     const readTokenRequired = row['read_token_required']
     const deleteTokenRequired = row['delete_token_required']
     return {
-      writeTokenRequired:
-        writeTokenRequired === null
-        ? null
-        : numberToBoolean(writeTokenRequired)
-    , readTokenRequired:
-        readTokenRequired === null
-        ? null
-        : numberToBoolean(readTokenRequired)
-    , deleteTokenRequired:
-        deleteTokenRequired === null
-        ? null
-        : numberToBoolean(deleteTokenRequired)
+      writeTokenRequired: writeTokenRequired === null
+                          ? null
+                          : numberToBoolean(writeTokenRequired)
+    , readTokenRequired: readTokenRequired === null
+                         ? null
+                         : numberToBoolean(readTokenRequired)
+    , deleteTokenRequired: deleteTokenRequired === null
+                           ? null
+                           : numberToBoolean(deleteTokenRequired)
     }
   } else {
     return {
@@ -68,6 +65,7 @@ export function unsetWriteTokenRequired(id: string): void {
          SET write_token_required = NULL
        WHERE logger_id = $id;
     `).run({ id })
+
     deleteNoPoliciesRow(id)
   })()
 }
@@ -89,6 +87,7 @@ export function unsetReadTokenRequired(id: string): void {
          SET read_token_required = NULL
        WHERE logger_id = $id;
     `).run({ id })
+
     deleteNoPoliciesRow(id)
   })()
 }
@@ -110,6 +109,7 @@ export function unsetDeleteTokenRequired(id: string): void {
          SET delete_token_required = NULL
        WHERE logger_id = $id;
     `).run({ id })
+
     deleteNoPoliciesRow(id)
   })()
 }

@@ -5,6 +5,7 @@ export function getAllIdsWithTokens(): string[] {
     SELECT logger_id
       FROM logger_token;
   `).all()
+
   return result.map(x => x['logger_id'])
 }
 
@@ -22,6 +23,7 @@ export function getAllTokens(id: string): Array<{ token: string, write: boolean,
       FROM logger_token
      WHERE logger_id = $id;
   `).all({ id })
+
   return result.map(x => ({
     token: x['token']
   , write: x['write_permission'] === 1
@@ -39,6 +41,7 @@ export function hasWriteTokens(id: string): boolean {
                 AND write_permission = 1
            ) AS write_tokens_exist
   `).get({ id })
+
   return result['write_tokens_exist'] === 1
 }
 
@@ -55,6 +58,7 @@ export function matchWriteToken({ token, id }: {
                 AND write_permission = 1
            ) AS matched
   `).get({ token, id })
+
   return result['matched'] === 1
 }
 
@@ -76,6 +80,7 @@ export function unsetWriteToken({ token, id }: { token: string; id: string }) {
        WHERE token = $token
          AND logger_id = $id;
     `).run({ token, id })
+
     deleteNoPermissionToken({ token, id })
   })()
 }
@@ -89,6 +94,7 @@ export function hasReadTokens(id: string): boolean {
                 AND read_permission = 1
            ) AS read_tokens_exist
   `).get({ id })
+
   return result['read_tokens_exist'] === 1
 }
 
@@ -105,6 +111,7 @@ export function matchReadToken({ token, id }: {
                 AND read_permission = 1
            ) AS matched
   `).get({ token, id })
+
   return result['matched'] === 1
 }
 
@@ -126,6 +133,7 @@ export function unsetReadToken({ token, id }: { token: string; id: string }) {
        WHERE token = $token
          AND logger_id = $id;
     `).run({ token, id })
+
     deleteNoPermissionToken({ token, id })
   })()
 }
@@ -143,6 +151,7 @@ export function matchDeleteToken({ token, id }: {
                 AND delete_permission = 1
            ) AS matched
   `).get({ token, id })
+
   return result['matched'] === 1
 }
 
@@ -164,6 +173,7 @@ export function unsetDeleteToken({ token, id }: { token: string; id: string }) {
        WHERE token = $token
          AND logger_id = $id;
     `).run({ token, id })
+
     deleteNoPermissionToken({ token, id })
   })()
 }

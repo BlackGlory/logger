@@ -14,6 +14,7 @@ export function purgeByLimit(id: string, limit: number): void {
      WHERE logger_id = $id
      ORDER BY timestamp DESC
             , number    DESC
-     LIMIT -1 OFFSET $limit;
+     LIMIT -1
+    OFFSET $limit;
   `).run({ id, limit })
 }

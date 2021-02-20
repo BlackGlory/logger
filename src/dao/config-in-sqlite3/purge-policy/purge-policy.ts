@@ -5,6 +5,7 @@ export function getAllIdsWithPurgePolicies(): string[] {
     SELECT logger_id
       FROM logger_purge_policy;
   `).all()
+
   return result.map(x => x['logger_id'])
 }
 
@@ -18,6 +19,7 @@ export function getPurgePolicies(id: string): {
       FROM logger_purge_policy
      WHERE logger_id = $id;
   `).get({ id })
+
   if (row) {
     return {
       timeToLive: row['time_to_live']
@@ -45,6 +47,7 @@ export function unsetTimeToLive(id: string): void {
          SET time_to_live = NULL
        WHERE logger_id = $id;
     `).run({ id })
+
     deleteNoPoliciesRow(id)
   })()
 }
@@ -66,6 +69,7 @@ export function unsetNumberLimit(id: string): void {
          SET number_limit = NULL
        WHERE logger_id = $id;
     `).run({ id })
+
     deleteNoPoliciesRow(id)
   })()
 }
