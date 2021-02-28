@@ -17,28 +17,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
       setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
       setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
       setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
       setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -57,28 +56,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -87,9 +85,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log4])
       })
     })
 
@@ -98,28 +94,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -128,10 +123,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[2], timestamp: timestamp2, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log3, log4])
       })
     })
   })
@@ -142,28 +134,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -172,9 +163,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        ])
+        expect(rows).toEqual([log1])
       })
     })
 
@@ -183,28 +172,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -213,10 +201,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): voi
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[1], timestamp: timestamp1, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log2])
       })
     })
   })
@@ -228,28 +213,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      setRawLog({
+      const log1 = setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
-      setRawLog({
+      const log2 = setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
-      setRawLog({
+      const log3 = setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
-      setRawLog({
+      const log4 = setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -258,10 +242,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
       const rows = getAllRawLogs(id)
 
       expect(iter).toBeUndefined()
-      expect(rows).toMatchObject([
-        { payload: payload[2], timestamp: timestamp2, number: 0 }
-      , { payload: payload[3], timestamp: timestamp2, number: 1 }
-      ])
+      expect(rows).toEqual([log3, log4])
     })
   })
 
@@ -271,28 +252,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -301,10 +281,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[2], timestamp: timestamp2, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log3, log4])
       })
     })
 
@@ -313,28 +290,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -343,11 +319,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[1], timestamp: timestamp1, number: 1 }
-        , { payload: payload[2], timestamp: timestamp2, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log2, log3, log4])
       })
     })
   })
@@ -358,28 +330,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -388,10 +359,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log4])
       })
     })
 
@@ -400,28 +368,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -430,11 +397,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; head: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[1], timestamp: timestamp1, number: 1 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log2, log4])
       })
     })
   })
@@ -446,28 +409,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      setRawLog({
+      const log1 = setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
-      setRawLog({
+      const log2 = setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
-      setRawLog({
+      const log3 = setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
-      setRawLog({
+      const log4 = setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -476,10 +438,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
       const rows = getAllRawLogs(id)
 
       expect(iter).toBeUndefined()
-      expect(rows).toMatchObject([
-        { payload: payload[0], timestamp: timestamp1, number: 0 }
-      , { payload: payload[1], timestamp: timestamp1, number: 1 }
-      ])
+      expect(rows).toEqual([log1, log2])
     })
   })
 
@@ -489,28 +448,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -519,10 +477,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log4])
       })
     })
 
@@ -531,28 +486,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -561,11 +515,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[2], timestamp: timestamp2, number: 0 }
-        , { payload: payload[3], timestamp: timestamp2, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log3, log4])
       })
     })
   })
@@ -576,28 +526,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -606,10 +555,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[1], timestamp: timestamp1, number: 1 }
-        ])
+        expect(rows).toEqual([log1, log2])
       })
     })
 
@@ -618,28 +564,27 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -648,11 +593,7 @@ describe('deleteLogs(id: string, paramters: { from?: string; to?: string; tail: 
         const rows = getAllRawLogs(id)
 
         expect(iter).toBeUndefined()
-        expect(rows).toMatchObject([
-          { payload: payload[0], timestamp: timestamp1, number: 0 }
-        , { payload: payload[1], timestamp: timestamp1, number: 1 }
-        , { payload: payload[2], timestamp: timestamp2, number: 0 }
-        ])
+        expect(rows).toEqual([log1, log2, log3])
       })
     })
   })

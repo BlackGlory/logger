@@ -13,13 +13,13 @@ beforeEach(async () => {
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', () => {
     const id = 'id'
-    setRawLog({
+    const log1 = setRawLog({
       logger_id: id
     , payload: 'payload1'
     , timestamp: 0
     , number: 0
     })
-    setRawLog({
+    const log2 = setRawLog({
       logger_id: id
     , payload: 'payload2'
     , timestamp: 1
@@ -31,22 +31,20 @@ describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
     const rows = getAllRawLogs(id)
 
     expect(result).toBeUndefined()
-    expect(rows).toMatchObject([
-      { payload: 'payload2', timestamp: 1, number: 0}
-    ])
+    expect(rows).toEqual([log2])
   })
 })
 
 describe('purgeByLimit(id: string, limit: number): void', () => {
   it('return undefined', () => {
     const id = 'id'
-    setRawLog({
+    const log1 = setRawLog({
       logger_id: id
     , payload: 'payload1'
     , timestamp: 0
     , number: 0
     })
-    setRawLog({
+    const log2 = setRawLog({
       logger_id: id
     , payload: 'payload2'
     , timestamp: 0
@@ -58,8 +56,6 @@ describe('purgeByLimit(id: string, limit: number): void', () => {
     const rows = getAllRawLogs(id)
 
     expect(result).toBeUndefined()
-    expect(rows).toMatchObject([
-      { payload: 'payload2', timestamp: 0, number: 1 }
-    ])
+    expect(rows).toEqual([log2])
   })
 })

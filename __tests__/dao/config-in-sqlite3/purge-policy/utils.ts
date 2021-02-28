@@ -6,7 +6,7 @@ interface IRawPurgePolicy {
   number_limit: number
 }
 
-export function setRawPurgePolicy(props: IRawPurgePolicy): void {
+export function setRawPurgePolicy(item: IRawPurgePolicy): IRawPurgePolicy {
   getDatabase().prepare(`
     INSERT INTO logger_purge_policy (
       logger_id
@@ -18,7 +18,9 @@ export function setRawPurgePolicy(props: IRawPurgePolicy): void {
     , $time_to_live
     , $number_limit
     );
-  `).run(props)
+  `).run(item)
+
+  return item
 }
 
 export function hasRawPurgePolicy(id: string): boolean {

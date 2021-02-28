@@ -31,19 +31,17 @@ describe('PurgePolicy', () => {
     describe('policy exists', () => {
       it('return', () => {
         const id = 'id'
-        const timeToLive = 100
-        const numberLimit = 200
-        setRawPurgePolicy({
+        const rawPurgePolicy = setRawPurgePolicy({
           logger_id: id
-        , time_to_live: timeToLive
-        , number_limit: numberLimit
+        , time_to_live: 100
+        , number_limit: 200
         })
 
         const result = DAO.getPurgePolicies(id)
 
         expect(result).toEqual({
-          timeToLive
-        , numberLimit
+          timeToLive: rawPurgePolicy.time_to_live
+        , numberLimit: rawPurgePolicy.number_limit
         })
       })
     })

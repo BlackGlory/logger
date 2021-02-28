@@ -18,28 +18,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      setRawLog({
+      const log1 = setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
-      setRawLog({
+      const log2 = setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
-      setRawLog({
+      const log3 = setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
-      setRawLog({
+      const log4 = setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -49,10 +48,10 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
       expect(iter).toBeIterable()
       expect(rows).toEqual([
-        { id: `${timestamp1}-0`, payload: payload[0] }
-      , { id: `${timestamp1}-1`, payload: payload[1] }
-      , { id: `${timestamp2}-0`, payload: payload[2] }
-      , { id: `${timestamp2}-1`, payload: payload[3] }
+        { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+      , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+      , { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
+      , { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
       ])
     })
   })
@@ -63,40 +62,39 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { to: `${timestamp2}-0` })
+        const iter = DAO.queryLogs(id, { to: `${log3.timestamp}-${log3.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-0`, payload: payload[0] }
-        , { id: `${timestamp1}-1`, payload: payload[1] }
-        , { id: `${timestamp2}-0`, payload: payload[2] }
+          { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+        , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        , { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
         ])
       })
     })
@@ -106,28 +104,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -137,8 +134,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-0`, payload: payload[0] }
-        , { id: `${timestamp1}-1`, payload: payload[1] }
+          { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+        , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
         ])
       })
     })
@@ -150,40 +147,39 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { from: `${timestamp1}-1` })
+        const iter = DAO.queryLogs(id, { from: `${log2.timestamp}-${log2.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-1`, payload: payload[1] }
-        , { id: `${timestamp2}-0`, payload: payload[2] }
-        , { id: `${timestamp2}-1`, payload: payload[3] }
+          { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        , { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
+        , { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
         ])
       })
     })
@@ -193,28 +189,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -224,8 +219,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iter
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp2}-0`, payload: payload[2] }
-        , { id: `${timestamp2}-1`, payload: payload[3] }
+          { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
+        , { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
         ])
       })
     })
@@ -238,28 +233,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      setRawLog({
+      const log1 = setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
-      setRawLog({
+      const log2 = setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
-      setRawLog({
+      const log3 = setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
-      setRawLog({
+      const log4 = setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -269,8 +263,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
       expect(iter).toBeIterable()
       expect(rows).toEqual([
-        { id: `${timestamp1}-0`, payload: payload[0] }
-      , { id: `${timestamp1}-1`, payload: payload[1] }
+        { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+      , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
       ])
     })
   })
@@ -281,39 +275,38 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { head: 2, to: `${timestamp2}-0` })
+        const iter = DAO.queryLogs(id, { head: 2, to: `${log3.timestamp}-${log3.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-0`, payload: payload[0] }
-        , { id: `${timestamp1}-1`, payload: payload[1] }
+          { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+        , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
         ])
       })
     })
@@ -323,28 +316,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -354,7 +346,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-0`, payload: payload[0] }
+          { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
         ])
       })
     })
@@ -366,39 +358,38 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { head: 2, from: `${timestamp1}-1` })
+        const iter = DAO.queryLogs(id, { head: 2, from: `${log2.timestamp}-${log2.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-1`, payload: payload[1] }
-        , { id: `${timestamp2}-0`, payload: payload[2] }
+          { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        , { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
         ])
       })
     })
@@ -408,28 +399,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -439,7 +429,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; head: s
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp2}-0`, payload: payload[2] }
+          { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
         ])
       })
     })
@@ -452,28 +442,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
       const id = 'id'
       const timestamp1 = Date.now()
       const timestamp2 = timestamp1 + 1
-      const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-      setRawLog({
+      const log1 = setRawLog({
         logger_id: id
-      , payload: payload[0]
+      , payload: 'payload1'
       , timestamp: timestamp1
       , number: 0
       })
-      setRawLog({
+      const log2 = setRawLog({
         logger_id: id
-      , payload: payload[1]
+      , payload: 'payload2'
       , timestamp: timestamp1
       , number: 1
       })
-      setRawLog({
+      const log3 = setRawLog({
         logger_id: id
-      , payload: payload[2]
+      , payload: 'payload3'
       , timestamp: timestamp2
       , number: 0
       })
-      setRawLog({
+      const log4 = setRawLog({
         logger_id: id
-      , payload: payload[3]
+      , payload: 'payload4'
       , timestamp: timestamp2
       , number: 1
       })
@@ -483,8 +472,8 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
       expect(iter).toBeIterable()
       expect(rows).toEqual([
-        { id: `${timestamp2}-0`, payload: payload[2] }
-      , { id: `${timestamp2}-1`, payload: payload[3] }
+        { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
+      , { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
       ])
     })
   })
@@ -495,39 +484,38 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { tail: 2, to: `${timestamp2}-0` })
+        const iter = DAO.queryLogs(id, { tail: 2, to: `${log3.timestamp}-${log3.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-1`, payload: payload[1] }
-        , { id: `${timestamp2}-0`, payload: payload[2] }
+          { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        , { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
         ])
       })
     })
@@ -537,28 +525,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -568,7 +555,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp1}-1`, payload: payload[1] }
+          { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
         ])
       })
     })
@@ -580,39 +567,38 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
 
-        const iter = DAO.queryLogs(id, { tail: 2, from: `${timestamp1}-1` })
+        const iter = DAO.queryLogs(id, { tail: 2, from: `${log2.timestamp}-${log2.number}` })
         const rows = toArray(iter)
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp2}-0`, payload: payload[2] }
-        , { id: `${timestamp2}-1`, payload: payload[3] }
+          { id: `${log3.timestamp}-${log3.number}`, payload: log3.payload }
+        , { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
         ])
       })
     })
@@ -622,28 +608,27 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
         const id = 'id'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
-        const payload = ['payload1', 'payload2', 'payload3', 'payload4']
-        setRawLog({
+        const log1 = setRawLog({
           logger_id: id
-        , payload: payload[0]
+        , payload: 'payload1'
         , timestamp: timestamp1
         , number: 0
         })
-        setRawLog({
+        const log2 = setRawLog({
           logger_id: id
-        , payload: payload[1]
+        , payload: 'payload2'
         , timestamp: timestamp1
         , number: 1
         })
-        setRawLog({
+        const log3 = setRawLog({
           logger_id: id
-        , payload: payload[2]
+        , payload: 'payload3'
         , timestamp: timestamp2
         , number: 0
         })
-        setRawLog({
+        const log4 = setRawLog({
           logger_id: id
-        , payload: payload[3]
+        , payload: 'payload4'
         , timestamp: timestamp2
         , number: 1
         })
@@ -653,7 +638,7 @@ describe('queryLogs(id: string, paramters: { from?: string; to?: string; tail: s
 
         expect(iter).toBeIterable()
         expect(rows).toEqual([
-          { id: `${timestamp2}-1`, payload: payload[3] }
+          { id: `${log4.timestamp}-${log4.number}`, payload: log4.payload }
         ])
       })
     })

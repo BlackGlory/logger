@@ -7,7 +7,7 @@ interface IRawLog {
   number: number
 }
 
-export function setRawLog(props: IRawLog): void {
+export function setRawLog(item: IRawLog): IRawLog {
   getDatabase().prepare(`
     INSERT INTO logger_log (
       logger_id
@@ -21,7 +21,9 @@ export function setRawLog(props: IRawLog): void {
     , $timestamp
     , $number
     );
-  `).run(props)
+  `).run(item)
+
+  return item
 }
 
 export function getAllRawLogs(id: string): IRawLog[] {
