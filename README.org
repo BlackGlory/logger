@@ -163,7 +163,7 @@ sse-cat "http://localhost:8080/logger/$id"
 
 ****** JavaScript
 #+BEGIN_SRC js
-const es = new EventSource(`http://localhost:8080/logger/$id`)
+const es = new EventSource(`http://localhost:8080/logger/${id}`)
 es.addEventListener('message', event => {
   console.log(event.data)
 })
@@ -201,7 +201,7 @@ websocat "ws://localhost:8080/logger/$id"
 
 ****** JavaScript
 #+BEGIN_SRC js
-const ws = new WebSocket('ws://localhost:8080')
+const ws = new WebSocket(`ws://localhost:8080/logger/${id}`)
 ws.addEventListener('message', event => {
     console.log(event.data);
 })
@@ -287,7 +287,7 @@ curl 'http://localhost:8080/logger'
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/store').then(res => res.json())
+await fetch('http://localhost:8080/logger').then(res => res.json())
 #+END_SRC
 
 **** metrics
@@ -900,7 +900,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/logger/${id}/tokens/$token/log`, {
+await fetch(`http://localhost:8080/api/logger/${id}/tokens/${token}/log`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -948,7 +948,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/logger/${id}/tokens/$token/read`, {
+await fetch(`http://localhost:8080/api/logger/${id}/tokens/${token}/read`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -996,7 +996,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/logger/${id}/tokens/$token/delete`, {
+await fetch(`http://localhost:8080/api/logger/${id}/tokens/${token}/delete`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
