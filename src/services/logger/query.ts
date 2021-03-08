@@ -1,3 +1,4 @@
+import { go } from '@blackglory/go'
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema, logIdSchema } from '@src/schema'
 import { Readable } from 'stream'
@@ -33,7 +34,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , (req, reply) => {
-      ;(async () => {
+      go(async () => {
         const id = req.params.id
         const token = req.query.token
         const range: IRange = {
@@ -67,7 +68,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
             .header('Content-Type', 'application/json')
             .send(Readable.from(stringifyJSONStreamAsync(logs)))
         }
-      })()
+      })
     }
   )
 }
