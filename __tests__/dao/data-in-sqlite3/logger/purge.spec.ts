@@ -1,14 +1,12 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/purge'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawLog, getAllRawLogs } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
   it('return undefined', () => {

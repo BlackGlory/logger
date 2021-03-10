@@ -10,12 +10,6 @@ interface ILog {
 interface ICore {
   isAdmin(password: string): boolean
 
-  metrics(): {
-    memoryUsage: NodeJS.MemoryUsage
-    cpuUsage: NodeJS.CpuUsage
-    resourceUsage: NodeJS.ResourceUsage
-  }
-
   Logger: {
     write(key: string, value: string): Promise<void>
     follow(key: string, listener: (log: ILog) => void): IUnfollow

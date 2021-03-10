@@ -1,5 +1,4 @@
 import { isAdmin } from './admin'
-import { metrics } from './metrics'
 import * as Logger from './logger'
 import * as Blacklist from './blacklist'
 import * as Whitelist from './whitelist'
@@ -9,7 +8,6 @@ import { TBAC } from './token-based-access-control'
 
 export const Core: ICore = {
   isAdmin
-, metrics
 , Logger
 , PurgePolicy
 , Blacklist

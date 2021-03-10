@@ -1,22 +1,37 @@
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import { resetCache } from '@env/cache'
+import { buildServer } from '@src/server'
 
-export async function resetDatabases() {
-  await resetDataInSqlite3Database()
-  await resetConfigInSqlite3Database()
+let server: ReturnType<typeof buildServer>
+
+export function getServer() {
+  return server
 }
 
-async function resetDataInSqlite3Database() {
-  DataInSqlite3.closeDatabase()
+export async function startService() {
+  await initializeDatabases()
+  server = buildServer()
+}
+
+export async function stopService() {
+  server.metrics.clearRegister()
+  await server.close()
+  clearDatabases()
+  resetEnvironment()
+}
+
+export async function initializeDatabases() {
+  ConfigInSqlite3.openDatabase()
+  await ConfigInSqlite3.prepareDatabase()
+
   DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
 }
 
-async function resetConfigInSqlite3Database() {
+export async function clearDatabases() {
   ConfigInSqlite3.closeDatabase()
-  ConfigInSqlite3.openDatabase()
-  await ConfigInSqlite3.prepareDatabase()
+  DataInSqlite3.closeDatabase()
 }
 
 export function resetEnvironment() {

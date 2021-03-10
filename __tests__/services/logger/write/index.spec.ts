@@ -1,5 +1,4 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { JsonSchemaDAO } from '@dao'
 
@@ -7,10 +6,8 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('no access control', () => {
   describe('LOGGER_JSON_VALIDATION=true', () => {
@@ -22,7 +19,7 @@ describe('no access control', () => {
             process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
               type: 'number'
             })
-            const server = await buildServer()
+            const server = getServer()
             const id = 'id'
             const message = '123'
 
@@ -45,7 +42,7 @@ describe('no access control', () => {
             process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
               type: 'number'
             })
-            const server = await buildServer()
+            const server = getServer()
             const id = 'id'
             const message = ' "message" '
 
@@ -69,7 +66,7 @@ describe('no access control', () => {
           process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
             type: 'number'
           })
-          const server = await buildServer()
+          const server = getServer()
           const id = 'id'
           const message = 'message'
 
@@ -99,7 +96,7 @@ describe('no access control', () => {
               id
             , schema: JSON.stringify(schema)
             })
-            const server = await buildServer()
+            const server = getServer()
 
             const res = await server.inject({
               method: 'POST'
@@ -120,7 +117,7 @@ describe('no access control', () => {
             const id = 'id'
             const schema = { type: 'string' }
             const message = 'message'
-            const server = await buildServer()
+            const server = getServer()
             await JsonSchemaDAO.setJsonSchema({
               id
             , schema: JSON.stringify(schema)
@@ -146,7 +143,7 @@ describe('no access control', () => {
           const id = 'id'
           const schema = { type: 'string' }
           const message = ' "message" '
-          const server = await buildServer()
+          const server = getServer()
           await JsonSchemaDAO.setJsonSchema({
             id
           , schema: JSON.stringify(schema)
@@ -174,7 +171,7 @@ describe('no access control', () => {
             const id = 'id'
             const schema = { type: 'string' }
             const message = ' "message" '
-            const server = await buildServer()
+            const server = getServer()
             await JsonSchemaDAO.setJsonSchema({
               id
             , schema: JSON.stringify(schema)
@@ -198,7 +195,7 @@ describe('no access control', () => {
             process.env.LOGGER_JSON_VALIDATION = 'true'
             const id = 'id'
             const message = 'message'
-            const server = await buildServer()
+            const server = getServer()
 
             const res = await server.inject({
               method: 'POST'
@@ -220,7 +217,7 @@ describe('no access control', () => {
     describe('Content-Type: application/json', () => {
       it('accpet any plaintext, return 204', async () => {
         process.env.LOGGER_JSON_PAYLOAD_ONLY = 'true'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const message = JSON.stringify('message')
 
@@ -240,7 +237,7 @@ describe('no access control', () => {
     describe('other Content-Type', () => {
       it('400', async () => {
         process.env.LOGGER_JSON_PAYLOAD_ONLY = 'true'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const message = 'message'
 
@@ -260,7 +257,7 @@ describe('no access control', () => {
 
   describe('Content-Type', () => {
     it('accpet any content-type', async () => {
-      const server = await buildServer()
+      const server = getServer()
       const id = 'id'
       const message = 'message'
 

@@ -1,15 +1,13 @@
-import { resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/data-in-sqlite3/logger/delete-logs'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawLog, getAllRawLogs } from './utils'
 import '@blackglory/jest-matchers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('deleteLogs(id: string, paramters: { from?: string; to?: string }): void', () => {
   describe('ignore from and to', () => {

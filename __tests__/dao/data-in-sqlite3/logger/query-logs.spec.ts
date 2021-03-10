@@ -1,5 +1,5 @@
-import { resetDatabases, resetEnvironment } from '@test/utils'
 import * as DAO from '@dao/data-in-sqlite3/logger/query-logs'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { toArray } from 'iterable-operator'
 import { setRawLog } from './utils'
 import '@blackglory/jest-matchers'
@@ -7,10 +7,8 @@ import '@blackglory/jest-matchers'
 jest.mock('@dao/data-in-sqlite3/database')
 jest.mock('@dao/config-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('queryLogs(id: string, paramters: { from?: string; to?: string }): Iterable<{ id: string; payload: string }>', () => {
   describe('ignore from and to', () => {

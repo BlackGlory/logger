@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/write-log'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { getAllRawLogs } from './utils'
 import 'jest-extended'
 
@@ -13,10 +13,8 @@ jest.mock('@dao/data-in-sqlite3/logger/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('writeLog(id: string, payload: string): string', () => {
   describe('no limit', () => {

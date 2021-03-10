@@ -1,14 +1,11 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { AccessControlDAO } from '@dao'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
@@ -16,7 +13,7 @@ describe('blacklist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const id = 'id'
-        const server = await buildServer()
+        const server = getServer()
         await AccessControlDAO.addBlacklistItem(id)
 
         const res = await server.inject({
@@ -32,7 +29,7 @@ describe('blacklist', () => {
       it('200', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const id = 'id'
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -48,7 +45,7 @@ describe('blacklist', () => {
     describe('id in blacklist', () => {
       it('200', async () => {
         const id = 'id'
-        const server = await buildServer()
+        const server = getServer()
         await AccessControlDAO.addBlacklistItem(id)
 
         const res = await server.inject({
