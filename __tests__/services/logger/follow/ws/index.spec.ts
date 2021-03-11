@@ -1,4 +1,4 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import WebSocket = require('ws')
 import { waitForEventEmitter } from '@blackglory/wait-for'
@@ -13,14 +13,8 @@ afterEach(stopService)
 describe('no access control', () => {
   it('open', async () => {
     const id = 'id'
-    const server = getServer()
-    const address = await server.listen(0)
 
-    try {
-      const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-      await waitForEventEmitter(ws, 'open')
-    } finally {
-      await server.close()
-    }
+    const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+    await waitForEventEmitter(ws, 'open')
   })
 })

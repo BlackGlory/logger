@@ -1,12 +1,16 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { JsonSchemaDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { post } from 'extra-request'
+import { url, pathname, json, text, header } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(startService)
+// 由于服务启动时会读取环境变量 LOGGER_JSON_PAYLOAD_ONLY
+// 因此环境变量必须在服务启动前设置, 这迫使测试用例手动启动服务
 afterEach(stopService)
 
 describe('no access control', () => {
@@ -19,20 +23,17 @@ describe('no access control', () => {
             process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
               type: 'number'
             })
-            const server = getServer()
+            await startService()
             const id = 'id'
-            const message = '123'
+            const message = 123
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , json(message)
+            ))
 
-            expect(res.statusCode).toBe(204)
+            expect(res.status).toBe(204)
           })
         })
 
@@ -42,20 +43,17 @@ describe('no access control', () => {
             process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
               type: 'number'
             })
-            const server = getServer()
+            await startService()
             const id = 'id'
             const message = ' "message" '
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , json(message)
+            ))
 
-            expect(res.statusCode).toBe(400)
+            expect(res.status).toBe(400)
           })
         })
       })
@@ -66,20 +64,17 @@ describe('no access control', () => {
           process.env.LOGGER_DEFAULT_JSON_SCHEMA = JSON.stringify({
             type: 'number'
           })
-          const server = getServer()
+          await startService()
           const id = 'id'
           const message = 'message'
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , payload: message
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })
@@ -89,50 +84,45 @@ describe('no access control', () => {
         describe('valid JSON', () => {
           it('204', async () => {
             process.env.LOGGER_JSON_VALIDATION = 'true'
+            await startService()
             const id = 'id'
             const schema = { type: 'string' }
-            const message = ' "message" '
+            const message = 'message'
             await JsonSchemaDAO.setJsonSchema({
               id
             , schema: JSON.stringify(schema)
             })
-            const server = getServer()
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , json(message)
+            ))
 
-            expect(res.statusCode).toBe(204)
+            expect(res.status).toBe(204)
           })
         })
 
         describe('invalid JSON', () => {
           it('400', async () => {
             process.env.LOGGER_JSON_VALIDATION = 'true'
+            await startService()
             const id = 'id'
             const schema = { type: 'string' }
             const message = 'message'
-            const server = getServer()
             await JsonSchemaDAO.setJsonSchema({
               id
             , schema: JSON.stringify(schema)
             })
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , text(message)
+            , header('Content-Type', 'application/json')
+            ))
 
-            expect(res.statusCode).toBe(400)
+            expect(res.status).toBe(400)
           })
         })
       })
@@ -140,25 +130,22 @@ describe('no access control', () => {
       describe('other Content-Type', () => {
         it('415', async () => {
           process.env.LOGGER_JSON_VALIDATION = 'true'
+          await startService()
           const id = 'id'
           const schema = { type: 'string' }
           const message = ' "message" '
-          const server = getServer()
           await JsonSchemaDAO.setJsonSchema({
             id
           , schema: JSON.stringify(schema)
           })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , payload: message
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(415)
+          expect(res.status).toBe(415)
         })
       })
     })
@@ -168,45 +155,40 @@ describe('no access control', () => {
         describe('valid JSON', () => {
           it('204', async () => {
             process.env.LOGGER_JSON_VALIDATION = 'true'
+            await startService()
             const id = 'id'
             const schema = { type: 'string' }
-            const message = ' "message" '
-            const server = getServer()
+            const message = 'message'
             await JsonSchemaDAO.setJsonSchema({
               id
             , schema: JSON.stringify(schema)
             })
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , json(message)
+            ))
 
-            expect(res.statusCode).toBe(204)
+            expect(res.status).toBe(204)
           })
         })
 
         describe('invalid JSON', () => {
           it('400', async () => {
             process.env.LOGGER_JSON_VALIDATION = 'true'
+            await startService()
             const id = 'id'
             const message = 'message'
-            const server = getServer()
 
-            const res = await server.inject({
-              method: 'POST'
-            , url: `/logger/${id}`
-            , payload: message
-            , headers: {
-                'Content-Type': 'application/json'
-              }
-            })
+            const res = await fetch(post(
+              url(getAddress())
+            , pathname(`/logger/${id}`)
+            , text(message)
+            , header('Content-Type', 'application/json')
+            ))
 
-            expect(res.statusCode).toBe(400)
+            expect(res.status).toBe(400)
           })
         })
       })
@@ -217,60 +199,52 @@ describe('no access control', () => {
     describe('Content-Type: application/json', () => {
       it('accpet any plaintext, return 204', async () => {
         process.env.LOGGER_JSON_PAYLOAD_ONLY = 'true'
-        const server = getServer()
+        await startService()
         const id = 'id'
         const message = JSON.stringify('message')
 
-        const res = await server.inject({
-          method: 'POST'
-        , url: `/logger/${id}`
-        , payload: message
-        , headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+        const res = await fetch(post(
+          url(getAddress())
+        , pathname(`/logger/${id}`)
+        , json(message)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('other Content-Type', () => {
       it('400', async () => {
         process.env.LOGGER_JSON_PAYLOAD_ONLY = 'true'
-        const server = getServer()
+        await startService()
         const id = 'id'
         const message = 'message'
 
-        const res = await server.inject({
-          method: 'POST'
-        , url: `/logger/${id}`
-        , payload: message
-        , headers: {
-            'Content-Type': 'text/plain'
-          }
-        })
+        const res = await fetch(post(
+          url(getAddress())
+        , pathname(`/logger/${id}`)
+        , text(message)
+        ))
 
-        expect(res.statusCode).toBe(400)
+        expect(res.status).toBe(400)
       })
     })
   })
 
   describe('Content-Type', () => {
     it('accpet any content-type', async () => {
-      const server = getServer()
+      await startService()
       const id = 'id'
       const message = 'message'
 
-      const res = await server.inject({
-        method: 'POST'
-      , url: `/logger/${id}`
-      , payload: message
-      , headers: {
-          'Content-Type': 'apple/banana'
-        }
-      })
+      const res = await fetch(post(
+        url(getAddress())
+      , pathname(`/logger/${id}`)
+      , text(message)
+      , header('Content-Type', 'apple/banana')
+      ))
 
-      expect(res.statusCode).toBe(204)
+      expect(res.status).toBe(204)
     })
   })
 })

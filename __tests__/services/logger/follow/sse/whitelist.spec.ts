@@ -1,8 +1,11 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { EventSource } from 'extra-fetch'
 import { waitForEventTarget } from '@blackglory/wait-for'
+import { fetch } from 'extra-fetch'
+import { get } from 'extra-request'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -18,16 +21,10 @@ describe('whitelist', () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const id = 'id'
         await AccessControlDAO.addWhitelistItem(id)
-        const server = getServer()
-        const address = await server.listen(0)
 
-        try {
-          const es = new EventSource(`${address}/logger/${id}`)
-          await waitForEventTarget(es as EventTarget, 'open')
-          es.close()
-        } finally {
-          await server.close()
-        }
+        const es = new EventSource(`${getAddress()}/logger/${id}`)
+        await waitForEventTarget(es as EventTarget, 'open')
+        es.close()
       })
     })
 
@@ -35,14 +32,13 @@ describe('whitelist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/logger/${id}`
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/logger/${id}`)
+        ))
 
-        expect(res.statusCode).toBe(403)
+        expect(res.status).toBe(403)
       })
     })
   })
@@ -51,16 +47,10 @@ describe('whitelist', () => {
     describe('id not in whitelist', () => {
       it('200', async () => {
         const id = 'id'
-        const server = getServer()
-        const address = await server.listen(0)
 
-        try {
-          const es = new EventSource(`${address}/logger/${id}`)
-          await waitForEventTarget(es as EventTarget, 'open')
-          es.close()
-        } finally {
-          await server.close()
-        }
+        const es = new EventSource(`${getAddress()}/logger/${id}`)
+        await waitForEventTarget(es as EventTarget, 'open')
+        es.close()
       })
     })
   })

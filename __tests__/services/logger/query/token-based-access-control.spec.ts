@@ -1,5 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { AccessControlDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { get, put, del } from 'extra-request'
+import { url, pathname, searchParam, headers, json, text, header } from 'extra-request/lib/es2018/transformers'
+import { toJSON } from 'extra-response'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -15,17 +19,16 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          , query: { token }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
 
@@ -34,17 +37,16 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          , query: { token: 'bad' }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          , searchParam('token', 'bad')
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -53,16 +55,15 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -73,14 +74,13 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -89,14 +89,13 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'false'
           const id = 'id'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -108,17 +107,16 @@ describe('token-based access control', () => {
         it('200', async () => {
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          , query: { token }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -129,17 +127,16 @@ describe('token-based access control', () => {
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}/logs`
-          , query: { token }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}/logs`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })

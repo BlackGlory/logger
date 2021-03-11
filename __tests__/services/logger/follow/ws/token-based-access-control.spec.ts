@@ -1,4 +1,4 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import WebSocket = require('ws')
@@ -19,17 +19,11 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}?token=${token}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'open')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}?token=${token}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'open')
         })
       })
 
@@ -38,17 +32,11 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}?token=bad`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'error')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}?token=bad`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'error')
         })
       })
 
@@ -57,17 +45,11 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'error')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'error')
         })
       })
     })
@@ -78,15 +60,9 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
-          const server = getServer()
-          const address = await server.listen(0)
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'error')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'error')
         })
       })
 
@@ -95,15 +71,9 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'false'
           const id = 'id'
-          const server = getServer()
-          const address = await server.listen(0)
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'open')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'open')
         })
       })
     })
@@ -115,17 +85,11 @@ describe('token-based access control', () => {
         it('open', async () => {
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setDeleteTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'open')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'open')
         })
       })
     })
@@ -135,15 +99,9 @@ describe('token-based access control', () => {
         it('open', async () => {
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
-          const server = getServer()
-          const address = await server.listen(0)
 
-          try {
-            const ws = new WebSocket(`${address}/logger/${id}`.replace('http', 'ws'))
-            await waitForEventEmitter(ws, 'open')
-          } finally {
-            await server.close()
-          }
+          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          await waitForEventEmitter(ws, 'open')
         })
       })
     })

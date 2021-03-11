@@ -1,6 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { post } from 'extra-request'
+import { url, pathname, searchParam, text } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -18,21 +21,17 @@ describe('token-based access control', () => {
           const id = 'id'
           const token = 'token'
           const message = 'message'
-          const server = getServer()
           await AccessControlDAO.setWriteTokenRequired(id, true)
           await AccessControlDAO.setWriteToken({ id, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , query: { token }
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , searchParam('token', token)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
 
@@ -42,21 +41,17 @@ describe('token-based access control', () => {
           const id = 'id'
           const token = 'token'
           const message = 'message'
-          const server = getServer()
           await AccessControlDAO.setWriteTokenRequired(id, true)
           await AccessControlDAO.setWriteToken({ id, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , query: { token: 'bad' }
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , searchParam('token', 'bad')
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -66,20 +61,16 @@ describe('token-based access control', () => {
           const id = 'id'
           const token = 'token'
           const message = 'message'
-          const server = getServer()
           await AccessControlDAO.setWriteTokenRequired(id, true)
           await AccessControlDAO.setWriteToken({ id, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -91,18 +82,14 @@ describe('token-based access control', () => {
           process.env.LOGGER_WRITE_TOKEN_REQUIRED = 'true'
           const id = 'id'
           const message = 'message'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -112,18 +99,14 @@ describe('token-based access control', () => {
           process.env.LOGGER_WRITE_TOKEN_REQUIRED = 'false'
           const id = 'id'
           const message = 'message'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })
@@ -136,20 +119,16 @@ describe('token-based access control', () => {
           const id = 'id'
           const token = 'token'
           const message = 'message'
-          const server = getServer()
           await AccessControlDAO.setWriteTokenRequired(id, true)
           await AccessControlDAO.setWriteToken({ id, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })
@@ -161,20 +140,16 @@ describe('token-based access control', () => {
           const id = 'id'
           const token = 'token'
           const message = 'message'
-          const server = getServer()
           await AccessControlDAO.setWriteTokenRequired(id, true)
           await AccessControlDAO.setWriteToken({ id, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/logger/${id}`
-          , headers: {
-              'Content-Type': 'text/plain'
-            }
-          , payload: message
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , text(message)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })

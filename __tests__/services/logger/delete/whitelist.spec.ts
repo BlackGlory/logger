@@ -1,6 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { del } from 'extra-request'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -15,15 +18,14 @@ describe('whitelist', () => {
       it('204', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const id = 'id'
-        const server = getServer()
         await AccessControlDAO.addWhitelistItem(id)
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/logger/${id}/logs`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/logger/${id}/logs`)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
@@ -31,14 +33,13 @@ describe('whitelist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/logger/${id}/logs`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/logger/${id}/logs`)
+        ))
 
-        expect(res.statusCode).toBe(403)
+        expect(res.status).toBe(403)
       })
     })
   })
@@ -47,14 +48,13 @@ describe('whitelist', () => {
     describe('id not in whitelist', () => {
       it('204', async () => {
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/logger/${id}/logs`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/logger/${id}/logs`)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
   })

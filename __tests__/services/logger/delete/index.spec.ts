@@ -1,5 +1,8 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
+import { fetch } from 'extra-fetch'
+import { del } from 'extra-request'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -10,14 +13,13 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const server = getServer()
     const id = 'id'
 
-    const res = await server.inject({
-      method: 'DELETE'
-    , url: `/logger/${id}/logs`
-    })
+    const res = await fetch(del(
+      url(getAddress())
+    , pathname(`/logger/${id}/logs`)
+    ))
 
-    expect(res.statusCode).toBe(204)
+    expect(res.status).toBe(204)
   })
 })

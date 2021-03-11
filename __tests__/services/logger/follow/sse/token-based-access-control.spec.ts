@@ -1,8 +1,11 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { EventSource } from 'extra-fetch'
 import { waitForEventTarget } from '@blackglory/wait-for'
+import { fetch } from 'extra-fetch'
+import { get } from 'extra-request'
+import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -19,18 +22,12 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const es = new EventSource(`${address}/logger/${id}?token=${token}`)
-            await waitForEventTarget(es as EventTarget, 'open')
-            es.close()
-          } finally {
-            await server.close()
-          }
+          const es = new EventSource(`${getAddress()}/logger/${id}?token=${token}`)
+          await waitForEventTarget(es as EventTarget, 'open')
+          es.close()
         })
       })
 
@@ -39,17 +36,16 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}`
-          , query: { token: 'bad' }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          , searchParam('token', 'bad')
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -58,16 +54,15 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setReadTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -78,14 +73,13 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/logger/${id}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/logger/${id}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -94,16 +88,10 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'false'
           const id = 'id'
-          const server = getServer()
-          const address = await server.listen(0)
 
-          try {
-            const es = new EventSource(`${address}/logger/${id}`)
-            await waitForEventTarget(es as EventTarget, 'open')
-            es.close()
-          } finally {
-            await server.close()
-          }
+          const es = new EventSource(`${getAddress()}/logger/${id}`)
+          await waitForEventTarget(es as EventTarget, 'open')
+          es.close()
         })
       })
     })
@@ -115,18 +103,12 @@ describe('token-based access control', () => {
         it('200', async () => {
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
           await AccessControlDAO.setDeleteTokenRequired(id, true)
           await AccessControlDAO.setReadToken({ id, token })
 
-          try {
-            const es = new EventSource(`${address}/logger/${id}?token=${token}`)
-            await waitForEventTarget(es as EventTarget, 'open')
-            es.close()
-          } finally {
-            await server.close()
-          }
+          const es = new EventSource(`${getAddress()}/logger/${id}?token=${token}`)
+          await waitForEventTarget(es as EventTarget, 'open')
+          es.close()
         })
       })
     })
@@ -137,16 +119,10 @@ describe('token-based access control', () => {
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
           const id = 'id'
           const token = 'token'
-          const server = getServer()
-          const address = await server.listen(0)
 
-          try {
-            const es = new EventSource(`${address}/logger/${id}?token=${token}`)
-            await waitForEventTarget(es as EventTarget, 'open')
-            es.close()
-          } finally {
-            await server.close()
-          }
+          const es = new EventSource(`${getAddress()}/logger/${id}?token=${token}`)
+          await waitForEventTarget(es as EventTarget, 'open')
+          es.close()
         })
       })
     })

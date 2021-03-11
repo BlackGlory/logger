@@ -1,5 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
+import { fetch } from 'extra-fetch'
+import { get, put, del, post } from 'extra-request'
+import { url, pathname, headers, json } from 'extra-request/lib/es2018/transformers'
+import { toJSON } from 'extra-response'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,16 +17,15 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/logger-with-purge-policies'
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/logger-with-purge-policies')
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'array'
         , items: {
             type: 'object'
@@ -47,29 +50,26 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/logger-with-purge-policies')
+        ))
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/logger-with-purge-policies'
-        })
-
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/logger-with-purge-policies'
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/logger-with-purge-policies')
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -78,17 +78,16 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/logger/${id}/purge-policies`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'object'
         , properties: {
             timeToLive: {
@@ -110,30 +109,28 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/logger/${id}/purge-policies`
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/logger/${id}/purge-policies`
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -142,59 +139,49 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , payload: JSON.stringify(val)
-        , headers: createJsonHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders('bad')
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -203,56 +190,49 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        , payload: JSON.stringify(val)
-        , headers: createJsonHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = 1
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        , payload: JSON.stringify(val)
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -261,47 +241,43 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , headers: createJsonHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/time-to-live`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -310,46 +286,43 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/logger/${id}/purge-policies/limit`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -358,46 +331,43 @@ describe('PurgePolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'POST'
-        , url: `/api/logger/${id}/purge-policies`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(post(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'POST'
-        , url: `/api/logger/${id}/purge-policies`
-        })
+        const res = await fetch(post(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'POST'
-        , url: `/api/logger/${id}/purge-policies`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(post(
+          url(getAddress())
+        , pathname(`/api/logger/${id}/purge-policies`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -406,11 +376,5 @@ describe('PurgePolicy', () => {
 function createAuthHeaders(adminPassword?: string) {
   return {
     'Authorization': `Bearer ${ adminPassword ?? process.env.LOGGER_ADMIN_PASSWORD }`
-  }
-}
-
-function createJsonHeaders() {
-  return {
-    'Content-Type': 'application/json'
   }
 }
