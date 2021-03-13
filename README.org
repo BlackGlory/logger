@@ -155,6 +155,15 @@ Logger将发送自Last-Event-Id之后的所有日志.
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
 =/logger/<id>?token=<token>=
 
+***** heartbeat
+通过环境变量 =LOGGER_SSE_HEARTBEAT_INTERVAL= 可以设置SSE心跳包的发送间隔, 单位为毫秒.
+在默认情况下, 服务不会发送SSE心跳包,
+半开连接的检测依赖于服务端和客户端的运行平台的TCP Keepalive配置.
+
+当 =LOGGER_SSE_HEARTBEAT_INTERVAL= 大于零时,
+服务会通过SSE的heartbeat事件按指定间隔发送空白数据.
+客户端若要实现半开连接检测, 则需要自行根据heartbeat事件设定计时器, 以判断连接是否正常.
+
 ***** Example
 ****** sse-cat
 #+BEGIN_SRC sh

@@ -157,6 +157,14 @@ export const LOGGER_LOGS_LIMIT: Getter<number> =
     .memoize(getCache)
     .get()
 
+export const SSE_HEARTBEAT_INTERVAL: Getter<number> =
+  env('LOGGER_SSE_HEARTBEAT_INTERVAL')
+    .convert(toInteger)
+    .default(0)
+    .assert(shouldBePositiveOrZero)
+    .memoize(getCache)
+    .get()
+
 function env(name: string): ValueGetter<string | undefined> {
   return new ValueGetter(() => process.env[name])
 }
@@ -177,4 +185,8 @@ function toJsonObject(val: string | undefined): object | undefined {
 
 function shouldBePositive(val: number) {
   assert(val > 0)
+}
+
+function shouldBePositiveOrZero(val: number) {
+  assert(val === 0 || val > 0)
 }
