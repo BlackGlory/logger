@@ -75,8 +75,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         const unfollow = Core.Logger.follow(id, async log => {
           const data = JSON.stringify(log)
-          for (const message of sse(data)) {
-            if (!reply.raw.write(message)) {
+          for (const line of sse({ id: log.id, data })) {
+            if (!reply.raw.write(line)) {
               await waitForEventEmitter(reply.raw, 'drain')
             }
           }
@@ -84,12 +84,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         let heartbeatTimer: NodeJS.Timeout | null = null
         if (SSE_HEARTBEAT_INTERVAL() > 0) {
-          heartbeatTimer = setInterval(() => {
-            reply.raw.write(
-              'event: heartbeat' + '\n'
-            + 'data: ' + '\n'
-            + '\n'
-            )
+          heartbeatTimer = setInterval(async () => {
+            for (const line of sse({ event: 'heartbeat', data: '' })) {
+              if (!reply.raw.write(line)) {
+                await waitForEventEmitter(reply.raw, 'drain')
+              }
+            }
           }, SSE_HEARTBEAT_INTERVAL())
         }
         req.raw.on('close', () => {
@@ -103,8 +103,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           for await (const log of logs) {
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)
-            for (const message of sse(data)) {
-              if (!reply.raw.write(message)) {
+            for (const line of sse({ data })) {
+              if (!reply.raw.write(line)) {
                 await waitForEventEmitter(reply.raw, 'drain')
               }
             }
