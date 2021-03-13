@@ -5,13 +5,14 @@ import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
 import { waitForEventEmitter } from '@blackglory/wait-for'
 import { sse } from 'extra-generator'
-import { SSE_HEARTBEAT_INTERVAL } from '@env'
+import { SSE_HEARTBEAT_INTERVAL, WS_HEARTBEAT_INTERVAL } from '@env'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import WebSocket = require('ws')
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   const wss = new WebSocket.Server({ noServer: true })
 
+  // WebSocket handler
   wss.on('connection', async (ws: WebSocket, req: http.IncomingMessage, params: { id: string }) => {
     const id = params.id
 
@@ -19,8 +20,21 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const data = JSON.stringify(log)
       ws.send(data)
     })
-    ws.on('close', () => unfollow())
-    ws.on('message', () => ws.close())
+
+    let cancelHeartbeatTimer: (() => void) | null = null
+    if (WS_HEARTBEAT_INTERVAL() > 0) {
+      cancelHeartbeatTimer = setDynamicTimeoutLoop(WS_HEARTBEAT_INTERVAL(), () => {
+        ws.ping()
+      })
+    }
+
+    ws.on('close', () => {
+      if (cancelHeartbeatTimer) cancelHeartbeatTimer()
+      unfollow()
+    })
+    ws.on('message', message => {
+      if (message.toString() !== '') ws.close()
+    })
 
     const since = parseQuerystring<{ since?: string }>(req.url!).since
     if (since) {
