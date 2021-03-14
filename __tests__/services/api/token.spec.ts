@@ -14,14 +14,14 @@ beforeEach(startService)
 afterEach(stopService)
 
 describe('TBAC', () => {
-  describe('GET /api/logger-with-tokens', () => {
+  describe('GET /admin/logger-with-tokens', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-tokens')
+        , pathname('/admin/logger-with-tokens')
         , headers(createAuthHeaders())
         ))
 
@@ -37,7 +37,7 @@ describe('TBAC', () => {
       it('401', async () => {
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-tokens')
+        , pathname('/admin/logger-with-tokens')
         ))
 
         expect(res.status).toBe(401)
@@ -50,7 +50,7 @@ describe('TBAC', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-tokens')
+        , pathname('/admin/logger-with-tokens')
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -59,7 +59,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('GET /api/logger/:id/tokens', () => {
+  describe('GET /admin/logger/:id/tokens', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -67,7 +67,7 @@ describe('TBAC', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens`)
+        , pathname(`/admin/logger/${id}/tokens`)
         , headers(createAuthHeaders())
         ))
 
@@ -93,7 +93,7 @@ describe('TBAC', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens`)
+        , pathname(`/admin/logger/${id}/tokens`)
         ))
 
         expect(res.status).toBe(401)
@@ -107,7 +107,7 @@ describe('TBAC', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens`)
+        , pathname(`/admin/logger/${id}/tokens`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -116,7 +116,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/tokens/:token/write', () => {
+  describe('PUT /admin/logger/:id/tokens/:token/write', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -125,7 +125,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         , headers(createAuthHeaders())
         ))
 
@@ -140,7 +140,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         ))
 
         expect(res.status).toBe(401)
@@ -155,7 +155,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -164,7 +164,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/tokens/:token/write', () => {
+  describe('DELETE /admin/logger/:id/tokens/:token/write', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -173,7 +173,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         , headers(createAuthHeaders())
         ))
 
@@ -188,7 +188,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         ))
 
         expect(res.status).toBe(401)
@@ -203,7 +203,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/write`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/write`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -212,7 +212,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/tokens/:token/read', () => {
+  describe('PUT /admin/logger/:id/tokens/:token/read', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -221,7 +221,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         , headers(createAuthHeaders())
         ))
 
@@ -236,7 +236,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         ))
 
         expect(res.status).toBe(401)
@@ -251,7 +251,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -260,7 +260,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/tokens/:token/read', () => {
+  describe('DELETE /admin/logger/:id/tokens/:token/read', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -269,7 +269,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         , headers(createAuthHeaders())
         ))
 
@@ -284,7 +284,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         ))
 
         expect(res.status).toBe(401)
@@ -299,7 +299,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/read`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/read`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -308,7 +308,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/tokens/:token/delete', () => {
+  describe('PUT /admin/logger/:id/tokens/:token/delete', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -317,7 +317,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         , headers(createAuthHeaders())
         ))
 
@@ -332,7 +332,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         ))
 
         expect(res.status).toBe(401)
@@ -347,7 +347,7 @@ describe('TBAC', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -356,7 +356,7 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/tokens/:token/delete', () => {
+  describe('DELETE /admin/logger/:id/tokens/:token/delete', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -365,7 +365,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         , headers(createAuthHeaders())
         ))
 
@@ -380,7 +380,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         ))
 
         expect(res.status).toBe(401)
@@ -395,7 +395,7 @@ describe('TBAC', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/tokens/${token}/delete`)
+        , pathname(`/admin/logger/${id}/tokens/${token}/delete`)
         , headers(createAuthHeaders('bad'))
         ))
 

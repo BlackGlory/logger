@@ -13,14 +13,14 @@ beforeEach(startService)
 afterEach(stopService)
 
 describe('PurgePolicy', () => {
-  describe('GET /api/logger-with-purge-policies', () => {
+  describe('GET /admin/logger-with-purge-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-purge-policies')
+        , pathname('/admin/logger-with-purge-policies')
         , headers(createAuthHeaders())
         ))
 
@@ -52,7 +52,7 @@ describe('PurgePolicy', () => {
       it('401', async () => {
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-purge-policies')
+        , pathname('/admin/logger-with-purge-policies')
         ))
 
         expect(res.status).toBe(401)
@@ -65,7 +65,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/logger-with-purge-policies')
+        , pathname('/admin/logger-with-purge-policies')
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -74,7 +74,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('GET /api/logger/:id/purge-policies', () => {
+  describe('GET /admin/logger/:id/purge-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -82,7 +82,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         , headers(createAuthHeaders())
         ))
 
@@ -113,7 +113,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -127,7 +127,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -135,7 +135,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/purge-policies/time-to-live', () => {
+  describe('PUT /admin/logger/:id/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -144,7 +144,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -160,7 +160,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         , json(val)
         ))
 
@@ -176,7 +176,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -186,7 +186,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('PUT /api/logger/:id/purge-policies/limit', () => {
+  describe('PUT /admin/logger/:id/purge-policies/limit', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -195,7 +195,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -211,7 +211,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         , json(val)
         ))
 
@@ -227,7 +227,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -237,7 +237,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/purge-policies/time-to-live', () => {
+  describe('DELETE /admin/logger/:id/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -245,7 +245,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         , headers(createAuthHeaders())
         ))
 
@@ -259,7 +259,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         ))
 
         expect(res.status).toBe(401)
@@ -273,7 +273,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -282,7 +282,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('DELETE /api/logger/:id/purge-policies/limit', () => {
+  describe('DELETE /admin/logger/:id/purge-policies/limit', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -290,7 +290,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         , headers(createAuthHeaders())
         ))
 
@@ -304,7 +304,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         ))
 
         expect(res.status).toBe(401)
@@ -318,7 +318,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${id}/purge-policies/limit`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -327,7 +327,7 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('POST /api/logger/:id/purge-policies', () => {
+  describe('POST /admin/logger/:id/purge-policies', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
@@ -335,7 +335,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         , headers(createAuthHeaders())
         ))
 
@@ -349,7 +349,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -363,7 +363,7 @@ describe('PurgePolicy', () => {
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/api/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${id}/purge-policies`)
         , headers(createAuthHeaders('bad'))
         ))
 
