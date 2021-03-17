@@ -1,6 +1,6 @@
 type IUnfollow = () => void
 type CustomErrorConsturctor = import('@blackglory/errors').CustomErrorConstructor
-type Json = import('@blackglory/types').Json
+type Json = import('justypes').Json
 
 interface ILog {
   id: string
