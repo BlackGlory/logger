@@ -1,15 +1,15 @@
 import { getDatabase } from '../database'
 
-export function getAllIdsWithPurgePolicies(): string[] {
+export function getAllNamespacesWithPurgePolicies(): string[] {
   const result = getDatabase().prepare(`
-    SELECT logger_id
+    SELECT namespace
       FROM logger_purge_policy;
   `).all()
 
-  return result.map(x => x['logger_id'])
+  return result.map(x => x['namespace'])
 }
 
-export function getPurgePolicies(id: string): {
+export function getPurgePolicies(namespace: string): {
   timeToLive: number | null
   numberLimit: number | null
 } {
@@ -17,8 +17,8 @@ export function getPurgePolicies(id: string): {
     SELECT time_to_live
          , number_limit
       FROM logger_purge_policy
-     WHERE logger_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
 
   if (row) {
     return {
@@ -30,55 +30,55 @@ export function getPurgePolicies(id: string): {
   }
 }
 
-export function setTimeToLive(id: string, timeToLive: number): void {
+export function setTimeToLive(namespace: string, timeToLive: number): void {
   getDatabase().prepare(`
-    INSERT INTO logger_purge_policy (logger_id, time_to_live)
-    VALUES ($id, $timeToLive)
-        ON CONFLICT(logger_id)
+    INSERT INTO logger_purge_policy (namespace, time_to_live)
+    VALUES ($namespace, $timeToLive)
+        ON CONFLICT(namespace)
         DO UPDATE SET time_to_live = $timeToLive;
-  `).run({ id, timeToLive })
+  `).run({ namespace, timeToLive })
 }
 
-export function unsetTimeToLive(id: string): void {
+export function unsetTimeToLive(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE logger_purge_policy
          SET time_to_live = NULL
-       WHERE logger_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoPoliciesRow(id)
+    deleteNoPoliciesRow(namespace)
   })()
 }
 
-export function setNumberLimit(id: string, numberLimit: number): void {
+export function setNumberLimit(namespace: string, numberLimit: number): void {
   getDatabase().prepare(`
-    INSERT INTO logger_purge_policy (logger_id, number_limit)
-    VALUES ($id, $numberLimit)
-        ON CONFLICT(logger_id)
+    INSERT INTO logger_purge_policy (namespace, number_limit)
+    VALUES ($namespace, $numberLimit)
+        ON CONFLICT(namespace)
         DO UPDATE SET number_limit = $numberLimit;
-  `).run({ id, numberLimit })
+  `).run({ namespace, numberLimit })
 }
 
-export function unsetNumberLimit(id: string): void {
+export function unsetNumberLimit(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE logger_purge_policy
          SET number_limit = NULL
-       WHERE logger_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoPoliciesRow(id)
+    deleteNoPoliciesRow(namespace)
   })()
 }
 
-function deleteNoPoliciesRow(id: string): void {
+function deleteNoPoliciesRow(namespace: string): void {
   getDatabase().prepare(`
     DELETE FROM logger_purge_policy
-     WHERE logger_id = $id
+     WHERE namespace = $namespace
        AND time_to_live IS NULL
        AND number_limit IS NULL
-  `).run({ id })
+  `).run({ namespace })
 }

@@ -3,26 +3,32 @@ import { getDatabase } from '../database'
 import { parseFrom } from './utils/parse-from'
 import { parseTo } from './utils/parse-to'
 
-export function queryLogs(id: string, range: IRange): Iterable<{ id: string; payload: string }> {
-  if ('head' in range) return queryLogsBySliceWithHead(id, range)
-  if ('tail' in range) return queryLogsBySliceWithTail(id, range)
-  return queryLogsBySlice(id, range)
+export function queryLogs(
+  namespace: string
+, range: IRange
+): Iterable<{ id: string; payload: string }> {
+  if ('head' in range) return queryLogsBySliceWithHead(namespace, range)
+  if ('tail' in range) return queryLogsBySliceWithTail(namespace, range)
+  return queryLogsBySlice(namespace, range)
 }
 
-function queryLogsBySlice(id: string, range: ISlice): Iterable<{ id: string; payload: string }> {
+function queryLogsBySlice(
+  namespace: string
+, range: ISlice
+): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
   const rows = getDatabase().prepare(sql`
     SELECT timestamp || '-' || number AS id
          , payload
       FROM logger_log
-     WHERE logger_id = $id
+     WHERE namespace = $namespace
     ${from && 'AND (timestamp > $fromTimestamp OR (timestamp = $fromTimestamp AND number >= $fromNumber))'}
     ${to   && 'AND (timestamp < $toTimestamp OR (timestamp = $toTimestamp AND number <= $toNumber))'}
      ORDER BY timestamp ASC
             , number    ASC;
   `).iterate({
-    id
+    namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
@@ -31,21 +37,24 @@ function queryLogsBySlice(id: string, range: ISlice): Iterable<{ id: string; pay
   return rows
 }
 
-function queryLogsBySliceWithHead(id: string, range: ISlice & IHead): Iterable<{ id: string; payload: string }> {
+function queryLogsBySliceWithHead(
+  namespace: string
+, range: ISlice & IHead
+): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
   const rows = getDatabase().prepare(sql`
     SELECT timestamp || '-' || number AS id
          , payload
       FROM logger_log
-     WHERE logger_id = $id
+     WHERE namespace = $namespace
     ${from && 'AND (timestamp > $fromTimestamp OR (timestamp = $fromTimestamp AND number >= $fromNumber))'}
     ${to   && 'AND (timestamp < $toTimestamp OR (timestamp = $toTimestamp AND number <= $toNumber))'}
      ORDER BY timestamp ASC
             , number    ASC
      LIMIT $head;
   `).iterate({
-    id
+    namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp
@@ -55,7 +64,10 @@ function queryLogsBySliceWithHead(id: string, range: ISlice & IHead): Iterable<{
   return rows
 }
 
-function queryLogsBySliceWithTail(id: string, range: ISlice & ITail): Iterable<{ id: string; payload: string }> {
+function queryLogsBySliceWithTail(
+  namespace: string
+, range: ISlice & ITail
+): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
   const rows = getDatabase().prepare(sql`
@@ -66,7 +78,7 @@ function queryLogsBySliceWithTail(id: string, range: ISlice & ITail): Iterable<{
                   , number
                   , payload
                FROM logger_log
-              WHERE logger_id = $id
+              WHERE namespace = $namespace
              ${from && 'AND (timestamp > $fromTimestamp OR (timestamp = $fromTimestamp AND number >= $fromNumber))'}
              ${to   && 'AND (timestamp < $toTimestamp OR (timestamp = $toTimestamp AND number <= $toNumber))'}
               ORDER BY timestamp DESC
@@ -76,7 +88,7 @@ function queryLogsBySliceWithTail(id: string, range: ISlice & ITail): Iterable<{
      ORDER BY timestamp ASC
             , number    ASC;
   `).iterate({
-    id
+    namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
   , toTimestamp: to?.timestamp

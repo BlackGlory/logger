@@ -17,12 +17,12 @@ type IRange =
 | (ISlice & ITail)
 
 interface ILoggerDAO {
-  writeLog(id: string, payload: string): Promise<string>
-  queryLogs(id: string, range: IRange): AsyncIterable<ILog>
-  deleteLogs(id: string, range: IRange): Promise<void>
+  writeLog(namespace: string, payload: string): Promise<string>
+  queryLogs(namespace: string, range: IRange): AsyncIterable<ILog>
+  deleteLogs(namespace: string, range: IRange): Promise<void>
 
-  getAllLoggerIds(): AsyncIterable<string>
+  getAllNamespaces(): AsyncIterable<string>
 
-  purgeByTimestamp(id: string, timestamp: number): Promise<void>
-  purgeByLimit(id: string, limit: number): Promise<void>
+  purgeByTimestamp(namespace: string, timestamp: number): Promise<void>
+  purgeByLimit(namespace: string, limit: number): Promise<void>
 }

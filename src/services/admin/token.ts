@@ -1,13 +1,13 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
-  // get all ids
-  server.get<{ Params: { id: string }}>(
+  // get all namespaces
+  server.get<{ Params: { namespace: string }}>(
     '/logger-with-tokens'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             type: 'array'
@@ -17,19 +17,19 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.TBAC.Token.getAllIds()
+      const result = await Core.TBAC.Token.getAllNamespaces()
       reply.send(result)
     }
   )
 
   // get all tokens
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/tokens'
+    '/logger/:namespace/tokens'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             type: 'array'
@@ -47,22 +47,22 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.TBAC.Token.getAll(id)
+      const namespace = req.params.namespace
+      const result = await Core.TBAC.Token.getAll(namespace)
       reply.send(result)
     }
   )
 
   // write token
   server.put<{
-    Params: { token: string, id: string }
+    Params: { token: string, namespace: string }
   }>(
-    '/logger/:id/tokens/:token/write'
+    '/logger/:namespace/tokens/:token/write'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -70,22 +70,22 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.setWriteToken(id, token)
+      await Core.TBAC.Token.setWriteToken(namespace, token)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { token: string, id: string }
+    Params: { token: string, namespace: string }
   }>(
-    '/logger/:id/tokens/:token/write'
+    '/logger/:namespace/tokens/:token/write'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -93,23 +93,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.unsetWriteToken(id, token)
+      await Core.TBAC.Token.unsetWriteToken(namespace, token)
       reply.status(204).send()
     }
   )
 
   // read token
   server.put<{
-    Params: { token: string, id : string }
+    Params: { token: string, namespace : string }
   }>(
-    '/logger/:id/tokens/:token/read'
+    '/logger/:namespace/tokens/:token/read'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -117,22 +117,22 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.setReadToken(id, token)
+      await Core.TBAC.Token.setReadToken(namespace, token)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { token: string, id : string }
+    Params: { token: string, namespace : string }
   }>(
-    '/logger/:id/tokens/:token/read'
+    '/logger/:namespace/tokens/:token/read'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -140,23 +140,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.unsetReadToken(id, token)
+      await Core.TBAC.Token.unsetReadToken(namespace, token)
       reply.status(204).send()
     }
   )
 
   // delete token
   server.put<{
-    Params: { token: string, id : string }
+    Params: { token: string, namespace : string }
   }>(
-    '/logger/:id/tokens/:token/delete'
+    '/logger/:namespace/tokens/:token/delete'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -164,22 +164,22 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.setDeleteToken(id, token)
+      await Core.TBAC.Token.setDeleteToken(namespace, token)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { token: string, id : string }
+    Params: { token: string, namespace : string }
   }>(
-    '/logger/:id/tokens/:token/delete'
+    '/logger/:namespace/tokens/:token/delete'
   , {
       schema: {
         params: {
           token: tokenSchema
-        , id: idSchema
+        , namespace: namespaceSchema
         }
       , response: {
           204: { type: 'null' }
@@ -187,9 +187,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.params.token
-      await Core.TBAC.Token.unsetDeleteToken(id, token)
+      await Core.TBAC.Token.unsetDeleteToken(namespace, token)
       reply.status(204).send()
     }
   )

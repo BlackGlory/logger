@@ -1,4 +1,4 @@
-import * as DAO from '@dao/data-in-sqlite3/logger/get-all-logger-ids'
+import * as DAO from '@dao/data-in-sqlite3/logger/get-all-namespaces'
 import { toArray } from 'iterable-operator'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawLog } from './utils'
@@ -10,10 +10,10 @@ jest.mock('@dao/data-in-sqlite3/database')
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('getAllLoggerIds(): Iterable<string>', () => {
+describe('getAllNamespaces(): Iterable<string>', () => {
   describe('empty', () => {
     it('return Iterable<string>', () => {
-      const iter = DAO.getAllLoggerIds()
+      const iter = DAO.getAllNamespaces()
       const result = toArray(iter)
 
       expect(iter).toBeIterable()
@@ -23,19 +23,19 @@ describe('getAllLoggerIds(): Iterable<string>', () => {
 
   describe('not empty', () => {
     it('return Iterable<string>', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       setRawLog({
-        logger_id: id
+        namespace
       , payload: 'payload'
       , timestamp: Date.now()
       , number: 0
       })
 
-      const iter = DAO.getAllLoggerIds()
+      const iter = DAO.getAllNamespaces()
       const result = toArray(iter)
 
       expect(iter).toBeIterable()
-      expect(result).toStrictEqual([id])
+      expect(result).toStrictEqual([namespace])
     })
   })
 })

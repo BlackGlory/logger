@@ -12,9 +12,9 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('open', async () => {
-    const id = 'id'
+    const namespace = 'namespace'
 
-    const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+    const ws = new WebSocket(`${getAddress()}/logger/${namespace}`.replace('http', 'ws'))
     await waitForEventEmitter(ws, 'open')
   })
 })

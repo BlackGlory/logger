@@ -1,7 +1,7 @@
-import { getAllIdsWithPurgePolicies, getPurgePolicies, setNumberLimit, setTimeToLive, unsetNumberLimit, unsetTimeToLive } from './purge-policy'
+import { getAllNamespacesWithPurgePolicies, getPurgePolicies, setNumberLimit, setTimeToLive, unsetNumberLimit, unsetTimeToLive } from './purge-policy'
 
 export const PurgePolicyDAO: IPurgePolicyDAO = {
-  getAllIdsWithPurgePolicies: asyncify(getAllIdsWithPurgePolicies)
+  getAllNamespacesWithPurgePolicies: asyncify(getAllNamespacesWithPurgePolicies)
 , getPurgePolicies: asyncify(getPurgePolicies)
 , setTimeToLive: asyncify(setTimeToLive)
 , unsetTimeToLive: asyncify(unsetTimeToLive)

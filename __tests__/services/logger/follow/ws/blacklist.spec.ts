@@ -13,35 +13,39 @@ afterEach(stopService)
 
 describe('blackllist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('error', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const id = 'id'
-        await AccessControlDAO.addBlacklistItem(id)
+        const namespace = 'namespace'
+        await AccessControlDAO.addBlacklistItem(namespace)
+        const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-        const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+        const ws = new WebSocket(url)
         await waitForEventEmitter(ws, 'error')
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('open', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const id = 'id'
+        const namespace = 'namespace'
+        const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-        const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+
+        const ws = new WebSocket(url)
         await waitForEventEmitter(ws, 'open')
       })
     })
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('open', async () => {
-        const id = 'id'
-        await AccessControlDAO.addBlacklistItem(id)
+        const namespace = 'namespace'
+        await AccessControlDAO.addBlacklistItem(namespace)
+        const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-        const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+        const ws = new WebSocket(url)
         await waitForEventEmitter(ws, 'open')
       })
     })

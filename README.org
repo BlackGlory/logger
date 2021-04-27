@@ -98,44 +98,44 @@ volumes:
 #+END_SRC
 
 ** API
-所有API中的记录器id都需要满足此正则表达式: =^[a-zA-Z0-9\.\-_]{0,255}$=
+所有API中的记录器namespace都需要满足此正则表达式: =^[a-zA-Z0-9\.\-_]{0,255}$=
 
-所有API中的日志id都是 =Unix毫秒时间戳-从0开始的计数器=,
+API中的日志id格式为 =Unix毫秒时间戳-从0开始的计数器=,
 使用计数器是为了防止在同一毫秒添加多条日志出现重复.
 由于日志有可能被删除, 因此不应假设计数器的数字是连续的.
 
 *** Public
 **** write
-=POST /logger/<id>=
+=POST /logger/<namespace>=
 
 往特定记录器记录日志, 所有订阅此记录器的客户端都会收到日志.
-id用于标识记录器.
+namespace用于标识记录器.
 
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有write权限的token:
-=POST /logger/<id>?token=<token>=
+=POST /logger/<namespace>?token=<token>=
 
 ***** Example
 ****** curl
 #+BEGIN_SRC sh
 curl \
   --data 'message' \
-  "http://localhost:8080/logger/$id"
+  "http://localhost:8080/logger/$namespace"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/logger/${id}`, {
+await fetch(`http://localhost:8080/logger/${namespace}`, {
   method: 'POST'
 , body: 'message'
 })
 #+END_SRC
 
 **** follow via Server-Sent Events(SSE)
-=GET /logger/<id>=
-=GET /logger/<id>?since=<logId>=
+=GET /logger/<namespace>=
+=GET /logger/<namespace>?since=<logId>=
 
 从特定记录器跟随日志.
-id用于标识记录器.
+namespace用于标识记录器.
 可用 =since=<logId>= 一并接收特定日志(logId)之后的日志,
 若在接收完日志前就有新的日志被写入, 则可能在接收的途中收到新日志.
 
@@ -153,7 +153,7 @@ Logger将发送自Last-Event-Id之后的所有日志.
 如果同时存在 =since= 和 =Last-Event-Id=, 会优先使用 =Last-Event-Id=.
 
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
-=/logger/<id>?token=<token>=
+=/logger/<namespace>?token=<token>=
 
 ***** heartbeat
 通过环境变量 =LOGGER_SSE_HEARTBEAT_INTERVAL= 可以设置SSE心跳包的发送间隔, 单位为毫秒.
@@ -167,23 +167,23 @@ Logger将发送自Last-Event-Id之后的所有日志.
 ***** Example
 ****** sse-cat
 #+BEGIN_SRC sh
-sse-cat "http://localhost:8080/logger/$id"
+sse-cat "http://localhost:8080/logger/$namespace"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-const es = new EventSource(`http://localhost:8080/logger/${id}`)
+const es = new EventSource(`http://localhost:8080/logger/${namespace}`)
 es.addEventListener('message', event => {
   console.log(event.data)
 })
 #+END_SRC
 
 **** follow via WebSocket
-=WS /logger/<id>=
-=WS /logger/<id>?since=<logId>=
+=WS /logger/<namespace>=
+=WS /logger/<namespace>?since=<logId>=
 
 从特定记录器跟随日志.
-id用于标识记录器.
+namespace用于标识记录器.
 可用 =since=<logId>= 一并接收特定日志(logId)之后的日志,
 若在接收完日志前就有新的日志被写入, 则可能在接收的途中收到新日志.
 
@@ -196,7 +196,7 @@ id用于标识记录器.
 #+END_SRC
 
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
-=/logger/<id>?token=<token>=
+=/logger/<namespace>?token=<token>=
 
 ***** heartbeat
 通过环境变量  =LOGGER_WS_HEARTBEAT_INTERVAL= 可以设置WS心跳包(ping帧)的发送间隔, 单位为毫秒.
@@ -212,26 +212,26 @@ id用于标识记录器.
 ***** Example
 ****** websocat
 #+BEGIN_SRC sh
-websocat "ws://localhost:8080/logger/$id"
+websocat "ws://localhost:8080/logger/$namespace"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-const ws = new WebSocket(`ws://localhost:8080/logger/${id}`)
+const ws = new WebSocket(`ws://localhost:8080/logger/${namespace}`)
 ws.addEventListener('message', event => {
     console.log(event.data);
 })
 #+END_SRC
 
 **** query
-=GET /logger/<id>/logs=
+=GET /logger/<namespace>/logs=
 
 获取所有日志.
 查询(head, tail, from, to可以组合使用, 不能同时有head和tail)
-- =GET /logger/<id>/logs?head=<number>= 取开头number个记录.
-- =GET /logger/<id>/logs?tail=<number>= 取结尾number个记录.
-- =GET /logger/<id>/logs?from=<logId>= 从特定logId开始.
-- =GET /logger/<id>/logs?to=<logId>= 至特定logId结束.
+- =GET /logger/<namespace>/logs?head=<number>= 取开头number个记录.
+- =GET /logger/<namespace>/logs?tail=<number>= 取结尾number个记录.
+- =GET /logger/<namespace>/logs?from=<logId>= 从特定logId开始.
+- =GET /logger/<namespace>/logs?to=<logId>= 至特定logId结束.
 
 from和to操作符可以使用实际并不存在的logId, 程序会自动匹配至最近的记录.
 省略from相当于从最早的记录开始.
@@ -246,51 +246,47 @@ Array<{
 #+END_SRC
 
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有read权限的token:
-=/logger/<id>/logs?token=<token>=
+=/logger/<namespace>/logs?token=<token>=
 
 此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
 
 ***** Example
 ****** curl
 #+BEGIN_SRC sh
-curl "http://localhost:8080/logger/$id/logs"
+curl "http://localhost:8080/logger/$namespace/logs"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/logger/${id}/logs`).then(res => res.json())
+await fetch(`http://localhost:8080/logger/${namespace}/logs`).then(res => res.json())
 #+END_SRC
 
 **** delete
-=DELETE /logger/<id>/logs=
-
-删除所有日志.
-根据查询结果删除日志(head, tail, from, to可以组合使用, 不能同时有head和tail):
-- =DELETE /logger/<id>/logs?from=<logId>= 删除从特定logId开始.
-- =DELETE /logger/<id>/logs?to=<logId>= 删除至特定logId结束.
-- =DELETE /logger/<id>/logs?head=<number>= 删除开头number个记录.
-- =DELETE /logger/<id>/logs?tail=<number>= 删除结尾number个记录.
+=DELETE /logger/<namespace>/logs?from=<logId>= 删除从特定logId开始.
+- =DELETE /logger/<namespace>/logs?to=<logId>= 删除至特定logId结束.
+- =DELETE /logger/<namespace>/logs?head=<number>= 删除开头number个记录.
+- =DELETE /logger/<namespace>/logs?tail=<number>= 删除结尾number个记录.
 
 如果开启基于token的访问控制, 则可能需要在Querystring提供具有delete权限的token:
-=/logger/<id>/logs?token=<token>=
+=/logger/<namespace>/logs?token=<token>=
 
 ***** Example
 ****** curl
 #+BEGIN_SRC sh
 curl \
   --request DELETE \
-  "http://localhost:8080/logger/$id/logs"
+  "http://localhost:8080/logger/$namespace/logs"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/logger/${id}/logs`)
+await fetch(`http://localhost:8080/logger/${namespace}/logs`)
 #+END_SRC
 
-**** get all logger ids
+**** get all namespaces
 =GET /logger=
 
-列出所有的logger id.
+列出所有的namespace.
 输出JSON =Array<string>=.
 
 此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
@@ -321,12 +317,13 @@ JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的pay
 此设置在未开启JSON Schema验证的情况下也有效, 但在这种情况下服务器能够接受不合法的JSON.
 
 ***** 为记录器单独设置JSON Schema
-可单独为id设置JSON Schema, 被设置的id将仅接受 =Content-Type: application/json= 请求.
+可单独为namespace设置JSON Schema,
+被设置的namespace将仅接受 =Content-Type: application/json= 请求.
 
-****** 获取所有具有JSON Schema的记录器id
+****** 获取所有具有JSON Schema的记录器namespace
 =GET /admin/logger-with-json-schema=
 
-获取所有具有JSON Schema的记录器id, 返回由JSON表示的字符串数组 =string[]=.
+获取所有具有JSON Schema的记录器namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
@@ -346,19 +343,19 @@ await fetch('http://localhost:8080/admin/logger-with-json-schema', {
 #+END_SRC
 
 ****** 获取JSON Schema
-=GET /admin/logger/<id>/json-schema=
+=GET /admin/logger/<namespace>/json-schema=
 
 ******* Example
 ******** curl
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/json-schema"
+  "http://localhost:8080/admin/logger/$namespace/json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/json-schema`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -366,7 +363,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
 #+END_SRC
 
 ****** 设置JSON Schema
-=PUT /admin/logger/<id>/json-schema=
+=PUT /admin/logger/<namespace>/json-schema=
 
 ******* Example
 ******** curl
@@ -376,12 +373,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$JSON_SCHEMA" \
-  "http://localhost:8080/admin/logger/$id/jsonschema"
+  "http://localhost:8080/admin/logger/$namespace/jsonschema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/json-schema`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -392,7 +389,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
 #+END_SRC
 
 ****** 移除JSON Schema
-=DELETE /admin/logger/<id>/json-schema=
+=DELETE /admin/logger/<namespace>/json-schema=
 
 ******* Example
 ******** curl
@@ -400,12 +397,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/json-schema"
+  "http://localhost:8080/admin/logger/$namespace/json-schema"
 #+END_SRC
 j
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/json-schema`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -430,10 +427,10 @@ Logger同时实施两种日志清除策略:
 ***** 单独设置清除策略
 单独设置的清除策略会覆盖由环境变量设置的同类策略.
 
-****** 获取所有具有清除策略的记录器id
+****** 获取所有具有清除策略的记录器namespace
 =GET /admin/logger-with-purge-policies=
 
-获取所有具有清除策略的记录器id, 返回由JSON表示的字符串数组 =string[]=.
+获取所有具有清除策略的记录器namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
@@ -453,7 +450,7 @@ await fetch('http://localhost:8080/admin/logger-with-purge-policies', {
 #+END_SRC
 
 ****** 获取清除策略
-=GET /admin/logger/<id>/purge-policies=
+=GET /admin/logger/<namespace>/purge-policies=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -468,12 +465,12 @@ await fetch('http://localhost:8080/admin/logger-with-purge-policies', {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/purge-policies"
+  "http://localhost:8080/admin/logger/$namespace/purge-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/purge-policies`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -481,8 +478,8 @@ await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
 #+END_SRC
 
 ****** 设置清除策略
-=PUT /admin/logger/<id>/purge-policies/time-to-live=
-=PUT /admin/logger/<id>/purge-policies/limit=
+=PUT /admin/logger/<namespace>/purge-policies/time-to-live=
+=PUT /admin/logger/<namespace>/purge-policies/limit=
 
 Payload必须是一个非负整数
 
@@ -493,12 +490,12 @@ curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --data "$LIMIT" \
-  "http://localhost:8080/admin/logger/$id/limit"
+  "http://localhost:8080/admin/logger/$namespace/limit"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/limit`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/limit`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -508,8 +505,8 @@ await fetch(`http://localhost:8080/admin/logger/${id}/limit`, {
 #+END_SRC
 
 ****** 移除清除策略
-=DELETE /admin/logger/<id>/purge-policies/time-to-live=
-=DELETE /admin/logger/<id>/purge-policies/limit=
+=DELETE /admin/logger/<namespace>/purge-policies/time-to-live=
+=DELETE /admin/logger/<namespace>/purge-policies/limit=
 
 ******* Example
 ******** curl
@@ -517,12 +514,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/limit`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/purge-policies"
+  "http://localhost:8080/admin/logger/$namespace/purge-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/purge-policies`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -531,7 +528,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
 #+END_SRC
 
 ****** 手动触发清除策略
-=POST /admin/logger/<id>/purge-policies=
+=POST /admin/logger/<namespace>/purge-policies=
 
 你总是可以在设置完清除策略后手动触发它们.
 
@@ -541,12 +538,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
 curl \
   --request POST \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/purge-policies"
+  "http://localhost:8080/admin/logger/$namespace/purge-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/purge-policies`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/purge-policies`, {
   method: 'POST'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -576,7 +573,7 @@ Logger提供两种访问控制策略, 可以一并使用.
 ******* 获取黑名单
 =GET /admin/blacklist=
 
-获取位于黑名单中的所有记录器id, 返回JSON表示的字符串数组 =string[]=.
+获取位于黑名单中的所有记录器namespace, 返回JSON表示的字符串数组 =string[]=.
 
 ******** Example
 ********* curl
@@ -596,7 +593,7 @@ await fetch('http://localhost:8080/admin/blacklist', {
 #+END_SRC
 
 ******* 添加黑名单
-=PUT /admin/blacklist/<id>=
+=PUT /admin/blacklist/<namespace>=
 
 将特定记录器加入黑名单.
 
@@ -606,12 +603,12 @@ await fetch('http://localhost:8080/admin/blacklist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${namespace}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -620,7 +617,7 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 #+END_SRC
 
 ******* 移除黑名单
-=DELETE /admin/blacklist/<id>=
+=DELETE /admin/blacklist/<namespace>=
 
 将特定记录器从黑名单中移除.
 
@@ -630,12 +627,12 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${namespace}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -647,7 +644,7 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 ******* 获取白名单
 =GET /admin/whitelist=
 
-获取位于黑名单中的所有记录器id, 返回JSON表示的字符串数组 =string[]=.
+获取位于黑名单中的所有记录器namespace, 返回JSON表示的字符串数组 =string[]=.
 
 ******** Example
 ********* curl
@@ -667,7 +664,7 @@ await fetch('http://localhost:8080/admin/whitelist', {
 #+END_SRC
 
 ******* 添加白名单
-=PUT /admin/whitelist/<id>=
+=PUT /admin/whitelist/<namespace>=
 
 将特定记录器加入白名单.
 
@@ -677,12 +674,12 @@ await fetch('http://localhost:8080/admin/whitelist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${namespace}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -691,7 +688,7 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 #+END_SRC
 
 ******* 移除白名单
-=DELETE /admin/whitelist/<id>=
+=DELETE /admin/whitelist/<namespace>=
 
 将特定记录器从白名单中移除.
 
@@ -701,12 +698,12 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${namespace}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -730,10 +727,10 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 - token难以被猜测
 - token的意外泄露可以被迅速处理
 
-****** 获取所有具有token策略的频道id
+****** 获取所有具有token策略的记录器namespace
 =GET /admin/logger-with-token-policies=
 
-获取所有具有token策略的频道id, 返回由JSON表示的字符串数组 =string[]=.
+获取所有具有token策略的记录器namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
@@ -748,8 +745,8 @@ curl \
 await fetch('http://localhost:8080/admin/logger-with-token-policies')
 #+END_SRC
 
-****** 获取特定频道的token策略
-=GET /admin/logger/<id>/token-policies=
+****** 获取特定记录器的token策略
+=GET /admin/logger/<namespace>/token-policies=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -766,12 +763,12 @@ await fetch('http://localhost:8080/admin/logger-with-token-policies')
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/token-policies"
+  "http://localhost:8080/admin/logger/$namespace/token-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fethc(`http://localhost:8080/admin/logger/${id}/token-policies`, {
+await fethc(`http://localhost:8080/admin/logger/${namespace}/token-policies`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -779,9 +776,9 @@ await fethc(`http://localhost:8080/admin/logger/${id}/token-policies`, {
 #+END_SRC
 
 ****** 设置token策略
-=PUT /admin/logger/<id>/token-policies/write-token-required=
-=PUT /admin/logger/<id>/token-policies/read-token-required=
-=PUT /admin/logger/<id>/token-policies/delete-token-required=
+=PUT /admin/logger/<namespace>/token-policies/write-token-required=
+=PUT /admin/logger/<namespace>/token-policies/read-token-required=
+=PUT /admin/logger/<namespace>/token-policies/delete-token-required=
 
 Payload必须是一个布尔值.
 
@@ -793,12 +790,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$WRITE_TOKEN_REQUIRED" \
-  "http://localhost:8080/admin/logger/$id/token-policies/write-token-required"
+  "http://localhost:8080/admin/logger/$namespace/token-policies/write-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/token-policies/write-token-required`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/token-policies/write-token-required`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -809,9 +806,9 @@ await fetch(`http://localhost:8080/admin/logger/${id}/token-policies/write-token
 #+END_SRC
 
 ****** 移除token策略
-=DELETE /admin/logger/<id>/token-policies/write-token-required=
-=DELETE /admin/logger/<id>/token-policies/read-token-required=
-=DELETE /admin/logger/<id>/token-policies/delete-token-required=
+=DELETE /admin/logger/<namespace>/token-policies/write-token-required=
+=DELETE /admin/logger/<namespace>/token-policies/read-token-required=
+=DELETE /admin/logger/<namespace>/token-policies/delete-token-required=
 
 ******* Example
 ******** curl
@@ -819,12 +816,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/token-policies/write-token
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/token-policies/write-token-required"
+  "http://localhost:8080/admin/logger/$namespace/token-policies/write-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/token-policies/write-token-required`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/token-policies/write-token-required`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -832,10 +829,10 @@ await fetch(`http://localhost:8080/admin/logger/${id}/token-policies/write-token
 })
 #+END_SRC
 
-****** 获取所有具有token的记录器id
+****** 获取所有具有token的记录器namespace
 =GET /admin/logger-with-tokens=
 
-获取所有具有token的记录器id, 返回由JSON表示的字符串数组`string[]`
+获取所有具有token的记录器namespace, 返回由JSON表示的字符串数组`string[]`
 
 ******* Example
 ******** curl
@@ -855,7 +852,7 @@ await fetch(`http://localhost:8080/admin/logger-with-tokens`, {
 #+END_SRC
 
 ****** 获取特定记录器的所有token信息
-=GET /admin/logger/<id>/tokens=
+=GET /admin/logger/<namespace>/tokens=
 
 获取特定记录器的所有token信息, 返回JSON表示的token信息数组
 =Array<{ token: string, write: boolean, read: boolean, delete: boolean }>=.
@@ -865,12 +862,12 @@ await fetch(`http://localhost:8080/admin/logger-with-tokens`, {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens"
+  "http://localhost:8080/admin/logger/$namespace/tokens"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -878,7 +875,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens`, {
 #+END_SRC
 
 ****** 为特定记录器的token设置write权限
-=PUT /admin/logger/<id>/tokens/<token>/write=
+=PUT /admin/logger/<namespace>/tokens/<token>/write=
 
 添加/更新token, 为token设置write权限.
 
@@ -888,12 +885,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/log"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/log"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/log`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/log`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -902,7 +899,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/log`, {
 #+END_SRC
 
 ****** 取消特定记录器的token的write权限
-=DELETE /admin/logger/<id>/tokens/<token>/write=
+=DELETE /admin/logger/<namespace>/tokens/<token>/write=
 
 取消token的read权限.
 
@@ -912,12 +909,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/log`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/write"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/write"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/write`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/write`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -926,7 +923,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/write`, {
 #+END_SRC
 
 ****** 为特定记录器的token设置read权限
-=PUT /admin/logger/<id>/tokens/<token>/read=
+=PUT /admin/logger/<namespace>/tokens/<token>/read=
 
 添加/更新token, 为token设置read权限.
 
@@ -936,12 +933,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/write`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/read"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/read"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/read`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -950,7 +947,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
 #+END_SRC
 
 ****** 取消特定记录器的token的read权限
-=DELETE /admin/logger/<id>/tokens/<token>/read=
+=DELETE /admin/logger/<namespace>/tokens/<token>/read=
 
 取消token的read权限.
 
@@ -960,12 +957,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/read"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/read"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/read`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -974,7 +971,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
 #+END_SRC
 
 ****** 为特定记录器的token设置delete权限
-=PUT /admin/logger/<id>/tokens/<token>/delete=
+=PUT /admin/logger/<namespace>/tokens/<token>/delete=
 
 添加/更新token, 为token设置delete权限.
 
@@ -984,12 +981,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/read`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/delete"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/delete"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/delete`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/delete`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -998,7 +995,7 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/delete`, {
 #+END_SRC
 
 ****** 取消特定记录器的token的delete权限
-=DELETE /admin/logger/<id>/tokens/<token>/delete=
+=DELETE /admin/logger/<namespace>/tokens/<token>/delete=
 
 取消token的delete权限.
 
@@ -1008,12 +1005,12 @@ await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/delete`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$id/tokens/$token/delete"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/delete"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${id}/tokens/${token}/delete`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/delete`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`

@@ -15,8 +15,8 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const loggerIds = ['logger-id']
-    prepareLoggers(loggerIds)
+    const namespaces = ['namespace']
+    prepareLoggers(namespaces)
 
     const res = await fetch(get(
       url(getAddress())
@@ -24,6 +24,6 @@ describe('no access control', () => {
     ))
 
     expect(res.status).toBe(200)
-    expect(await toJSON(res)).toStrictEqual(loggerIds)
+    expect(await toJSON(res)).toStrictEqual(namespaces)
   })
 })

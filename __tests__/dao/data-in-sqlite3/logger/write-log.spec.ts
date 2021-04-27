@@ -16,19 +16,19 @@ jest.mock('@dao/data-in-sqlite3/logger/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('writeLog(id: string, payload: string): string', () => {
+describe('writeLog(namespace: string, payload: string): string', () => {
   describe('no limit', () => {
     describe('write two logs in the same second', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
         const timestamp = Date.now()
 
         setTimestamp(timestamp)
-        const result1 = DAO.writeLog(id, payload1)
-        const result2 = DAO.writeLog(id, payload2)
-        const rows = getAllRawLogs(id)
+        const result1 = DAO.writeLog(namespace, payload1)
+        const result2 = DAO.writeLog(namespace, payload2)
+        const rows = getAllRawLogs(namespace)
 
         expect(result1).toBe(`${timestamp}-0`)
         expect(result2).toBe(`${timestamp}-1`)
@@ -41,17 +41,17 @@ describe('writeLog(id: string, payload: string): string', () => {
 
     describe('write two logs in the different second', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
         const timestamp1 = Date.now()
         const timestamp2 = timestamp1 + 1
 
         setTimestamp(timestamp1)
-        const result1 = DAO.writeLog(id, payload1)
+        const result1 = DAO.writeLog(namespace, payload1)
         setTimestamp(timestamp2)
-        const result2 = DAO.writeLog(id, payload2)
-        const rows = getAllRawLogs(id)
+        const result2 = DAO.writeLog(namespace, payload2)
+        const rows = getAllRawLogs(namespace)
 
         expect(result1).toEqual(`${timestamp1}-0`)
         expect(result2).toEqual(`${timestamp2}-0`)

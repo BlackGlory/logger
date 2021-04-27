@@ -1,9 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema, logIdSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema, logIdSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
     Querystring: {
       token?: string
       from?: string
@@ -12,10 +12,10 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       head?: number
     }
   }>(
-    '/logger/:id/logs'
+    '/logger/:namespace/logs'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , querystring: {
           token: tokenSchema
         , from: logIdSchema
@@ -29,7 +29,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const token = req.query.token
       const range: IRange = {
         from: req.query.from
@@ -39,9 +39,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       if (req.query.tail) (range as ISlice & ITail).tail = req.query.tail
 
       try {
-        await Core.Blacklist.check(id)
-        await Core.Whitelist.check(id)
-        await Core.TBAC.checkDeletePermission(id, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkDeletePermission(namespace, token)
       } catch (e) {
         if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -49,7 +49,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.Logger.del(id, range)
+      await Core.Logger.del(namespace, range)
       reply.status(204).send()
     }
   )

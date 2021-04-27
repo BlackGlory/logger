@@ -14,29 +14,29 @@ afterEach(stopService)
 
 describe('whitelist', () => {
   describe('enabled', () => {
-    describe('id in whitelist', () => {
+    describe('namespace in whitelist', () => {
       it('204', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const id = 'id'
-        await AccessControlDAO.addWhitelistItem(id)
+        const namespace = 'namespace'
+        await AccessControlDAO.addWhitelistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/logger/${id}/logs`)
+        , pathname(`/logger/${namespace}/logs`)
         ))
 
         expect(res.status).toBe(204)
       })
     })
 
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/logger/${id}/logs`)
+        , pathname(`/logger/${namespace}/logs`)
         ))
 
         expect(res.status).toBe(403)
@@ -45,13 +45,13 @@ describe('whitelist', () => {
   })
 
   describe('disabled', () => {
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('204', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/logger/${id}/logs`)
+        , pathname(`/logger/${namespace}/logs`)
         ))
 
         expect(res.status).toBe(204)

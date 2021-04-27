@@ -16,12 +16,12 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const id = 'id'
-    prepareLoggers(['logger-id'])
+    const namespace = 'namespace'
+    prepareLoggers([namespace])
 
     const res = await fetch(get(
       url(getAddress())
-    , pathname(`/logger/${id}/logs`)
+    , pathname(`/logger/${namespace}/logs`)
     ))
 
     expect(res.status).toBe(200)

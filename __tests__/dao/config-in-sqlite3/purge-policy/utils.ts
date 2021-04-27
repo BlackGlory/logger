@@ -1,36 +1,36 @@
 import { getDatabase } from '@dao/config-in-sqlite3/database'
 
 interface IRawPurgePolicy {
-  logger_id: string
+  namespace: string
   time_to_live: number
   number_limit: number
 }
 
-export function setRawPurgePolicy(item: IRawPurgePolicy): IRawPurgePolicy {
+export function setRawPurgePolicy(raw: IRawPurgePolicy): IRawPurgePolicy {
   getDatabase().prepare(`
     INSERT INTO logger_purge_policy (
-      logger_id
+      namespace
     , time_to_live
     , number_limit
     )
     VALUES (
-      $logger_id
+      $namespace
     , $time_to_live
     , $number_limit
     );
-  `).run(item)
+  `).run(raw)
 
-  return item
+  return raw
 }
 
-export function hasRawPurgePolicy(id: string): boolean {
-  return !!getRawPurgePolicy(id)
+export function hasRawPurgePolicy(namespace: string): boolean {
+  return !!getRawPurgePolicy(namespace)
 }
 
-export function getRawPurgePolicy(id: string): IRawPurgePolicy | null {
+export function getRawPurgePolicy(namespace: string): IRawPurgePolicy | null {
   return getDatabase().prepare(`
     SELECT *
       FROM logger_purge_policy
-     WHERE logger_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
 }

@@ -13,16 +13,18 @@ afterEach(stopService)
 
 describe('token-based access control', () => {
   describe('enabled', () => {
-    describe('id need read tokens', () => {
+    describe('namespace need read tokens', () => {
       describe('token matched', () => {
         it('open', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const id = 'id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(id, true)
-          await AccessControlDAO.setReadToken({ id, token })
+          await AccessControlDAO.setReadTokenRequired(namespace, true)
+          await AccessControlDAO.setReadToken({ namespace, token })
+          const url = `${getAddress()}/logger/${namespace}?token=${token}`
+            .replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}?token=${token}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'open')
         })
       })
@@ -30,12 +32,14 @@ describe('token-based access control', () => {
       describe('token does not matched', () => {
         it('error', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const id = 'id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(id, true)
-          await AccessControlDAO.setReadToken({ id, token })
+          await AccessControlDAO.setReadTokenRequired(namespace, true)
+          await AccessControlDAO.setReadToken({ namespace, token })
+          const url = `${getAddress()}/logger/${namespace}?token=bad`
+            .replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}?token=bad`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'error')
         })
       })
@@ -43,25 +47,27 @@ describe('token-based access control', () => {
       describe('no token', () => {
         it('error', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const id = 'id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(id, true)
-          await AccessControlDAO.setReadToken({ id, token })
+          await AccessControlDAO.setReadTokenRequired(namespace, true)
+          await AccessControlDAO.setReadToken({ namespace, token })
+          const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'error')
         })
       })
     })
 
-    describe('id does not have read tokens', () => {
+    describe('namespace does not have read tokens', () => {
       describe('READ_TOKEN_REQUIRED=true', () => {
         it('error', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
-          const id = 'id'
+          const namespace = 'namespace'
+          const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'error')
         })
       })
@@ -70,9 +76,10 @@ describe('token-based access control', () => {
         it('open', async () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'false'
-          const id = 'id'
+          const namespace = 'namespace'
+          const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'open')
         })
       })
@@ -80,27 +87,29 @@ describe('token-based access control', () => {
   })
 
   describe('disabled', () => {
-    describe('id need read tokens', () => {
+    describe('namespace need read tokens', () => {
       describe('no token', () => {
         it('open', async () => {
-          const id = 'id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setDeleteTokenRequired(id, true)
-          await AccessControlDAO.setReadToken({ id, token })
+          await AccessControlDAO.setDeleteTokenRequired(namespace, true)
+          await AccessControlDAO.setReadToken({ namespace, token })
+          const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'open')
         })
       })
     })
 
-    describe('id does not need read tokens', () => {
+    describe('namespace does not need read tokens', () => {
       describe('READ_TOKEN_REQUIRED=true', () => {
         it('open', async () => {
           process.env.LOGGER_READ_TOKEN_REQUIRED = 'true'
-          const id = 'id'
+          const namespace = 'namespace'
+          const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
-          const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+          const ws = new WebSocket(url)
           await waitForEventEmitter(ws, 'open')
         })
       })

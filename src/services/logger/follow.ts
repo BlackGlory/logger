@@ -2,7 +2,7 @@ import * as http from 'http'
 import * as net from 'net'
 import { go } from '@blackglory/go'
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 import { waitForEventEmitter } from '@blackglory/wait-for'
 import { sse } from 'extra-generator'
 import { SSE_HEARTBEAT_INTERVAL, WS_HEARTBEAT_INTERVAL } from '@env'
@@ -13,10 +13,14 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   const wss = new WebSocket.Server({ noServer: true })
 
   // WebSocket handler
-  wss.on('connection', async (ws: WebSocket, req: http.IncomingMessage, params: { id: string }) => {
-    const id = params.id
+  wss.on('connection', async (
+    ws: WebSocket
+  , req: http.IncomingMessage
+  , params: { namespace: string }
+  ) => {
+    const namespace = params.namespace
 
-    const unfollow = Core.Logger.follow(id, log => {
+    const unfollow = Core.Logger.follow(namespace, log => {
       const data = JSON.stringify(log)
       ws.send(data)
     })
@@ -38,7 +42,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
     const since = parseQuerystring<{ since?: string }>(req.url!).since
     if (since) {
-      const logs = await Core.Logger.query(id, { from: since })
+      const logs = await Core.Logger.query(namespace, { from: since })
       for await (const log of logs) {
         if (log.id === since) continue
         const data = JSON.stringify(log)
@@ -48,22 +52,26 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   })
 
   // WebSocket upgrade handler
-  server.server.on('upgrade', async (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
+  server.server.on('upgrade', async (
+    req: http.IncomingMessage
+  , socket: net.Socket
+  , head: Buffer
+  ) => {
     const url = req.url!
-    const pathnameRegExp = /^\/logger\/(?<id>[a-zA-Z0-9\.\-_]{1,256})$/
+    const pathnameRegExp = /^\/logger\/(?<namespace>[a-zA-Z0-9\.\-_]{1,256})$/
     const result = getPathname(url).match(pathnameRegExp)
     if (!result) {
       socket.write('HTTP/1.1 404 Not Found\r\n\r\n')
       return socket.destroy()
     }
 
-    const id = result.groups!.id
+    const namespace = result.groups!.namespace
     const token = parseQuerystring<{ token?: string }>(url).token
 
     try {
-      await Core.Blacklist.check(id)
-      await Core.Whitelist.check(id)
-      await Core.TBAC.checkReadPermission(id, token)
+      await Core.Blacklist.check(namespace)
+      await Core.Whitelist.check(namespace)
+      await Core.TBAC.checkReadPermission(namespace, token)
     } catch (e) {
       if (e instanceof Core.Blacklist.Forbidden) {
         socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
@@ -78,44 +86,44 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
 
     wss.handleUpgrade(req, socket, head, async ws => {
-      wss.emit('connection', ws, req, { id })
+      wss.emit('connection', ws, req, { namespace })
 
-      // Why need stream?
+      // QUESTION: why stream?
       const connection = WebSocket.createWebSocketStream(ws, { encoding: 'utf8' })
       ws.on('newListener', event => {
         if (event === 'message') connection.resume()
       })
 
       const GOING_AWAY = 1001
-      // Why need close?
+      // QUESTION: why close?
       ws.close(GOING_AWAY)
     })
   })
 
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
     Querystring: { token?: string; since?: string }
     Headers: { 'Last-Event-ID'?: string }
   }>(
-    '/logger/:id'
+    '/logger/:namespace'
   , {
       schema: {
-        params: { id: idSchema }
-      , querystring: { token: tokenSchema, since: idSchema }
-      , headers: { 'Last-Event-ID': idSchema }
+        params: { namespace: namespaceSchema }
+      , querystring: { token: tokenSchema, since: namespaceSchema }
+      , headers: { 'Last-Event-ID': namespaceSchema }
       }
     }
   // Server-Sent Events handler
   , (req, reply) => {
       go(async () => {
-        const id = req.params.id
+        const namespace = req.params.namespace
         const token = req.query.token
         const lastEventId = req.headers['Last-Event-ID']
 
         try {
-          await Core.Blacklist.check(id)
-          await Core.Whitelist.check(id)
-          await Core.TBAC.checkReadPermission(id, token)
+          await Core.Blacklist.check(namespace)
+          await Core.Whitelist.check(namespace)
+          await Core.TBAC.checkReadPermission(namespace, token)
         } catch (e) {
           if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
           if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -131,7 +139,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         }
         reply.raw.flushHeaders()
 
-        const unfollow = Core.Logger.follow(id, async log => {
+        const unfollow = Core.Logger.follow(namespace, async log => {
           const data = JSON.stringify(log)
           for (const line of sse({ id: log.id, data })) {
             if (!reply.raw.write(line)) {
@@ -158,7 +166,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         const since = lastEventId ?? req.query.since
         if (since) {
-          const logs = await Core.Logger.query(id, { from: since })
+          const logs = await Core.Logger.query(namespace, { from: since })
           for await (const log of logs) {
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)

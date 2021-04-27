@@ -1,7 +1,7 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function writeLog(id: string, payload: string): string {
+export function writeLog(namespace: string, payload: string): string {
   let number
   const timestamp = getTimestamp()
   const db = getDatabase()
@@ -10,33 +10,33 @@ export function writeLog(id: string, payload: string): string {
     const row: { number: number } = db.prepare(`
       SELECT count AS number
         FROM logger_counter
-       WHERE logger_id = $id
+       WHERE namespace = $namespace
          AND timestamp = $timestamp
-    `).get({ id, timestamp })
+    `).get({ namespace, timestamp })
 
     if (row) {
       number = row['number']
       db.prepare(`
         UPDATE logger_counter
            SET count = count + 1
-         WHERE logger_id = $id
+         WHERE namespace = $namespace
            AND timestamp = $timestamp;
-      `).run({ id, timestamp })
+      `).run({ namespace, timestamp })
     } else {
       number = 0
       db.prepare(`
-        INSERT INTO logger_counter (logger_id, timestamp, count)
-        VALUES ($id, $timestamp, 1)
-            ON CONFLICT(logger_id)
+        INSERT INTO logger_counter (namespace, timestamp, count)
+        VALUES ($namespace, $timestamp, 1)
+            ON CONFLICT(namespace)
             DO UPDATE SET timestamp = $timestamp
                         , count = 1
-      `).run({ id, timestamp })
+      `).run({ namespace, timestamp })
     }
 
     db.prepare(`
-      INSERT INTO logger_log (logger_id, timestamp, number, payload)
-      VALUES ($id, $timestamp, $number, $payload)
-    `).run({ id, timestamp, number, payload })
+      INSERT INTO logger_log (namespace, timestamp, number, payload)
+      VALUES ($namespace, $timestamp, $number, $payload)
+    `).run({ namespace, timestamp, number, payload })
   })()
 
   return `${timestamp}-${number}`

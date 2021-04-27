@@ -1,37 +1,37 @@
 import { AccessControlDAO } from '@dao'
 
-export function getAllIds(): Promise<string[]> {
-  return AccessControlDAO.getAllIdsWithTokenPolicies()
+export function getAllNamespaces(): Promise<string[]> {
+  return AccessControlDAO.getAllNamespacesWithTokenPolicies()
 }
 
-export function get(id: string): Promise<{
+export function get(namespace: string): Promise<{
   writeTokenRequired: boolean | null
   readTokenRequired: boolean | null
   deleteTokenRequired: boolean | null
 }> {
-  return AccessControlDAO.getTokenPolicies(id)
+  return AccessControlDAO.getTokenPolicies(namespace)
 }
 
-export function setWriteTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setWriteTokenRequired(id, val)
+export function setWriteTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setWriteTokenRequired(namespace, val)
 }
 
-export function unsetWriteTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetWriteTokenRequired(id)
+export function unsetWriteTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetWriteTokenRequired(namespace)
 }
 
-export function setReadTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setReadTokenRequired(id, val)
+export function setReadTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setReadTokenRequired(namespace, val)
 }
 
-export function unsetReadTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetReadTokenRequired(id)
+export function unsetReadTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetReadTokenRequired(namespace)
 }
 
-export function setDeleteTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setDeleteTokenRequired(id, val)
+export function setDeleteTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setDeleteTokenRequired(namespace, val)
 }
 
-export function unsetDeleteTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetDeleteTokenRequired(id)
+export function unsetDeleteTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetDeleteTokenRequired(namespace)
 }

@@ -11,71 +11,71 @@ interface ICore {
   isAdmin(password: string): boolean
 
   Logger: {
-    write(key: string, value: string): Promise<void>
-    follow(key: string, listener: (log: ILog) => void): IUnfollow
-    query(id: string, range: IRange): AsyncIterable<ILog>
-    del(id: string, range: IRange): Promise<void>
+    write(namespace: string, value: string): Promise<void>
+    follow(namespace: string, listener: (log: ILog) => void): IUnfollow
+    query(namespace: string, range: IRange): AsyncIterable<ILog>
+    del(namespace: string, range: IRange): Promise<void>
 
-    getAllLoggerIds(): AsyncIterable<string>
+    getAllNamespaces(): AsyncIterable<string>
   }
 
   PurgePolicy: {
-    purge(id: string): Promise<void>
+    purge(namespace: string): Promise<void>
 
-    getAllIds(): Promise<string[]>
-    get(id: string): Promise<{
+    getAllNamespaces(): Promise<string[]>
+    get(namespace: string): Promise<{
       timeToLive: number | null
       limit: number | null
     }>
 
-    setTimeToLive(id: string, timeToLive: number): Promise<void>
-    unsetTimeToLive(id: string): Promise<void>
+    setTimeToLive(namespace: string, timeToLive: number): Promise<void>
+    unsetTimeToLive(namespace: string): Promise<void>
 
-    setLimit(id: string, limit: number): Promise<void>
-    unsetLimit(id: string): Promise<void>
+    setLimit(namespace: string, limit: number): Promise<void>
+    unsetLimit(namespace: string): Promise<void>
   }
 
   Blacklist: {
     isEnabled(): boolean
-    isBlocked(id: string): Promise<boolean>
+    isBlocked(namespace: string): Promise<boolean>
     getAll(): Promise<string[]>
-    add(id: string): Promise<void>
-    remove(id: string): Promise<void>
+    add(namespace: string): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {Forbidden}
      */
-    check(id: string): Promise<void>
+    check(namespace: string): Promise<void>
 
     Forbidden: CustomErrorConsturctor
   }
 
   Whitelist: {
     isEnabled(): boolean
-    isBlocked(id: string): Promise<boolean>
+    isBlocked(namespace: string): Promise<boolean>
     getAll(): Promise<string[]>
-    add(id: string): Promise<void>
-    remove(id: string): Promise<void>
+    add(namespace: string): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {Forbidden}
      */
-    check(id: string): Promise<void>
+    check(namespace: string): Promise<void>
 
     Forbidden: CustomErrorConsturctor
   }
 
   JsonSchema: {
     isEnabled(): boolean
-    getAllIds(): Promise<string[]>
-    get(id: string): Promise<string | null>
-    set(id: string, schema: Json): Promise<void>
-    remove(id: string): Promise<void>
+    getAllNamespaces(): Promise<string[]>
+    get(namespace: string): Promise<string | null>
+    set(namespace: string, schema: Json): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {InvalidPayload}
      */
-    validate(id: string, payload: string): Promise<void>
+    validate(namespace: string, payload: string): Promise<void>
 
     InvalidPayload: CustomErrorConsturctor
   }
@@ -86,54 +86,54 @@ interface ICore {
     /**
      * @throws {Unauthorized}
      */
-    checkWritePermission(id: string, token?: string): Promise<void>
+    checkWritePermission(namespace: string, token?: string): Promise<void>
 
     /**
      * @throws {Unauthorized}
      */
-    checkReadPermission(id: string, token?: string): Promise<void>
+    checkReadPermission(namespace: string, token?: string): Promise<void>
 
     /**
      * @throws {Unauthorized}
      */
-    checkDeletePermission(id: string, token?: string): Promise<void>
+    checkDeletePermission(namespace: string, token?: string): Promise<void>
 
     Unauthorized: CustomErrorConsturctor
 
     Token: {
-      getAllIds(): Promise<string[]>
-      getAll(id: string): Promise<Array<{
+      getAllNamespaces(): Promise<string[]>
+      getAll(namespace: string): Promise<Array<{
         token: string
         write: boolean
         read: boolean
         delete: boolean
       }>>
 
-      setWriteToken(id: string, token: string): Promise<void>
-      unsetWriteToken(id: string, token: string): Promise<void>
+      setWriteToken(namespace: string, token: string): Promise<void>
+      unsetWriteToken(namespace: string, token: string): Promise<void>
 
-      setReadToken(id: string, token: string): Promise<void>
-      unsetReadToken(id: string, token: string): Promise<void>
+      setReadToken(namespace: string, token: string): Promise<void>
+      unsetReadToken(namespace: string, token: string): Promise<void>
 
-      setDeleteToken(id: string, token: string): Promise<void>
-      unsetDeleteToken(id: string, token: string): Promise<void>
+      setDeleteToken(namespace: string, token: string): Promise<void>
+      unsetDeleteToken(namespace: string, token: string): Promise<void>
     }
 
     TokenPolicy: {
-      getAllIds(): Promise<string[]>
-      get(id: string): Promise<{
+      getAllNamespaces(): Promise<string[]>
+      get(namespace: string): Promise<{
         writeTokenRequired: boolean | null
         readTokenRequired: boolean | null
       }>
 
-      setWriteTokenRequired(id: string, val: boolean): Promise<void>
-      unsetWriteTokenRequired(id: string): Promise<void>
+      setWriteTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetWriteTokenRequired(namespace: string): Promise<void>
 
-      setReadTokenRequired(id: string, val: boolean): Promise<void>
-      unsetReadTokenRequired(id: string): Promise<void>
+      setReadTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetReadTokenRequired(namespace: string): Promise<void>
 
-      setDeleteTokenRequired(id: string, val: boolean): Promise<void>
-      unsetDeleteTokenRequired(id: string): Promise<void>
+      setDeleteTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetDeleteTokenRequired(namespace: string): Promise<void>
     }
   }
 }

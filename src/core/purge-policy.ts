@@ -1,45 +1,45 @@
 import { PurgePolicyDAO, LoggerDAO } from '@dao'
 import { LOGGER_LOGS_LIMIT, LOGGER_LOGS_TIME_TO_LIVE } from '@env'
 
-export function getAllIds(): Promise<string[]> {
-  return PurgePolicyDAO.getAllIdsWithPurgePolicies()
+export function getAllNamespaces(): Promise<string[]> {
+  return PurgePolicyDAO.getAllNamespacesWithPurgePolicies()
 }
 
-export async function get(id: string): Promise<{
+export async function get(namespace: string): Promise<{
   timeToLive: number | null
   limit: number | null
 }> {
-  const result = await PurgePolicyDAO.getPurgePolicies(id)
+  const result = await PurgePolicyDAO.getPurgePolicies(namespace)
   return {
     timeToLive: result.timeToLive
   , limit: result.numberLimit
   }
 }
 
-export function setTimeToLive(id: string, timeToLive: number): Promise<void> {
-  return PurgePolicyDAO.setTimeToLive(id, timeToLive)
+export function setTimeToLive(namespace: string, timeToLive: number): Promise<void> {
+  return PurgePolicyDAO.setTimeToLive(namespace, timeToLive)
 }
 
-export function unsetTimeToLive(id: string): Promise<void> {
-  return PurgePolicyDAO.unsetTimeToLive(id)
+export function unsetTimeToLive(namespace: string): Promise<void> {
+  return PurgePolicyDAO.unsetTimeToLive(namespace)
 }
 
-export function setLimit(id: string, limit: number): Promise<void> {
-  return PurgePolicyDAO.setNumberLimit(id, limit)
+export function setLimit(namespace: string, limit: number): Promise<void> {
+  return PurgePolicyDAO.setNumberLimit(namespace, limit)
 }
 
-export function unsetLimit(id: string): Promise<void> {
-  return PurgePolicyDAO.unsetNumberLimit(id)
+export function unsetLimit(namespace: string): Promise<void> {
+  return PurgePolicyDAO.unsetNumberLimit(namespace)
 }
 
-export async function purge(id: string): Promise<void> {
-  const policies = await PurgePolicyDAO.getPurgePolicies(id)
+export async function purge(namespace: string): Promise<void> {
+  const policies = await PurgePolicyDAO.getPurgePolicies(namespace)
   const limit = policies.numberLimit ?? LOGGER_LOGS_LIMIT()
   const timeToLive = policies.timeToLive ?? LOGGER_LOGS_TIME_TO_LIVE()
-  if (limit > 0) await LoggerDAO.purgeByLimit(id, limit)
+  if (limit > 0) await LoggerDAO.purgeByLimit(namespace, limit)
   if (timeToLive > 0) {
     const timestamp = getTimestamp() - timeToLive
-    await LoggerDAO.purgeByTimestamp(id, timestamp)
+    await LoggerDAO.purgeByTimestamp(namespace, timestamp)
   }
 }
 

@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
@@ -15,18 +15,18 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.TBAC.TokenPolicy.getAllIds()
+      const result = await Core.TBAC.TokenPolicy.getAllNamespaces()
       reply.send(result)
     }
   )
 
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/token-policies'
+    '/logger/:namespace/token-policies'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             writeTokenRequired: {
@@ -52,20 +52,20 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.TBAC.TokenPolicy.get(id)
+      const namespace = req.params.namespace
+      const result = await Core.TBAC.TokenPolicy.get(namespace)
       reply.send(result)
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/logger/:id/token-policies/write-token-required'
+    '/logger/:namespace/token-policies/write-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -73,40 +73,40 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setWriteTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setWriteTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string}
+    Params: { namespace: string}
   }>(
-    '/logger/:id/token-policies/write-token-required'
+    '/logger/:namespace/token-policies/write-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetWriteTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetWriteTokenRequired(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/logger/:id/token-policies/read-token-required'
+    '/logger/:namespace/token-policies/read-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -114,40 +114,40 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setReadTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setReadTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/token-policies/read-token-required'
+    '/logger/:namespace/token-policies/read-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetReadTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetReadTokenRequired(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/logger/:id/token-policies/delete-token-required'
+    '/logger/:namespace/token-policies/delete-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -155,28 +155,28 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setDeleteTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setDeleteTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string}
+    Params: { namespace: string}
   }>(
-    '/logger/:id/token-policies/delete-token-required'
+    '/logger/:namespace/token-policies/delete-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetDeleteTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetDeleteTokenRequired(namespace)
       reply.status(204).send()
     }
   )

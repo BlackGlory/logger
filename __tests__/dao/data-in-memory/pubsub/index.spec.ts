@@ -5,35 +5,35 @@ beforeEach(resetEmitter)
 
 describe('PubSubDAO', () => {
   test('publish, subscribe', async done => {
-    const loggerId = 'logger-id'
+    const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
 
-    PubSubDAO.publish(loggerId, { id: logId, payload })
-    PubSubDAO.subscribe(loggerId, () => done.fail())
+    PubSubDAO.publish(namespace, { id: logId, payload })
+    PubSubDAO.subscribe(namespace, () => done.fail())
     setImmediate(done)
   })
 
   test('subscribe, publish', async done => {
-    const loggerId = 'logger-id'
+    const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
 
-    PubSubDAO.subscribe(loggerId, val => {
+    PubSubDAO.subscribe(namespace, val => {
       expect(val).toStrictEqual({ id: logId, payload })
       done()
     })
-    PubSubDAO.publish(loggerId, { id: logId, payload })
+    PubSubDAO.publish(namespace, { id: logId, payload })
   })
 
   test('subscribe, unsubscribe, publish', async done => {
-    const loggerId = 'logger-id'
+    const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
 
-    const unsubscribe = PubSubDAO.subscribe(loggerId, () => done.fail())
+    const unsubscribe = PubSubDAO.subscribe(namespace, () => done.fail())
     unsubscribe()
-    PubSubDAO.publish(loggerId, { id: logId, payload })
+    PubSubDAO.publish(namespace, { id: logId, payload })
     setImmediate(done)
   })
 })

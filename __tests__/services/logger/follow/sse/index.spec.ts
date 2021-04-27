@@ -12,9 +12,9 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const id = 'id'
+    const namespace = 'namespace'
 
-    const es = new EventSource(`${getAddress()}/logger/${id}`)
+    const es = new EventSource(`${getAddress()}/logger/${namespace}`)
     await waitForEventTarget(es as EventTarget, 'open')
     es.close()
   })

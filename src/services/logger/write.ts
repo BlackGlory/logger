@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 import { JSON_PAYLOAD_ONLY, WRITE_PAYLOAD_LIMIT } from '@env'
 import { CustomError } from '@blackglory/errors'
 
@@ -18,19 +18,20 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   )
 
   server.post<{
-    Params: { id: string }
+    Params: { namespace: string }
     Querystring: { token?: string }
     Body: string
   }>(
-    '/logger/:id'
+    '/logger/:namespace'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , querystring: { token: tokenSchema }
       , headers: {
-          'content-type': JSON_PAYLOAD_ONLY()
-                          ? { type: 'string', pattern: '^application/json' }
-                          : { type: 'string' }
+          'content-type':
+            JSON_PAYLOAD_ONLY()
+            ? { type: 'string', pattern: '^application/json' }
+            : { type: 'string' }
         }
       , response: {
           204: { type: 'null' }
@@ -39,19 +40,19 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     , bodyLimit: WRITE_PAYLOAD_LIMIT()
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const payload = req.body
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(id)
-        await Core.Whitelist.check(id)
-        await Core.TBAC.checkWritePermission(id, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkWritePermission(namespace, token)
         if (Core.JsonSchema.isEnabled()) {
           if (isJSONPayload()) {
-            await Core.JsonSchema.validate(id, payload)
+            await Core.JsonSchema.validate(namespace, payload)
           } else {
-            if (await Core.JsonSchema.get(id)) {
+            if (await Core.JsonSchema.get(namespace)) {
               throw new BadContentType('application/json')
             }
           }
@@ -65,7 +66,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.Logger.write(id, payload)
+      await Core.Logger.write(namespace, payload)
       reply.status(204).send()
 
       function isJSONPayload(): boolean {

@@ -10,32 +10,32 @@ beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
 describe('PurgePolicy', () => {
-  describe('getAllIdsWithPurgePolicies(): string[]', () => {
+  describe('getAllNamespacesWithPurgePolicies(): string[]', () => {
     it('return string[]', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       setRawPurgePolicy({
-        logger_id: id
+        namespace
       , time_to_live: 100
       , number_limit: 200
       })
 
-      const result = DAO.getAllIdsWithPurgePolicies()
+      const result = DAO.getAllNamespacesWithPurgePolicies()
 
-      expect(result).toEqual([id])
+      expect(result).toEqual([namespace])
     })
   })
 
-  describe('getPurgePolicies(id: string): { timeToLive: number | null, numberLimit: number | null', () => {
+  describe('getPurgePolicies(namespace: string): { timeToLive: number | null, numberLimit: number | null', () => {
     describe('policy exists', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const rawPurgePolicy = setRawPurgePolicy({
-          logger_id: id
+          namespace
         , time_to_live: 100
         , number_limit: 200
         })
 
-        const result = DAO.getPurgePolicies(id)
+        const result = DAO.getPurgePolicies(namespace)
 
         expect(result).toEqual({
           timeToLive: rawPurgePolicy.time_to_live
@@ -46,9 +46,9 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.getPurgePolicies(id)
+        const result = DAO.getPurgePolicies(namespace)
 
         expect(result).toEqual({
           timeToLive: null
@@ -58,13 +58,13 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('setTimeToLive(id: string, timeToLive: number): void', () => {
+  describe('setTimeToLive(namespace: string, timeToLive: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       const timeToLive = 100
 
-      const result = DAO.setTimeToLive(id, timeToLive)
-      const row = getRawPurgePolicy(id)
+      const result = DAO.setTimeToLive(namespace, timeToLive)
+      const row = getRawPurgePolicy(namespace)
 
       expect(result).toBeUndefined()
       expect(row).not.toBeNull()
@@ -72,18 +72,18 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('unsetTimeToLive(id: string): void', () => {
+  describe('unsetTimeToLive(namespace: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawPurgePolicy({
-          logger_id: id
+          namespace
         , time_to_live: 100
         , number_limit: 100
         })
 
-        const result = DAO.unsetTimeToLive(id)
-        const row = getRawPurgePolicy(id)
+        const result = DAO.unsetTimeToLive(namespace)
+        const row = getRawPurgePolicy(namespace)
 
         expect(result).toBeUndefined()
         expect(row).not.toBeNull()
@@ -93,23 +93,23 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetTimeToLive(id)
+        const result = DAO.unsetTimeToLive(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawPurgePolicy(id)).toBeFalse()
+        expect(hasRawPurgePolicy(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setNumberLimit(id: string, numberLimit: number): void', () => {
+  describe('setNumberLimit(namespace: string, numberLimit: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       const numberLimit = 100
 
-      const result = DAO.setNumberLimit(id, numberLimit)
-      const row = getRawPurgePolicy(id)
+      const result = DAO.setNumberLimit(namespace, numberLimit)
+      const row = getRawPurgePolicy(namespace)
 
       expect(result).toBeUndefined()
       expect(row).not.toBeNull()
@@ -117,18 +117,18 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('unsetNumberLimit(id: string): void', () => {
+  describe('unsetNumberLimit(namespace: string): void', () => {
     describe('policy exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawPurgePolicy({
-          logger_id: id
+          namespace
         , time_to_live: 100
         , number_limit: 100
         })
 
-        const result = DAO.unsetNumberLimit(id)
-        const row = getRawPurgePolicy(id)
+        const result = DAO.unsetNumberLimit(namespace)
+        const row = getRawPurgePolicy(namespace)
 
         expect(result).toBeUndefined()
         expect(row).not.toBeNull()
@@ -138,12 +138,12 @@ describe('PurgePolicy', () => {
 
     describe('policy does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetNumberLimit(id)
+        const result = DAO.unsetNumberLimit(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawPurgePolicy(id)).toBeFalse()
+        expect(hasRawPurgePolicy(namespace)).toBeFalse()
       })
     })
   })

@@ -8,9 +8,9 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src __tests__",
-    "test": "jest --config jest.config.js",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test:coverage": "jest --coverage --config jest.config.js",
+    "test": "jest --runInBand --config jest.config.js",
+    "test:debug": "node --runInBand --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage --config jest.config.js",
     "dev": "nodemon",
     "dev:http2": "cross-env LOGGER_HTTP2=true nodemon",
     "clean": "rimraf lib",

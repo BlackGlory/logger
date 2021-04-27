@@ -14,16 +14,16 @@ afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('403', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const id = 'id'
+        const namespace = 'namespace'
         const message = 'message'
-        await AccessControlDAO.addBlacklistItem(id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/logger/${id}`)
+        , pathname(`/logger/${namespace}`)
         , text(message)
         ))
 
@@ -31,15 +31,15 @@ describe('blacklist', () => {
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('204', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const id = 'id'
+        const namespace = 'namespace'
         const message = 'message'
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/logger/${id}`)
+        , pathname(`/logger/${namespace}`)
         , text(message)
         ))
 
@@ -49,15 +49,15 @@ describe('blacklist', () => {
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('204', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const message = 'message'
-        await AccessControlDAO.addBlacklistItem(id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/logger/${id}`)
+        , pathname(`/logger/${namespace}`)
         , text(message)
         ))
 

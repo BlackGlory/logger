@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
@@ -15,18 +15,18 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.PurgePolicy.getAllIds()
+      const result = await Core.PurgePolicy.getAllNamespaces()
       reply.send(result)
     }
   )
 
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/purge-policies'
+    '/logger/:namespace/purge-policies'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             timeToLive: {
@@ -46,107 +46,107 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.PurgePolicy.get(id)
+      const namespace = req.params.namespace
+      const result = await Core.PurgePolicy.get(namespace)
       reply.send(result)
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/logger/:id/purge-policies/time-to-live'
+    '/logger/:namespace/purge-policies/time-to-live'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const timeToLive = req.body
-      await Core.PurgePolicy.setTimeToLive(id, timeToLive)
+      await Core.PurgePolicy.setTimeToLive(namespace, timeToLive)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/logger/:id/purge-policies/limit'
+    '/logger/:namespace/purge-policies/limit'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const limit = req.body
-      await Core.PurgePolicy.setLimit(id, limit)
+      await Core.PurgePolicy.setLimit(namespace, limit)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/purge-policies/time-to-live'
+    '/logger/:namespace/purge-policies/time-to-live'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.PurgePolicy.unsetTimeToLive(id)
+      const namespace = req.params.namespace
+      await Core.PurgePolicy.unsetTimeToLive(namespace)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/purge-policies/limit'
+    '/logger/:namespace/purge-policies/limit'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.PurgePolicy.unsetLimit(id)
+      const namespace = req.params.namespace
+      await Core.PurgePolicy.unsetLimit(namespace)
       reply.status(204).send()
     }
   )
 
   server.post<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/logger/:id/purge-policies'
+    '/logger/:namespace/purge-policies'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.PurgePolicy.purge(id)
+      const namespace = req.params.namespace
+      await Core.PurgePolicy.purge(namespace)
       reply.status(204).send()
     }
   )

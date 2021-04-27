@@ -8,50 +8,50 @@ jest.mock('@dao/data-in-sqlite3/database')
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('purgeByTimestamp(id: string, timestamp: number): void', () => {
+describe('purgeByTimestamp(namespace: string, timestamp: number): void', () => {
   it('return undefined', () => {
-    const id = 'id'
+    const namespace = 'namespace'
     const log1 = setRawLog({
-      logger_id: id
+      namespace
     , payload: 'payload1'
     , timestamp: 0
     , number: 0
     })
     const log2 = setRawLog({
-      logger_id: id
+      namespace
     , payload: 'payload2'
     , timestamp: 1
     , number: 0
     })
     const timestamp = 1
 
-    const result = DAO.purgeByTimestamp(id, timestamp)
-    const rows = getAllRawLogs(id)
+    const result = DAO.purgeByTimestamp(namespace, timestamp)
+    const rows = getAllRawLogs(namespace)
 
     expect(result).toBeUndefined()
     expect(rows).toEqual([log2])
   })
 })
 
-describe('purgeByLimit(id: string, limit: number): void', () => {
+describe('purgeByLimit(namespace: string, limit: number): void', () => {
   it('return undefined', () => {
-    const id = 'id'
+    const namespace = 'namespace'
     const log1 = setRawLog({
-      logger_id: id
+      namespace
     , payload: 'payload1'
     , timestamp: 0
     , number: 0
     })
     const log2 = setRawLog({
-      logger_id: id
+      namespace
     , payload: 'payload2'
     , timestamp: 0
     , number: 1
     })
     const limit = 1
 
-    const result = DAO.purgeByLimit(id, limit)
-    const rows = getAllRawLogs(id)
+    const result = DAO.purgeByLimit(namespace, limit)
+    const rows = getAllRawLogs(namespace)
 
     expect(result).toBeUndefined()
     expect(rows).toEqual([log2])

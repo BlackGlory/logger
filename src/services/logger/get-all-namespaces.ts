@@ -9,7 +9,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.get(
     '/logger'
   , (req, reply) => {
-      const result = Core.Logger.getAllLoggerIds()
+      const result = Core.Logger.getAllNamespaces()
       const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
       if (accept === 'application/x-ndjson') {
         reply

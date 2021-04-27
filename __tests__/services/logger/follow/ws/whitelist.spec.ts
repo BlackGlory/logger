@@ -12,25 +12,25 @@ beforeEach(startService)
 afterEach(stopService)
 
 describe('whitelist', () => {
-  describe('id in whitelist', () => {
+  describe('namespace in whitelist', () => {
     it('open', async () => {
       process.env.LOGGER_ADMIN_PASSWORD = 'password'
       process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-      const id = 'id'
-      await AccessControlDAO.addWhitelistItem(id)
+      const namespace = 'namespace'
+      await AccessControlDAO.addWhitelistItem(namespace)
 
-      const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+      const ws = new WebSocket(`${getAddress()}/logger/${namespace}`.replace('http', 'ws'))
       await waitForEventEmitter(ws, 'open')
     })
   })
 
-  describe('id not in whitelist', () => {
+  describe('namespace not in whitelist', () => {
     it('error', async () => {
       process.env.LOGGER_ADMIN_PASSWORD = 'password'
       process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const ws = new WebSocket(`${getAddress()}/logger/${id}`.replace('http', 'ws'))
+      const ws = new WebSocket(`${getAddress()}/logger/${namespace}`.replace('http', 'ws'))
       await waitForEventEmitter(ws, 'error')
     })
   })

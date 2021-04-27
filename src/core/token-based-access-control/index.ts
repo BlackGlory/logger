@@ -28,47 +28,53 @@ function isEnabled() {
 /**
  * @throws {Unauthorized}
  */
-async function checkWritePermission(id: string, token?: string) {
+async function checkWritePermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const writeTokenRequired =
-    (await TokenPolicy.get(id)).writeTokenRequired
+    (await TokenPolicy.get(namespace)).writeTokenRequired
   ?? WRITE_TOKEN_REQUIRED()
 
   if (writeTokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchWriteToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchWriteToken({ token, namespace: namespace })) {
+      throw new Unauthorized()
+    }
   }
 }
 
 /**
  * @throws {Unauthorized}
  */
-async function checkReadPermission(id: string, token?: string) {
+async function checkReadPermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const readTokenRequired =
-    (await TokenPolicy.get(id)).readTokenRequired
+    (await TokenPolicy.get(namespace)).readTokenRequired
   ?? READ_TOKEN_REQUIRED()
 
   if (readTokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchReadToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchReadToken({ token, namespace: namespace })) {
+      throw new Unauthorized()
+    }
   }
 }
 
 /**
  * @throws {Unauthorized}
  */
-async function checkDeletePermission(id: string, token?: string) {
+async function checkDeletePermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const deleteTokenRequired =
-    (await TokenPolicy.get(id)).deleteTokenRequired
+    (await TokenPolicy.get(namespace)).deleteTokenRequired
   ?? DELETE_TOKEN_REQUIRED()
 
   if (deleteTokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchDeleteToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchDeleteToken({ token, namespace: namespace })) {
+      throw new Unauthorized()
+    }
   }
 }

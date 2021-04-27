@@ -74,15 +74,15 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('GET /admin/logger/:id/purge-policies', () => {
+  describe('GET /admin/logger/:namespace/purge-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         , headers(createAuthHeaders())
         ))
 
@@ -109,11 +109,11 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -123,11 +123,11 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -135,16 +135,16 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('PUT /admin/logger/:id/purge-policies/time-to-live', () => {
+  describe('PUT /admin/logger/:namespace/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -155,12 +155,12 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         , json(val)
         ))
 
@@ -171,12 +171,12 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -186,16 +186,16 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('PUT /admin/logger/:id/purge-policies/limit', () => {
+  describe('PUT /admin/logger/:namespace/purge-policies/limit', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -206,12 +206,12 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         , json(val)
         ))
 
@@ -222,12 +222,12 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = 1
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -237,15 +237,15 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('DELETE /admin/logger/:id/purge-policies/time-to-live', () => {
+  describe('DELETE /admin/logger/:namespace/purge-policies/time-to-live', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         , headers(createAuthHeaders())
         ))
 
@@ -255,11 +255,11 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         ))
 
         expect(res.status).toBe(401)
@@ -269,11 +269,11 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/time-to-live`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/time-to-live`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -282,15 +282,15 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('DELETE /admin/logger/:id/purge-policies/limit', () => {
+  describe('DELETE /admin/logger/:namespace/purge-policies/limit', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         , headers(createAuthHeaders())
         ))
 
@@ -300,11 +300,11 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         ))
 
         expect(res.status).toBe(401)
@@ -314,11 +314,11 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies/limit`)
+        , pathname(`/admin/logger/${namespace}/purge-policies/limit`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -327,15 +327,15 @@ describe('PurgePolicy', () => {
     })
   })
 
-  describe('POST /admin/logger/:id/purge-policies', () => {
+  describe('POST /admin/logger/:namespace/purge-policies', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         , headers(createAuthHeaders())
         ))
 
@@ -345,11 +345,11 @@ describe('PurgePolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -359,11 +359,11 @@ describe('PurgePolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.LOGGER_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/admin/logger/${id}/purge-policies`)
+        , pathname(`/admin/logger/${namespace}/purge-policies`)
         , headers(createAuthHeaders('bad'))
         ))
 

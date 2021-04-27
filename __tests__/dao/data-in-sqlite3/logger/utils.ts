@@ -1,37 +1,37 @@
 import { getDatabase } from '@dao/data-in-sqlite3/database'
 
 interface IRawLog {
-  logger_id: string
+  namespace: string
   payload: string
   timestamp: number
   number: number
 }
 
-export function setRawLog(item: IRawLog): IRawLog {
+export function setRawLog(raw: IRawLog): IRawLog {
   getDatabase().prepare(`
     INSERT INTO logger_log (
-      logger_id
+      namespace
     , payload
     , timestamp
     , number
     )
     VALUES (
-      $logger_id
+      $namespace
     , $payload
     , $timestamp
     , $number
     );
-  `).run(item)
+  `).run(raw)
 
-  return item
+  return raw
 }
 
-export function getAllRawLogs(id: string): IRawLog[] {
+export function getAllRawLogs(namespace: string): IRawLog[] {
   return getDatabase().prepare(`
     SELECT *
       FROM logger_log
-     WHERE logger_id = $id
+     WHERE namespace = $namespace
      ORDER BY timestamp ASC
             , number    ASC;
-  `).all({ id })
+  `).all({ namespace })
 }
