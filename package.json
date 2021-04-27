@@ -100,7 +100,7 @@
     "migrations-file": "^0.1.7",
     "prom-client": "^13.1.0",
     "return-style": "^0.12.3",
-    "rxjs": "^7.0.0-beta.13",
+    "rxjs": "^7.0.0-rc.2",
     "value-getter": "^0.1.13",
     "ws": "^7.4.5"
   }
