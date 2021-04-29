@@ -832,7 +832,7 @@ await fetch(`http://localhost:8080/admin/logger/${namespace}/token-policies/writ
 ****** 获取所有具有token的记录器namespace
 =GET /admin/logger-with-tokens=
 
-获取所有具有token的记录器namespace, 返回由JSON表示的字符串数组`string[]`
+获取所有具有token的记录器namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
