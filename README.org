@@ -887,12 +887,12 @@ await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/logger/$namespace/tokens/$token/log"
+  "http://localhost:8080/admin/logger/$namespace/tokens/$token/write"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/log`, {
+await fetch(`http://localhost:8080/admin/logger/${namespace}/tokens/${token}/write`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
