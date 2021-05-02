@@ -280,7 +280,9 @@ curl \
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/logger/${namespace}/logs`)
+await fetch(`http://localhost:8080/logger/${namespace}/logs`, {
+  method: 'DELETE'
+})
 #+END_SRC
 
 **** get all namespaces
