@@ -4,7 +4,7 @@ import { PubSubDAO } from '@dao/data-in-memory/pubsub'
 beforeEach(resetEmitter)
 
 describe('PubSubDAO', () => {
-  test('publish, subscribe', async done => {
+  test('publish, subscribe', done => {
     const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
@@ -14,7 +14,7 @@ describe('PubSubDAO', () => {
     setImmediate(done)
   })
 
-  test('subscribe, publish', async done => {
+  test('subscribe, publish', done => {
     const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
@@ -26,7 +26,7 @@ describe('PubSubDAO', () => {
     PubSubDAO.publish(namespace, { id: logId, payload })
   })
 
-  test('subscribe, unsubscribe, publish', async done => {
+  test('subscribe, unsubscribe, publish', done => {
     const namespace = 'namespace'
     const logId = 'log-id'
     const payload = 'payload'
