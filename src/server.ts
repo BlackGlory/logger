@@ -1,6 +1,6 @@
 import fastify from 'fastify'
 import cors from 'fastify-cors'
-import metricsPlugin = require('fastify-metrics')
+import metricsPlugin from 'fastify-metrics'
 import { Registry } from 'prom-client'
 import { routes as logger } from '@services/logger'
 import { routes as admin } from '@services/admin'
