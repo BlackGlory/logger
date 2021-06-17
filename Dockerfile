@@ -35,7 +35,6 @@ RUN apk add --update --no-cache --virtual .build-deps \
 
 COPY . ./
 
-ENV NODE_ENV=production
 ENV LOGGER_HOST=0.0.0.0
 ENV LOGGER_PORT=8080
 EXPOSE 8080
