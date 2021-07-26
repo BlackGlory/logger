@@ -225,9 +225,9 @@ ws.addEventListener('message', event => {
 
 **** query
 =GET /logger/<namespace>/logs=
-
 获取所有日志.
-查询(head, tail, from, to可以组合使用, 不能同时有head和tail)
+
+参数(head, tail, from, to可以组合使用, 不能同时有head和tail)
 - =GET /logger/<namespace>/logs?head=<number>= 取开头number个记录.
 - =GET /logger/<namespace>/logs?tail=<number>= 取结尾number个记录.
 - =GET /logger/<namespace>/logs?from=<logId>= 从特定logId开始.
@@ -262,7 +262,11 @@ await fetch(`http://localhost:8080/logger/${namespace}/logs`).then(res => res.js
 #+END_SRC
 
 **** delete
-=DELETE /logger/<namespace>/logs?from=<logId>= 删除从特定logId开始.
+=DELETE /logger/<namspace>/logs=
+删除所有日志.
+
+参数(head, tail, from, to可以组合使用, 不能同时有head和tail)
+- =DELETE /logger/<namespace>/logs?from=<logId>= 删除从特定logId开始.
 - =DELETE /logger/<namespace>/logs?to=<logId>= 删除至特定logId结束.
 - =DELETE /logger/<namespace>/logs?head=<number>= 删除开头number个记录.
 - =DELETE /logger/<namespace>/logs?tail=<number>= 删除结尾number个记录.
