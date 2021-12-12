@@ -35,8 +35,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         from: req.query.from
       , to: req.query.to
       }
-      if (req.query.head) (range as ISlice & IHead).head = req.query.head
-      if (req.query.tail) (range as ISlice & ITail).tail = req.query.tail
+      if (req.query.head) {
+        (range as ISlice & IHead).head = req.query.head
+      }
+      if (req.query.tail) {
+        (range as ISlice & ITail).tail = req.query.tail
+      }
 
       try {
         await Core.Blacklist.check(namespace)

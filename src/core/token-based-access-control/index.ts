@@ -21,19 +21,19 @@ export const TBAC: ICore['TBAC'] = {
 , Token
 }
 
-function isEnabled() {
+function isEnabled(): boolean {
   return TOKEN_BASED_ACCESS_CONTROL()
 }
 
 /**
  * @throws {Unauthorized}
  */
-async function checkWritePermission(namespace: string, token?: string) {
+async function checkWritePermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const writeTokenRequired =
-    (await TokenPolicy.get(namespace)).writeTokenRequired
-  ?? WRITE_TOKEN_REQUIRED()
+    (await TokenPolicy.get(namespace)).writeTokenRequired ??
+    WRITE_TOKEN_REQUIRED()
 
   if (writeTokenRequired) {
     if (!token) throw new Unauthorized()
@@ -46,12 +46,12 @@ async function checkWritePermission(namespace: string, token?: string) {
 /**
  * @throws {Unauthorized}
  */
-async function checkReadPermission(namespace: string, token?: string) {
+async function checkReadPermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const readTokenRequired =
-    (await TokenPolicy.get(namespace)).readTokenRequired
-  ?? READ_TOKEN_REQUIRED()
+    (await TokenPolicy.get(namespace)).readTokenRequired ??
+    READ_TOKEN_REQUIRED()
 
   if (readTokenRequired) {
     if (!token) throw new Unauthorized()
@@ -64,7 +64,7 @@ async function checkReadPermission(namespace: string, token?: string) {
 /**
  * @throws {Unauthorized}
  */
-async function checkDeletePermission(namespace: string, token?: string) {
+async function checkDeletePermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const deleteTokenRequired =

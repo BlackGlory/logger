@@ -36,7 +36,9 @@ export async function purge(namespace: string): Promise<void> {
   const policies = await PurgePolicyDAO.getPurgePolicies(namespace)
   const limit = policies.numberLimit ?? LOGGER_LOGS_LIMIT()
   const timeToLive = policies.timeToLive ?? LOGGER_LOGS_TIME_TO_LIVE()
-  if (limit > 0) await LoggerDAO.purgeByLimit(namespace, limit)
+  if (limit > 0) {
+    await LoggerDAO.purgeByLimit(namespace, limit)
+  }
   if (timeToLive > 0) {
     const timestamp = getTimestamp() - timeToLive
     await LoggerDAO.purgeByTimestamp(namespace, timestamp)
