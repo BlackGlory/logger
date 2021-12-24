@@ -85,7 +85,7 @@
     "extra-generator": "^0.2.15",
     "extra-promise": "^0.20.0",
     "extra-sql-builder": "^0.2.9",
-    "extra-tags": "^0.2.3",
+    "extra-tags": "^0.2.4",
     "extra-timers": "^0.2.4",
     "fastify": "^3.25.0",
     "fastify-accepts": "^2.1.0",

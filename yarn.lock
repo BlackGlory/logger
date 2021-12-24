@@ -3221,17 +3221,10 @@ extra-stream@^0.1.3:
   dependencies:
     "@blackglory/types" "^0.6.3"
 
-extra-tags@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/extra-tags/-/extra-tags-0.2.2.tgz#bbb6f546520a6e31ee5389ffdec27fa0de10a55b"
-  integrity sha512-aWsBrb9hH/vqvbvlR+w9FfJTowDT3+2m/1mzlKasSmLhHbUdEShsSpl9rILneeG0FemfgNohZkyfEtc/02y9eg==
-  dependencies:
-    justypes "^0.1.5"
-
-extra-tags@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/extra-tags/-/extra-tags-0.2.3.tgz#7b2cd42cd825a178ec281af7ca4ee1971abb620e"
-  integrity sha512-4CodCSOAzC+LSGrVVwZxfROtkGQmgfjydzQCIhuJoLbBzfV4esNpZXjPIF5q7uHtgdxpx1f1iI3NyxKgrohn7Q==
+extra-tags@^0.2.2, extra-tags@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/extra-tags/-/extra-tags-0.2.4.tgz#894335e12f62a55035c76d05128b8dd0525e3fbc"
+  integrity sha512-wDW5tjPrcnIHHpz+i4bosYKr3Zotpx2fSGQX3Fpu4w2pMpyV9uPKR3+hqIcy/IVR1y67iXZECtlMUZXE58RzyQ==
   dependencies:
     justypes "^0.1.6"
 
