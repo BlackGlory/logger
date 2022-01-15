@@ -14,7 +14,7 @@ export async function prepareDatabase(): Promise<void> {
 }
 
 export function getDatabase(): IDatabase {
-  assert(db)
+  assert(db, 'Database is not opened')
   return db
 }
 
