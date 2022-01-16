@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/BlackGlory/logger/compare/v0.3.5...v0.4.0) (2022-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* - The minimum version is Node.js v16
+
+### Features
+
+* add accept-version support ([87e3325](https://github.com/BlackGlory/logger/commit/87e3325f4bdb34d95212f510d4929c867956d461))
+* add cache-control header ([52ab140](https://github.com/BlackGlory/logger/commit/52ab1403b895a708ef804d11e1d5d108a1a74cc4))
+
+
+### Bug Fixes
+
+* **docker:** build ([1482550](https://github.com/BlackGlory/logger/commit/1482550af59f3d207689a05855f2bf34eb5381bb))
+* **docker:** healthcheck ([317dfa4](https://github.com/BlackGlory/logger/commit/317dfa46d734df428e30ade93eb4da502d54386d))
+
+
+* upgrade dependencies ([bb862de](https://github.com/BlackGlory/logger/commit/bb862deadee59e20b3a8d2ad43924d0c44afd5ad))
+
 ### [0.3.5](https://github.com/BlackGlory/logger/compare/v0.3.4...v0.3.5) (2021-10-14)
 
 ### [0.3.4](https://github.com/BlackGlory/logger/compare/v0.3.3...v0.3.4) (2021-07-13)
