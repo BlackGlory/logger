@@ -29,24 +29,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { namespace: namespaceSchema }
       , response: {
           200: {
-            writeTokenRequired: {
-              anyOf: [
-                { type: 'boolean' }
-              , { type: 'null' }
-              ]
-            }
-          , readTokenRequired: {
-              anyOf: [
-                { type: 'boolean' }
-              , { type: 'null' }
-              ]
-            }
-          , deleteTokenRequired: {
-              anyOf: [
-                { type: 'boolean' }
-              , { type: 'null' }
-              ]
-            }
+            writeTokenRequired: { type: 'boolean', nullable: true }
+          , readTokenRequired: { type: 'boolean', nullable: true }
+          , deleteTokenRequired: { type: 'boolean', nullable: true }
           }
         }
       }
