@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
 import { Readable } from 'stream'
-import accepts from 'fastify-accepts'
+import accepts from '@fastify/accepts'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(accepts)
