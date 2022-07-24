@@ -9,3 +9,12 @@ services:
         - 'HTTP_PROXY'
         - 'HTTPS_PROXY'
     command: test
+
+  smoke:
+    build:
+      dockerfile: Dockerfile.test
+      context: .
+      args:
+        - 'HTTP_PROXY'
+        - 'HTTPS_PROXY'
+    command: smoke
