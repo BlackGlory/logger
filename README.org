@@ -35,6 +35,7 @@ git clone https://github.com/BlackGlory/logger
 cd log
 yarn install
 yarn build
+yarn bundle
 yarn --silent start
 #+END_SRC
 
