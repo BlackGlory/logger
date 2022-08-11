@@ -2,6 +2,7 @@ import { sql } from 'extra-sql-builder'
 import { getDatabase } from '../database'
 import { parseFrom } from './utils/parse-from'
 import { parseTo } from './utils/parse-to'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export function queryLogs(
   namespace: string
@@ -12,13 +13,14 @@ export function queryLogs(
   return queryLogsBySlice(namespace, range)
 }
 
-function queryLogsBySlice(
+const queryLogsBySlice = withLazyStatic(function (
   namespace: string
 , range: ISlice
 ): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
-  const rows = getDatabase().prepare(sql`
+
+  const rows = lazyStatic(() => getDatabase().prepare(sql`
     SELECT timestamp || '-' || number AS id
          , payload
       FROM logger_log
@@ -27,7 +29,7 @@ function queryLogsBySlice(
     ${to   && 'AND (timestamp < $toTimestamp OR (timestamp = $toTimestamp AND number <= $toNumber))'}
      ORDER BY timestamp ASC
             , number    ASC;
-  `).iterate({
+  `), [getDatabase()]).iterate({
     namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
@@ -35,15 +37,16 @@ function queryLogsBySlice(
   , toNumber: to?.number
   })
   return rows
-}
+})
 
-function queryLogsBySliceWithHead(
+const queryLogsBySliceWithHead = withLazyStatic(function (
   namespace: string
 , range: ISlice & IHead
 ): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
-  const rows = getDatabase().prepare(sql`
+
+  const rows = lazyStatic(() => getDatabase().prepare(sql`
     SELECT timestamp || '-' || number AS id
          , payload
       FROM logger_log
@@ -53,7 +56,7 @@ function queryLogsBySliceWithHead(
      ORDER BY timestamp ASC
             , number    ASC
      LIMIT $head;
-  `).iterate({
+  `), [getDatabase()]).iterate({
     namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
@@ -62,15 +65,16 @@ function queryLogsBySliceWithHead(
   , head: range.head
   })
   return rows
-}
+})
 
-function queryLogsBySliceWithTail(
+const queryLogsBySliceWithTail = withLazyStatic(function (
   namespace: string
 , range: ISlice & ITail
 ): Iterable<{ id: string; payload: string }> {
   const from = parseFrom(range)
   const to = parseTo(range)
-  const rows = getDatabase().prepare(sql`
+
+  const rows = lazyStatic(() => getDatabase().prepare(sql`
     SELECT timestamp || '-' || number AS id
          , payload
       FROM (
@@ -87,7 +91,7 @@ function queryLogsBySliceWithTail(
            )
      ORDER BY timestamp ASC
             , number    ASC;
-  `).iterate({
+  `), [getDatabase()]).iterate({
     namespace
   , fromTimestamp: from?.timestamp
   , fromNumber: from?.number
@@ -96,4 +100,4 @@ function queryLogsBySliceWithTail(
   , tail: range.tail
   })
   return rows
-}
+})

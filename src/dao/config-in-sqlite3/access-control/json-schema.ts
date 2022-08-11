@@ -1,36 +1,40 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllNamespacesWithJsonSchema(): string[] {
-  const result = getDatabase().prepare(`
+export const getAllNamespacesWithJsonSchema = withLazyStatic(function (): string[] {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM logger_json_schema
-  `).all()
+  `), [getDatabase()]).all()
 
   return result.map(x => x['namespace'])
-}
+})
 
-export function getJsonSchema(namespace: string): string | null {
-  const result = getDatabase().prepare(`
+export const getJsonSchema = withLazyStatic(function (namespace: string): string | null {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT json_schema
       FROM logger_json_schema
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
 
   return result ? result['json_schema'] : null
-}
+})
 
-export function setJsonSchema({ namespace, schema }: { namespace: string; schema: string }): void {
-  getDatabase().prepare(`
+export const setJsonSchema = withLazyStatic(function ({ namespace, schema }: {
+  namespace: string
+  schema: string
+}): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO logger_json_schema (namespace, json_schema)
     VALUES ($namespace, $schema)
         ON CONFLICT(namespace)
         DO UPDATE SET json_schema = $schema;
-  `).run({ namespace, schema })
-}
+  `), [getDatabase()]).run({ namespace, schema })
+})
 
-export function removeJsonSchema(namespace: string): void {
-  getDatabase().prepare(`
+export const removeJsonSchema = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM logger_json_schema
      WHERE namespace = $namespace;
-  `).run({ namespace })
-}
+  `), [getDatabase()]).run({ namespace })
+})

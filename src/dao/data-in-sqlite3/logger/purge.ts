@@ -1,20 +1,27 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function purgeByTimestamp(namespace: string, timestamp: number): void {
-  getDatabase().prepare(`
+export const purgeByTimestamp = withLazyStatic(function (
+  namespace: string
+, timestamp: number
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM logger_log
      WHERE namespace = $namespace
        AND timestamp < $timestamp;
-  `).run({ namespace, timestamp })
-}
+  `), [getDatabase()]).run({ namespace, timestamp })
+})
 
-export function purgeByLimit(namespace: string, limit: number): void {
-  getDatabase().prepare(`
+export const purgeByLimit = withLazyStatic(function (
+  namespace: string
+, limit: number
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM logger_log
      WHERE namespace = $namespace
      ORDER BY timestamp DESC
             , number    DESC
      LIMIT -1
     OFFSET $limit;
-  `).run({ namespace, limit })
-}
+  `), [getDatabase()]).run({ namespace, limit })
+})

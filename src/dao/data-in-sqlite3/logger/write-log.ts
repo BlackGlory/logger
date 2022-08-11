@@ -1,43 +1,50 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function writeLog(namespace: string, payload: string): string {
-  let number
-  const timestamp = getTimestamp()
-  const db = getDatabase()
+export const writeLog = withLazyStatic(function (
+  namespace: string
+, payload: string
+): string {
+  return lazyStatic(() => getDatabase().transaction((namespace: string, payload: string) => {
+    const timestamp = getTimestamp()
 
-  db.transaction(() => {
-    const row: { number: number } = db.prepare(`
+    const row: { number: number } = lazyStatic(() => getDatabase().prepare(`
       SELECT count AS number
         FROM logger_counter
        WHERE namespace = $namespace
          AND timestamp = $timestamp
-    `).get({ namespace, timestamp })
+    `), [getDatabase()]).get({ namespace, timestamp })
 
+    const countUp = lazyStatic(() => getDatabase().prepare(`
+      UPDATE logger_counter
+          SET count = count + 1
+        WHERE namespace = $namespace
+          AND timestamp = $timestamp;
+    `), [getDatabase()])
+
+    const initCounter = lazyStatic(() => getDatabase().prepare(`
+      INSERT INTO logger_counter (namespace, timestamp, count)
+      VALUES ($namespace, $timestamp, 1)
+          ON CONFLICT(namespace)
+          DO UPDATE SET timestamp = $timestamp
+                      , count = 1
+    `), [getDatabase()])
+
+    let number: number
     if (row) {
       number = row['number']
-      db.prepare(`
-        UPDATE logger_counter
-           SET count = count + 1
-         WHERE namespace = $namespace
-           AND timestamp = $timestamp;
-      `).run({ namespace, timestamp })
+      countUp.run({ namespace, timestamp })
     } else {
       number = 0
-      db.prepare(`
-        INSERT INTO logger_counter (namespace, timestamp, count)
-        VALUES ($namespace, $timestamp, 1)
-            ON CONFLICT(namespace)
-            DO UPDATE SET timestamp = $timestamp
-                        , count = 1
-      `).run({ namespace, timestamp })
+      initCounter.run({ namespace, timestamp })
     }
 
-    db.prepare(`
+    lazyStatic(() => getDatabase().prepare(`
       INSERT INTO logger_log (namespace, timestamp, number, payload)
       VALUES ($namespace, $timestamp, $number, $payload)
-    `).run({ namespace, timestamp, number, payload })
-  })()
+    `), [getDatabase()]).run({ namespace, timestamp, number, payload })
 
-  return `${timestamp}-${number}`
-}
+    return `${timestamp}-${number}`
+  }), [getDatabase()])(namespace, payload)
+})
