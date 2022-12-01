@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/BlackGlory/logger/compare/v0.4.6...v0.4.7) (2022-12-01)
+
+
+### Bug Fixes
+
+* edge cases ([18edc54](https://github.com/BlackGlory/logger/commit/18edc541a484c4cca86a0df1eb44a0f4a962bea6))
+
 ### [0.4.6](https://github.com/BlackGlory/logger/compare/v0.4.5...v0.4.6) (2022-09-07)
 
 ### [0.4.5](https://github.com/BlackGlory/logger/compare/v0.4.4...v0.4.5) (2022-08-11)
