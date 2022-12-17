@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/write-log'
-import { initializeDatabases, clearDatabases } from '@test/utils'
+import { expectMatchSchema, initializeDatabases, clearDatabases } from '@test/utils'
 import { getAllRawLogs } from './utils'
-import 'jest-extended'
 
 let timestamp = Date.now()
 
@@ -32,9 +31,19 @@ describe('writeLog(namespace: string, payload: string): string', () => {
 
         expect(result1).toBe(`${timestamp}-0`)
         expect(result2).toBe(`${timestamp}-1`)
-        expect(rows).toMatchObject([
-          { payload: payload1, timestamp, number: 0 }
-        , { payload: payload2, timestamp, number: 1 }
+        expect(rows).toEqual([
+          {
+            namespace
+          , payload: payload1
+          , timestamp
+          , number: 0
+          }
+        , {
+            namespace
+          , payload: payload2
+          , timestamp
+          , number: 1
+          }
         ])
       })
     })
@@ -55,9 +64,19 @@ describe('writeLog(namespace: string, payload: string): string', () => {
 
         expect(result1).toEqual(`${timestamp1}-0`)
         expect(result2).toEqual(`${timestamp2}-0`)
-        expect(rows).toMatchObject([
-          { payload: payload1, timestamp: timestamp1, number: 0 }
-        , { payload: payload2, timestamp: timestamp2, number: 0 }
+        expect(rows).toEqual([
+          {
+            namespace
+          , payload: payload1
+          , timestamp: timestamp1
+          , number: 0
+          }
+        , {
+            namespace
+          , payload: payload2
+          , timestamp: timestamp2
+          , number: 0
+          }
         ])
       })
     })

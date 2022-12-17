@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/purge-policy/purge-policy'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { getRawPurgePolicy, hasRawPurgePolicy, setRawPurgePolicy } from './utils'
-import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -98,7 +97,7 @@ describe('PurgePolicy', () => {
         const result = DAO.unsetTimeToLive(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawPurgePolicy(namespace)).toBeFalse()
+        expect(hasRawPurgePolicy(namespace)).toBe(false)
       })
     })
   })
@@ -143,7 +142,7 @@ describe('PurgePolicy', () => {
         const result = DAO.unsetNumberLimit(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawPurgePolicy(namespace)).toBeFalse()
+        expect(hasRawPurgePolicy(namespace)).toBe(false)
       })
     })
   })

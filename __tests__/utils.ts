@@ -2,7 +2,9 @@ import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import { resetCache } from '@env/cache'
 import { buildServer } from '@src/server'
+import Ajv from 'ajv'
 
+const ajv = new Ajv()
 let server: ReturnType<typeof buildServer>
 let address: string
 
@@ -52,4 +54,10 @@ export function resetEnvironment() {
 
   // reset memoize
   resetCache()
+}
+
+export function expectMatchSchema(data: unknown, schema: object): void {
+  if (!ajv.validate(schema, data)) {
+    throw new Error(ajv.errorsText())
+  }
 }

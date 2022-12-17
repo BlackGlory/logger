@@ -1,5 +1,4 @@
 import { startService, stopService, getAddress } from '@test/utils'
-import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { EventSource } from 'extra-fetch'
 import { waitForEventTarget } from '@blackglory/wait-for'
@@ -9,7 +8,6 @@ import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
-expect.extend(matchers)
 
 beforeEach(startService)
 afterEach(stopService)
