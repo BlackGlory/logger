@@ -1,6 +1,6 @@
-import { LoggerDAO } from '@dao/data-in-sqlite3/logger'
-import { PubSubDAO } from '@dao/data-in-memory/pubsub'
-import { purge } from './purge-policy'
+import { LoggerDAO } from '@dao/data-in-sqlite3/logger/index.js'
+import { PubSubDAO } from '@dao/data-in-memory/pubsub/index.js'
+import { purge } from './purge-policy.js'
 
 export async function write(namespace: string, payload: string): Promise<void> {
   const id = await LoggerDAO.writeLog(namespace, payload)

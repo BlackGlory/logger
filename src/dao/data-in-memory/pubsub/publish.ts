@@ -1,4 +1,4 @@
-import { getEmitter } from './emitter-instance'
+import { getEmitter } from './emitter-instance.js'
 
 export function publish(namespace: string, value: ILog): void {
   const emitter = getEmitter()

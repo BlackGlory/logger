@@ -1,8 +1,8 @@
-import { writeLog } from './write-log'
-import { queryLogs } from './query-logs'
-import { deleteLogs } from './delete-logs'
-import { purgeByLimit, purgeByTimestamp } from './purge'
-import { getAllNamespaces } from './get-all-namespaces'
+import { writeLog } from './write-log.js'
+import { queryLogs } from './query-logs.js'
+import { deleteLogs } from './delete-logs.js'
+import { purgeByLimit, purgeByTimestamp } from './purge.js'
+import { getAllNamespaces } from './get-all-namespaces.js'
 
 export const LoggerDAO: ILoggerDAO = {
   writeLog: asyncify(writeLog)

@@ -1,10 +1,7 @@
-import * as DAO from '@dao/data-in-sqlite3/logger/query-logs'
-import { initializeDatabases, clearDatabases } from '@test/utils'
+import * as DAO from '@dao/data-in-sqlite3/logger/query-logs.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { toArray } from 'iterable-operator'
-import { setRawLog } from './utils'
-
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/config-in-sqlite3/database')
+import { setRawLog } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

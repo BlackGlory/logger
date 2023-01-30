@@ -1,8 +1,8 @@
 import { go } from '@blackglory/go'
-import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
-import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
-import { buildServer } from './server'
-import { PORT, HOST, NODE_ENV, NodeEnv } from '@env'
+import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database.js'
+import * as DataInSqlite3 from '@dao/data-in-sqlite3/database.js'
+import { PORT, HOST, NODE_ENV, NodeEnv } from '@env/index.js'
+import { buildServer } from './server.js'
 import { youDied } from 'you-died'
 
 go(async () => {
@@ -15,7 +15,10 @@ go(async () => {
   DataInSqlite3.prepareDatabase()
 
   const server = buildServer()
-  await server.listen(PORT(), HOST())
+  await server.listen({
+    host: HOST()
+  , port: PORT()
+  })
   if (NODE_ENV() === NodeEnv.Test) process.exit()
 
   process.send?.('ready')

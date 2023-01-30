@@ -1,5 +1,5 @@
-import { getDatabase } from '../database'
-import { getTimestamp } from './utils/get-timestamp'
+import { getDatabase } from '../database.js'
+import { getTimestamp } from './utils/get-timestamp.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export const writeLog = withLazyStatic(function (

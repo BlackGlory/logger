@@ -1,9 +1,6 @@
-import * as DAO from '@dao/config-in-sqlite3/purge-policy/purge-policy'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { getRawPurgePolicy, hasRawPurgePolicy, setRawPurgePolicy } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/config-in-sqlite3/purge-policy/purge-policy.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { getRawPurgePolicy, hasRawPurgePolicy, setRawPurgePolicy } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

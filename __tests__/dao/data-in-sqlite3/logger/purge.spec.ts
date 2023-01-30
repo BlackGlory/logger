@@ -1,9 +1,6 @@
-import * as DAO from '@dao/data-in-sqlite3/logger/purge'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setRawLog, getAllRawLogs } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/data-in-sqlite3/logger/purge.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setRawLog, getAllRawLogs } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

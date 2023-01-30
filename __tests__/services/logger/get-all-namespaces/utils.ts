@@ -1,4 +1,4 @@
-import { LoggerDAO } from '@dao'
+import { LoggerDAO } from '@dao/index.js'
 
 export async function prepareLoggers(namespaces: string[]): Promise<void> {
   for (const namespace of namespaces) {

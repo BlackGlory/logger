@@ -1,13 +1,10 @@
-import { expectMatchSchema, startService, stopService, getAddress } from '@test/utils'
-import { logIdSchema } from '@src/schema'
-import { prepareLoggers } from './utils'
+import { expectMatchSchema, startService, stopService, getAddress } from '@test/utils.js'
+import { logIdSchema } from '@src/schema.js'
+import { prepareLoggers } from './utils.js'
 import { fetch } from 'extra-fetch'
 import { get } from 'extra-request'
-import { url, pathname } from 'extra-request/lib/es2018/transformers'
+import { url, pathname } from 'extra-request/transformers'
 import { toJSON } from 'extra-response'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
 
 beforeEach(startService)
 afterEach(stopService)

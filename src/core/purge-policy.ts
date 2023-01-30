@@ -1,5 +1,5 @@
-import { PurgePolicyDAO, LoggerDAO } from '@dao'
-import { LOGGER_LOGS_LIMIT, LOGGER_LOGS_TIME_TO_LIVE } from '@env'
+import { PurgePolicyDAO, LoggerDAO } from '@dao/index.js'
+import { LOGGER_LOGS_LIMIT, LOGGER_LOGS_TIME_TO_LIVE } from '@env/index.js'
 
 export function getAllNamespaces(): Promise<string[]> {
   return PurgePolicyDAO.getAllNamespacesWithPurgePolicies()

@@ -1,16 +1,7 @@
-import * as DAO from '@dao/data-in-sqlite3/logger/write-log'
-import { expectMatchSchema, initializeDatabases, clearDatabases } from '@test/utils'
-import { getAllRawLogs } from './utils'
-
-let timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/logger/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import * as DAO from '@dao/data-in-sqlite3/logger/write-log.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { getAllRawLogs } from './utils.js'
+import { setMockTimestamp } from '@dao/data-in-sqlite3/logger/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
@@ -22,9 +13,9 @@ describe('writeLog(namespace: string, payload: string): string', () => {
         const namespace = 'namespace'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
-        const timestamp = Date.now()
+        const timestamp = 10000
 
-        setTimestamp(timestamp)
+        setMockTimestamp(timestamp)
         const result1 = DAO.writeLog(namespace, payload1)
         const result2 = DAO.writeLog(namespace, payload2)
         const rows = getAllRawLogs(namespace)
@@ -53,12 +44,12 @@ describe('writeLog(namespace: string, payload: string): string', () => {
         const namespace = 'namespace'
         const payload1 = 'payload-1'
         const payload2 = 'payload-2'
-        const timestamp1 = Date.now()
+        const timestamp1 = 10000
         const timestamp2 = timestamp1 + 1
 
-        setTimestamp(timestamp1)
+        setMockTimestamp(timestamp1)
         const result1 = DAO.writeLog(namespace, payload1)
-        setTimestamp(timestamp2)
+        setMockTimestamp(timestamp2)
         const result2 = DAO.writeLog(namespace, payload2)
         const rows = getAllRawLogs(namespace)
 
@@ -82,7 +73,3 @@ describe('writeLog(namespace: string, payload: string): string', () => {
     })
   })
 })
-
-function setTimestamp(value: number) {
-  timestamp = value
-}

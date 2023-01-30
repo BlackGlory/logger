@@ -4,10 +4,10 @@ import {
 , READ_TOKEN_REQUIRED
 , WRITE_TOKEN_REQUIRED
 , DELETE_TOKEN_REQUIRED
-} from '@env'
-import { AccessControlDAO } from '@dao'
-import * as TokenPolicy from './token-policy'
-import * as Token from './token'
+} from '@env/index.js'
+import { AccessControlDAO } from '@dao/index.js'
+import * as TokenPolicy from './token-policy.js'
+import * as Token from './token.js'
 
 class Unauthorized extends CustomError {}
 

@@ -1,7 +1,7 @@
-import { getDatabase } from '../database'
+import { getDatabase } from '../database.js'
 import { sql } from 'extra-sql-builder'
-import { parseFrom } from './utils/parse-from'
-import { parseTo } from './utils/parse-to'
+import { parseFrom } from './utils/parse-from.js'
+import { parseTo } from './utils/parse-to.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export function deleteLogs(namespace: string, range: IRange): void {

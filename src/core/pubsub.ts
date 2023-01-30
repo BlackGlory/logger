@@ -1,4 +1,4 @@
-import { PubSubDAO } from '@dao'
+import { PubSubDAO } from '@dao/index.js'
 
 export function publish(namespace: string, payload: ILog): void {
   PubSubDAO.publish(namespace, payload)

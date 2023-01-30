@@ -1,11 +1,12 @@
 import Ajv from 'ajv'
-import { JsonSchemaDAO } from '@dao'
-import { DEFAULT_JSON_SCHEMA } from '@env'
-import { JSON_VALIDATION } from '@env'
-import { Json } from 'justypes'
+import { JsonSchemaDAO } from '@dao/index.js'
+import { DEFAULT_JSON_SCHEMA } from '@env/index.js'
+import { JSON_VALIDATION } from '@env/index.js'
+import { JSONValue } from '@blackglory/prelude'
 import { getErrorResult } from 'return-style'
 import { CustomError } from '@blackglory/errors'
 
+// @ts-ignore
 const ajv = new Ajv()
 
 export function isEnabled(): boolean {
