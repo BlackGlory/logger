@@ -6,6 +6,10 @@ export function setMockTimestamp(timestamp: number): void {
   mockTimestamp = timestamp
 }
 
+export function clearMock(): void {
+  mockTimestamp = undefined
+}
+
 export function getTimestamp(): number {
   if (NODE_ENV() === NodeEnv.Test && isntUndefined(mockTimestamp)) {
     return mockTimestamp

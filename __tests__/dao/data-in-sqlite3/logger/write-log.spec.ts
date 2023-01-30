@@ -1,10 +1,11 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/write-log.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { getAllRawLogs } from './utils.js'
-import { setMockTimestamp } from '@dao/data-in-sqlite3/logger/utils/get-timestamp.js'
+import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/logger/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+afterEach(clearMock)
 
 describe('writeLog(namespace: string, payload: string): string', () => {
   describe('no limit', () => {
