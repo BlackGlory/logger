@@ -564,7 +564,7 @@ Logger提供两种访问控制策略, 可以一并使用.
 所有访问控制API都使用基于口令的Bearer Token Authentication.
 口令需通过环境变量 =LOGGER_ADMIN_PASSWORD= 进行设置.
 
-访问控制规则是通过[[https://www.sqlite.org/wal.html][WAL模式]]j的SQLite3持久化的, 开启访问控制后,
+访问控制规则是通过[[https://www.sqlite.org/wal.html][WAL模式]]的SQLite3持久化的, 开启访问控制后,
 服务器的吞吐量和响应速度会受到硬盘性能的影响.
 
 已经打开的连接不会受到新的访问控制规则的影响.
@@ -723,11 +723,11 @@ await fetch(`http://localhost:8080/admin/whitelist/${namespace}`, {
 
 通过设置环境变量 =LOGGER_TOKEN_BASED_ACCESS_CONTROL=true= 开启基于token的访问控制.
 
-基于token的访问控制将根据消息队列的token access policy决定其访问规则.
+基于token的访问控制将根据logger的token access policy决定其访问规则.
 可通过环境变量 =LOGGER_WRITE_TOKEN_REQUIRED=, =LOGGER_READ_TOKEN_REQUIRED=,
 =LOGGER_DELETE_TOKEN_REQUIRED= 设置相关默认值, 未设置情况下为 =false=.
 
-一个消息队列可以有多个token, 每个token可以单独设置write和read权限, 不同消息队列的token不共用.
+一个logger可以有多个token, 每个token可以单独设置write和read权限, 不同logger的token不共用.
 
 基于token的访问控制作出了以下假设
 - token的传输过程是安全的
