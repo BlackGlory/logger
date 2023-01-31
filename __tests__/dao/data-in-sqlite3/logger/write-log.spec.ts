@@ -1,11 +1,11 @@
 import * as DAO from '@dao/data-in-sqlite3/logger/write-log.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { getAllRawLogs } from './utils.js'
-import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/logger/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp } from '@dao/data-in-sqlite3/logger/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
-afterEach(clearMock)
+afterEach(_clearMockedTimestamp)
 
 describe('writeLog(namespace: string, payload: string): string', () => {
   describe('no limit', () => {
@@ -16,7 +16,7 @@ describe('writeLog(namespace: string, payload: string): string', () => {
         const payload2 = 'payload-2'
         const timestamp = 10000
 
-        setMockTimestamp(timestamp)
+        _setMockedTimestamp(timestamp)
         const result1 = DAO.writeLog(namespace, payload1)
         const result2 = DAO.writeLog(namespace, payload2)
         const rows = getAllRawLogs(namespace)
@@ -48,9 +48,9 @@ describe('writeLog(namespace: string, payload: string): string', () => {
         const timestamp1 = 10000
         const timestamp2 = timestamp1 + 1
 
-        setMockTimestamp(timestamp1)
+        _setMockedTimestamp(timestamp1)
         const result1 = DAO.writeLog(namespace, payload1)
-        setMockTimestamp(timestamp2)
+        _setMockedTimestamp(timestamp2)
         const result2 = DAO.writeLog(namespace, payload2)
         const rows = getAllRawLogs(namespace)
 
