@@ -1,21 +1,23 @@
 import { getDatabase } from '../database.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export const getAllNamespacesWithJSONSchema = withLazyStatic(function (): string[] {
+export const getAllNamespacesWithJSONSchema = withLazyStatic((): string[] => {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM logger_json_schema
-  `), [getDatabase()]).all()
+  `), [getDatabase()])
+    .all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
 
-export const getJSONSchema = withLazyStatic(function (namespace: string): string | null {
+export const getJSONSchema = withLazyStatic((namespace: string): string | null => {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT json_schema
       FROM logger_json_schema
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()])
+    .get({ namespace }) as { json_schema: string } | undefined
 
   return result ? result['json_schema'] : null
 })

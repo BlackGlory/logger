@@ -3,29 +3,29 @@ import * as ConfigInSqlite3 from '@dao/config/database.js'
 import { resetCache } from '@env/cache.js'
 import { buildServer } from '@src/server.js'
 import Ajv from 'ajv'
+import { UnpackedPromise } from 'hotypes'
 
-// @ts-ignore
-const ajv = new Ajv()
-let server: ReturnType<typeof buildServer>
+const ajv = new Ajv.default()
+let server: UnpackedPromise<ReturnType<typeof buildServer>>
 let address: string
 
-export function getAddress() {
+export function getAddress(): string {
   return address
 }
 
-export async function startService() {
+export async function startService(): Promise<void> {
   await initializeDatabases()
-  server = buildServer()
+  server = await buildServer()
   address = await server.listen()
 }
 
-export async function stopService() {
+export async function stopService(): Promise<void> {
   await server.close()
   clearDatabases()
   resetEnvironment()
 }
 
-export async function initializeDatabases() {
+export async function initializeDatabases(): Promise<void> {
   ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
 
@@ -33,12 +33,12 @@ export async function initializeDatabases() {
   await DataInSqlite3.prepareDatabase()
 }
 
-export async function clearDatabases() {
+export function clearDatabases(): void {
   ConfigInSqlite3.closeDatabase()
   DataInSqlite3.closeDatabase()
 }
 
-export function resetEnvironment() {
+export function resetEnvironment(): void {
   // assigning a property on `process.env` will implicitly convert the value to a string.
   // use `delete` to delete a property from `process.env`.
   // see also: https://nodejs.org/api/process.html#process_process_env

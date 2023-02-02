@@ -5,13 +5,16 @@ import accepts from '@fastify/accepts'
 import { IAPI } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
-  server.register(accepts)
+  await server.register(accepts)
 
   server.get(
     '/logger'
   , (req, reply) => {
       const result = api.Logger.getAllNamespaces()
-      const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
+      // eslint-disable-next-line
+      const accept = req
+        .accepts()
+        .type(['application/json', 'application/x-ndjson']) as string
       if (accept === 'application/x-ndjson') {
         return reply
           .status(200)

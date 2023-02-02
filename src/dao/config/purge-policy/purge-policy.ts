@@ -1,25 +1,30 @@
 import { getDatabase } from '../database.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export const getAllNamespacesWithPurgePolicies = withLazyStatic(function (): string[] {
+export const getAllNamespacesWithPurgePolicies = withLazyStatic((): string[] => {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM logger_purge_policy;
-  `), [getDatabase()]).all()
+  `), [getDatabase()])
+    .all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
 
-export const getPurgePolicies = withLazyStatic(function (namespace: string): {
+export const getPurgePolicies = withLazyStatic((namespace: string): {
   timeToLive: number | null
   numberLimit: number | null
-} {
+} => {
   const row = lazyStatic(() => getDatabase().prepare(`
     SELECT time_to_live
          , number_limit
       FROM logger_purge_policy
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()])
+    .get({ namespace }) as {
+      time_to_live: number | null
+      number_limit: number | null
+    }
 
   if (row) {
     return {

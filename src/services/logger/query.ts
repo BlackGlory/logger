@@ -6,7 +6,7 @@ import accepts from '@fastify/accepts'
 import { IAPI, IHead, IRange, ISlice, ITail } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
-  server.register(accepts)
+  await server.register(accepts)
 
   server.get<{
     Params: { namespace: string }
@@ -48,9 +48,9 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
 
       try {
-        await api.Blacklist.check(namespace)
-        await api.Whitelist.check(namespace)
-        await api.TBAC.checkReadPermission(namespace, token)
+        api.Blacklist.check(namespace)
+        api.Whitelist.check(namespace)
+        api.TBAC.checkReadPermission(namespace, token)
       } catch (e) {
         if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()

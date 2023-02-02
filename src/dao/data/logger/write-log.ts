@@ -9,12 +9,13 @@ export const writeLog = withLazyStatic((namespace: string, payload: string): str
   ) => {
     const timestamp = getTimestamp()
 
-    const row: { number: number } = lazyStatic(() => getDatabase().prepare(`
+    const row = lazyStatic(() => getDatabase().prepare(`
       SELECT count AS number
         FROM logger_counter
        WHERE namespace = $namespace
          AND timestamp = $timestamp
-    `), [getDatabase()]).get({ namespace, timestamp })
+    `), [getDatabase()])
+      .get({ namespace, timestamp }) as { number: number } | undefined
 
     const countUp = lazyStatic(() => getDatabase().prepare(`
       UPDATE logger_counter

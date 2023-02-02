@@ -33,5 +33,5 @@ export function getAllRawLogs(namespace: string): IRawLog[] {
      WHERE namespace = $namespace
      ORDER BY timestamp ASC
             , number    ASC;
-  `).all({ namespace })
+  `).all({ namespace }) as Array<IRawLog>
 }

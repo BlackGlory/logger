@@ -27,10 +27,10 @@ export function hasRawPurgePolicy(namespace: string): boolean {
   return !!getRawPurgePolicy(namespace)
 }
 
-export function getRawPurgePolicy(namespace: string): IRawPurgePolicy | null {
+export function getRawPurgePolicy(namespace: string): IRawPurgePolicy | undefined {
   return getDatabase().prepare(`
     SELECT *
       FROM logger_purge_policy
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `).get({ namespace }) as IRawPurgePolicy | undefined
 }

@@ -5,7 +5,8 @@ export const getAllNamespacesWithTokens = withLazyStatic(function (): string[] {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM logger_token;
-  `), [getDatabase()]).all()
+  `), [getDatabase()])
+    .all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
@@ -13,19 +14,20 @@ export const getAllNamespacesWithTokens = withLazyStatic(function (): string[] {
 export const getAllTokens = withLazyStatic(function (
   namespace: string
 ): Array<{ token: string, write: boolean, read: boolean, delete: boolean }> {
-  const result: Array<{
-    token: string
-    'write_permission': number
-    'read_permission': number
-    'delete_permission': number
-  }> = lazyStatic(() => getDatabase().prepare(`
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT token
          , write_permission
          , read_permission
          , delete_permission
       FROM logger_token
      WHERE namespace = $namespace;
-  `), [getDatabase()]).all({ namespace })
+  `), [getDatabase()])
+    .all({ namespace }) as Array<{
+      token: string
+      write_permission: 1 | 0
+      read_permission: 1 | 0
+      delete_permission: 1 | 0 
+    }>
 
   return result.map(x => ({
     token: x['token']
@@ -43,7 +45,8 @@ export const hasWriteTokens = withLazyStatic(function (namespace: string): boole
               WHERE namespace = $namespace
                 AND write_permission = 1
            ) AS write_tokens_exist
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()])
+    .get({ namespace }) as { write_tokens_exist: 1 | 0 }
 
   return result['write_tokens_exist'] === 1
 })
@@ -60,7 +63,8 @@ export const matchWriteToken = withLazyStatic(function ({ token, namespace }: {
                 AND token = $token
                 AND write_permission = 1
            ) AS matched
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()])
+    .get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })
@@ -104,7 +108,8 @@ export const hasReadTokens = withLazyStatic(function (namespace: string): boolea
               WHERE namespace = $namespace
                 AND read_permission = 1
            ) AS read_tokens_exist
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()])
+    .get({ namespace }) as { read_tokens_exist: 1 | 0 }
 
   return result['read_tokens_exist'] === 1
 })
@@ -121,7 +126,8 @@ export const matchReadToken = withLazyStatic(function ({ token, namespace }: {
                 AND token = $token
                 AND read_permission = 1
            ) AS matched
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()])
+    .get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })
@@ -169,7 +175,8 @@ export const matchDeleteToken = withLazyStatic(function ({ token, namespace }: {
                 AND token = $token
                 AND delete_permission = 1
            ) AS matched
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()])
+    .get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })

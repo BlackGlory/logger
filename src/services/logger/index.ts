@@ -7,9 +7,9 @@ import { routes as getAllNamespacesRoutes } from './get-all-namespaces.js'
 import { IAPI } from '@src/api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
-  server.register(writeRoutes, { api })
-  server.register(followRoutes, { api })
-  server.register(queryRoutes, { api })
-  server.register(deleteRoutes, { api })
-  server.register(getAllNamespacesRoutes, { api })
+  await server.register(writeRoutes, { api })
+  await server.register(followRoutes, { api })
+  await server.register(queryRoutes, { api })
+  await server.register(deleteRoutes, { api })
+  await server.register(getAllNamespacesRoutes, { api })
 }

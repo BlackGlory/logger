@@ -14,7 +14,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   const wss = new WebSocketServer({ noServer: true })
 
   // WebSocket handler
-  wss.on('connection', async (
+  wss.on('connection', (
     ws: WebSocket
   , req: http.IncomingMessage
   , params: { namespace: string }
@@ -43,8 +43,8 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
 
     const since = parseQuerystring<{ since?: string }>(req.url!).since
     if (since) {
-      const logs = await api.Logger.query(namespace, { from: since })
-      for await (const log of logs) {
+      const logs = api.Logger.query(namespace, { from: since })
+      for (const log of logs) {
         if (log.id === since) continue
         const data = JSON.stringify(log)
         ws.send(data)
@@ -53,7 +53,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   })
 
   // WebSocket upgrade handler
-  server.server.on('upgrade', async (
+  server.server.on('upgrade', (
     req: http.IncomingMessage
   , socket: net.Socket
   , head: Buffer
@@ -70,9 +70,9 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     const token = parseQuerystring<{ token?: string }>(url).token
 
     try {
-      await api.Blacklist.check(namespace)
-      await api.Whitelist.check(namespace)
-      await api.TBAC.checkReadPermission(namespace, token)
+      api.Blacklist.check(namespace)
+      api.Whitelist.check(namespace)
+      api.TBAC.checkReadPermission(namespace, token)
     } catch (e) {
       if (e instanceof api.Blacklist.Forbidden) {
         socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
@@ -86,7 +86,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       return socket.destroy()
     }
 
-    wss.handleUpgrade(req, socket, head, async ws => {
+    wss.handleUpgrade(req, socket, head, ws => {
       wss.emit('connection', ws, req, { namespace })
 
       const connection = createWebSocketStream(ws, { encoding: 'utf8' })
@@ -113,70 +113,69 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
     }
     // Server-Sent Events handler
-  , (req, reply) => {
-      go(async () => {
-        const namespace = req.params.namespace
-        const token = req.query.token
-        const lastEventId = req.headers['Last-Event-ID']
+  , async (req, reply) => {
+      const namespace = req.params.namespace
+      const token = req.query.token
+      const lastEventId = req.headers['Last-Event-ID']
 
-        try {
-          await api.Blacklist.check(namespace)
-          await api.Whitelist.check(namespace)
-          await api.TBAC.checkReadPermission(namespace, token)
-        } catch (e) {
-          if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
-          if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
-          if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
-          throw e
+      try {
+        api.Blacklist.check(namespace)
+        api.Whitelist.check(namespace)
+        api.TBAC.checkReadPermission(namespace, token)
+      } catch (e) {
+        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
+        throw e
+      }
+
+      reply.raw.setHeader('Content-Type','text/event-stream')
+      reply.raw.setHeader('Connection', 'keep-alive')
+      reply.raw.setHeader('Cache-Control', 'no-store')
+      if (req.headers.origin) {
+        reply.raw.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+      }
+      reply.raw.flushHeaders()
+
+      // eslint-disable-next-line
+      const unfollow = api.Logger.follow(namespace, async log => {
+        const data = JSON.stringify(log)
+        for (const line of sse({ id: log.id, data })) {
+          if (!reply.raw.write(line)) {
+            await waitForEventEmitter(reply.raw, 'drain')
+          }
         }
+      })
 
-        reply.raw.setHeader('Content-Type','text/event-stream')
-        reply.raw.setHeader('Connection', 'keep-alive')
-        reply.raw.setHeader('Cache-Control', 'no-store')
-        if (req.headers.origin) {
-          reply.raw.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-        }
-        reply.raw.flushHeaders()
-
-        const unfollow = api.Logger.follow(namespace, async log => {
-          const data = JSON.stringify(log)
-          for (const line of sse({ id: log.id, data })) {
+      let cancelHeartbeatTimer: (() => void) | null = null
+      const heartbeatInterval = SSE_HEARTBEAT_INTERVAL()
+      if (heartbeatInterval > 0) {
+        cancelHeartbeatTimer = setDynamicTimeoutLoop(heartbeatInterval, async () => {
+          for (const line of sse({ event: 'heartbeat', data: '' })) {
             if (!reply.raw.write(line)) {
               await waitForEventEmitter(reply.raw, 'drain')
             }
           }
         })
+      }
+      req.raw.on('close', () => {
+        if (cancelHeartbeatTimer) cancelHeartbeatTimer()
+        unfollow()
+      })
 
-        let cancelHeartbeatTimer: (() => void) | null = null
-        const heartbeatInterval = SSE_HEARTBEAT_INTERVAL()
-        if (heartbeatInterval > 0) {
-          cancelHeartbeatTimer = setDynamicTimeoutLoop(heartbeatInterval, async () => {
-            for (const line of sse({ event: 'heartbeat', data: '' })) {
-              if (!reply.raw.write(line)) {
-                await waitForEventEmitter(reply.raw, 'drain')
-              }
-            }
-          })
-        }
-        req.raw.on('close', () => {
-          if (cancelHeartbeatTimer) cancelHeartbeatTimer()
-          unfollow()
-        })
-
-        const since = lastEventId ?? req.query.since
-        if (since) {
-          const logs = await api.Logger.query(namespace, { from: since })
-          for await (const log of logs) {
-            if (log.id === req.query.since) continue
-            const data = JSON.stringify(log)
-            for (const line of sse({ data })) {
-              if (!reply.raw.write(line)) {
-                await waitForEventEmitter(reply.raw, 'drain')
-              }
+      const since = lastEventId ?? req.query.since
+      if (since) {
+        const logs = api.Logger.query(namespace, { from: since })
+        for (const log of logs) {
+          if (log.id === req.query.since) continue
+          const data = JSON.stringify(log)
+          for (const line of sse({ data })) {
+            if (!reply.raw.write(line)) {
+              await waitForEventEmitter(reply.raw, 'drain')
             }
           }
         }
-      })
+      }
     }
   )
 }

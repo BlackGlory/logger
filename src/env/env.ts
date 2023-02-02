@@ -1,5 +1,5 @@
 import { ValueGetter } from 'value-getter'
-import { isNumber } from '@blackglory/prelude'
+import { isNumber, isPlainObject, JSONValue } from '@blackglory/prelude'
 import { Getter } from '@blackglory/prelude'
 import { assert } from '@blackglory/errors'
 import * as path from 'path'
@@ -175,7 +175,12 @@ function toInteger(val: string | number | undefined ): number | undefined {
 }
 
 function toJSONObject(val: string | undefined): object | undefined {
-  if (val) return JSON.parse(val)
+  if (val) {
+    const value = JSON.parse(val) as JSONValue
+    assert(isPlainObject(value), 'The value should be a JSON object')
+
+    return value
+  }
 }
 
 function shouldBePositive(val: number) {

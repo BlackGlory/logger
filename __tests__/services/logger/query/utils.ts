@@ -1,7 +1,7 @@
 import { LoggerDAO } from '@dao/index.js'
 
-export async function prepareLoggers(namespaces: string[]): Promise<void> {
+export function prepareLoggers(namespaces: string[]): void {
   for (const namespace of namespaces) {
-    await LoggerDAO.writeLog(namespace, 'payload')
+    LoggerDAO.writeLog(namespace, 'payload')
   }
 }

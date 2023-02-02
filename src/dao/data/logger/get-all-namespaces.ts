@@ -6,7 +6,7 @@ export const getAllNamespaces = withLazyStatic((): Iterable<string> => {
   const iter = lazyStatic(() => getDatabase().prepare(`
     SELECT DISTINCT namespace
       FROM logger_log;
-  `), [getDatabase()]).iterate()
+  `), [getDatabase()]).iterate() as IterableIterator<{ namespace: string }>
 
   return map(iter, row => row['namespace'])
 })

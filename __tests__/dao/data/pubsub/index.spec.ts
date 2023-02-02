@@ -10,7 +10,9 @@ describe('PubSubDAO', () => {
     const payload = 'payload'
 
     PubSubDAO.publish(namespace, { id: logId, payload })
-    PubSubDAO.subscribe(namespace, () => done.fail())
+    PubSubDAO.subscribe(namespace, () => {
+      done.fail()
+    })
     setImmediate(done)
   })
 
@@ -31,7 +33,9 @@ describe('PubSubDAO', () => {
     const logId = 'log-id'
     const payload = 'payload'
 
-    const unsubscribe = PubSubDAO.subscribe(namespace, () => done.fail())
+    const unsubscribe = PubSubDAO.subscribe(namespace, () => {
+      done.fail()
+    })
     unsubscribe()
     PubSubDAO.publish(namespace, { id: logId, payload })
     setImmediate(done)
