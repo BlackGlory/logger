@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get(
     '/logger-with-purge-policies'
   , {
@@ -15,7 +16,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.PurgePolicy.getAllNamespaces()
+      const result = api.PurgePolicy.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -37,7 +38,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await Core.PurgePolicy.get(namespace)
+      const result = api.PurgePolicy.get(namespace)
       return reply.send(result)
     }
   )
@@ -58,7 +59,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const timeToLive = req.body
-      await Core.PurgePolicy.setTimeToLive(namespace, timeToLive)
+      api.PurgePolicy.setTimeToLive(namespace, timeToLive)
       return reply
         .status(204)
         .send()
@@ -81,7 +82,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const limit = req.body
-      await Core.PurgePolicy.setLimit(namespace, limit)
+      api.PurgePolicy.setLimit(namespace, limit)
       return reply
         .status(204)
         .send()
@@ -102,7 +103,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.PurgePolicy.unsetTimeToLive(namespace)
+      api.PurgePolicy.unsetTimeToLive(namespace)
       return reply
         .status(204)
         .send()
@@ -123,7 +124,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.PurgePolicy.unsetLimit(namespace)
+      api.PurgePolicy.unsetLimit(namespace)
       return reply
         .status(204)
         .send()
@@ -144,7 +145,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.PurgePolicy.purge(namespace)
+      api.PurgePolicy.purge(namespace)
       return reply
         .status(204)
         .send()

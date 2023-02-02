@@ -12,7 +12,7 @@ describe('blackllist', () => {
       it('error', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const namespace = 'namespace'
-        await AccessControlDAO.addBlacklistItem(namespace)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
         const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
         const ws = new WebSocket(url)
@@ -37,7 +37,7 @@ describe('blackllist', () => {
     describe('namespace in blacklist', () => {
       it('open', async () => {
         const namespace = 'namespace'
-        await AccessControlDAO.addBlacklistItem(namespace)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
         const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
         const ws = new WebSocket(url)

@@ -14,8 +14,8 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(namespace, true)
-          await AccessControlDAO.setReadToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setReadTokenRequired(namespace, true)
+          AccessControlDAO.Token.setReadToken({ namespace, token })
           const url = `${getAddress()}/logger/${namespace}?token=${token}`
             .replace('http', 'ws')
 
@@ -29,8 +29,8 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(namespace, true)
-          await AccessControlDAO.setReadToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setReadTokenRequired(namespace, true)
+          AccessControlDAO.Token.setReadToken({ namespace, token })
           const url = `${getAddress()}/logger/${namespace}?token=bad`
             .replace('http', 'ws')
 
@@ -44,8 +44,8 @@ describe('token-based access control', () => {
           process.env.LOGGER_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setReadTokenRequired(namespace, true)
-          await AccessControlDAO.setReadToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setReadTokenRequired(namespace, true)
+          AccessControlDAO.Token.setReadToken({ namespace, token })
           const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
           const ws = new WebSocket(url)
@@ -87,8 +87,8 @@ describe('token-based access control', () => {
         it('open', async () => {
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setDeleteTokenRequired(namespace, true)
-          await AccessControlDAO.setReadToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setDeleteTokenRequired(namespace, true)
+          AccessControlDAO.Token.setReadToken({ namespace, token })
           const url = `${getAddress()}/logger/${namespace}`.replace('http', 'ws')
 
           const ws = new WebSocket(url)

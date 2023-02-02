@@ -8,8 +8,9 @@ import { sse } from 'extra-generator'
 import { SSE_HEARTBEAT_INTERVAL, WS_HEARTBEAT_INTERVAL } from '@env/index.js'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import { WebSocket, WebSocketServer, createWebSocketStream } from 'ws'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   const wss = new WebSocketServer({ noServer: true })
 
   // WebSocket handler
@@ -20,7 +21,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   ) => {
     const namespace = params.namespace
 
-    const unfollow = Core.Logger.follow(namespace, log => {
+    const unfollow = api.Logger.follow(namespace, log => {
       const data = JSON.stringify(log)
       ws.send(data)
     })
@@ -42,7 +43,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
     const since = parseQuerystring<{ since?: string }>(req.url!).since
     if (since) {
-      const logs = await Core.Logger.query(namespace, { from: since })
+      const logs = await api.Logger.query(namespace, { from: since })
       for await (const log of logs) {
         if (log.id === since) continue
         const data = JSON.stringify(log)
@@ -69,17 +70,17 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     const token = parseQuerystring<{ token?: string }>(url).token
 
     try {
-      await Core.Blacklist.check(namespace)
-      await Core.Whitelist.check(namespace)
-      await Core.TBAC.checkReadPermission(namespace, token)
+      await api.Blacklist.check(namespace)
+      await api.Whitelist.check(namespace)
+      await api.TBAC.checkReadPermission(namespace, token)
     } catch (e) {
-      if (e instanceof Core.Blacklist.Forbidden) {
+      if (e instanceof api.Blacklist.Forbidden) {
         socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
       }
-      if (e instanceof Core.Whitelist.Forbidden) {
+      if (e instanceof api.Whitelist.Forbidden) {
         socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
       }
-      if (e instanceof Core.TBAC.Unauthorized) {
+      if (e instanceof api.TBAC.Unauthorized) {
         socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
       }
       return socket.destroy()
@@ -119,13 +120,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         const lastEventId = req.headers['Last-Event-ID']
 
         try {
-          await Core.Blacklist.check(namespace)
-          await Core.Whitelist.check(namespace)
-          await Core.TBAC.checkReadPermission(namespace, token)
+          await api.Blacklist.check(namespace)
+          await api.Whitelist.check(namespace)
+          await api.TBAC.checkReadPermission(namespace, token)
         } catch (e) {
-          if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
-          if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
-          if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
+          if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+          if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+          if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
           throw e
         }
 
@@ -137,7 +138,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         }
         reply.raw.flushHeaders()
 
-        const unfollow = Core.Logger.follow(namespace, async log => {
+        const unfollow = api.Logger.follow(namespace, async log => {
           const data = JSON.stringify(log)
           for (const line of sse({ id: log.id, data })) {
             if (!reply.raw.write(line)) {
@@ -164,7 +165,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
         const since = lastEventId ?? req.query.since
         if (since) {
-          const logs = await Core.Logger.query(namespace, { from: since })
+          const logs = await api.Logger.query(namespace, { from: since })
           for await (const log of logs) {
             if (log.id === req.query.since) continue
             const data = JSON.stringify(log)

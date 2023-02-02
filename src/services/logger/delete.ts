@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, tokenSchema, logIdSchema } from '@src/schema.js'
+import { IAPI, IHead, IRange, ISlice, ITail } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.delete<{
     Params: { namespace: string }
     Querystring: {
@@ -43,17 +44,17 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       try {
-        await Core.Blacklist.check(namespace)
-        await Core.Whitelist.check(namespace)
-        await Core.TBAC.checkDeletePermission(namespace, token)
+        api.Blacklist.check(namespace)
+        api.Whitelist.check(namespace)
+        api.TBAC.checkDeletePermission(namespace, token)
       } catch (e) {
-        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
+        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
-      await Core.Logger.del(namespace, range)
+      api.Logger.del(namespace, range)
       return reply
         .status(204)
         .send()

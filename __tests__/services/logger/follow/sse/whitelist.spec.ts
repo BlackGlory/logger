@@ -15,7 +15,7 @@ describe('whitelist', () => {
       it('200', async () => {
         process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const namespace = 'namespace'
-        await AccessControlDAO.addWhitelistItem(namespace)
+        AccessControlDAO.Whitelist.addWhitelistItem(namespace)
 
         const es = new EventSource(`${getAddress()}/logger/${namespace}`)
         await waitForEventTarget(es as EventTarget, 'open')

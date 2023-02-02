@@ -1,7 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
+import { IAPI } from '@api/contract.js'
+import { JSONValue } from '@blackglory/prelude'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get(
     '/logger-with-json-schema'
   , {
@@ -15,7 +17,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.JsonSchema.getAllNamespaces()
+      const result = api.JSONSchema.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -33,7 +35,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await Core.JsonSchema.get(namespace)
+      const result = api.JSONSchema.get(namespace)
       if (result) {
         return reply
           .header('content-type', 'application/json')
@@ -46,7 +48,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   )
 
-  server.put<{ Params: { namespace: string }; Body: any }>(
+  server.put<{
+    Params: {
+      namespace: string
+    }
+    Body: JSONValue
+  }>(
     '/logger/:namespace/json-schema'
   , {
       schema: {
@@ -59,7 +66,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const schema = req.body
-      await Core.JsonSchema.set(namespace, schema)
+      api.JSONSchema.set(namespace, schema)
       return reply
         .status(204)
         .send()
@@ -78,7 +85,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.JsonSchema.remove(namespace)
+      api.JSONSchema.remove(namespace)
       return reply
         .status(204)
         .send()

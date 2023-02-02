@@ -119,7 +119,7 @@ export const JSON_VALIDATION: Getter<boolean> =
 
 export const DEFAULT_JSON_SCHEMA: Getter<object | undefined> =
   env('LOGGER_DEFAULT_JSON_SCHEMA')
-    .convert(toJsonObject)
+    .convert(toJSONObject)
     .memoize(getCache)
     .get()
 
@@ -174,7 +174,7 @@ function toInteger(val: string | number | undefined ): number | undefined {
   if (val) return Number.parseInt(val, 10)
 }
 
-function toJsonObject(val: string | undefined): object | undefined {
+function toJSONObject(val: string | undefined): object | undefined {
   if (val) return JSON.parse(val)
 }
 

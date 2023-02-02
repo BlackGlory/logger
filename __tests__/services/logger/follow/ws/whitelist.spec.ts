@@ -12,7 +12,7 @@ describe('whitelist', () => {
       process.env.LOGGER_ADMIN_PASSWORD = 'password'
       process.env.LOGGER_LIST_BASED_ACCESS_CONTROL = 'whitelist'
       const namespace = 'namespace'
-      await AccessControlDAO.addWhitelistItem(namespace)
+      AccessControlDAO.Whitelist.addWhitelistItem(namespace)
 
       const ws = new WebSocket(`${getAddress()}/logger/${namespace}`.replace('http', 'ws'))
       await waitForEventEmitter(ws, 'open')

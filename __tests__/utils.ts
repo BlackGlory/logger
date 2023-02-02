@@ -1,5 +1,5 @@
-import * as DataInSqlite3 from '@dao/data-in-sqlite3/database.js'
-import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database.js'
+import * as DataInSqlite3 from '@dao/data/database.js'
+import * as ConfigInSqlite3 from '@dao/config/database.js'
 import { resetCache } from '@env/cache.js'
 import { buildServer } from '@src/server.js'
 import Ajv from 'ajv'

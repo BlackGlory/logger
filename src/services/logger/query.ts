@@ -1,10 +1,11 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, tokenSchema, logIdSchema } from '@src/schema.js'
 import { Readable } from 'stream'
-import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
+import { stringifyJSONStream, stringifyNDJSONStream } from 'extra-generator'
 import accepts from '@fastify/accepts'
+import { IAPI, IHead, IRange, ISlice, ITail } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.register(accepts)
 
   server.get<{
@@ -47,28 +48,28 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       try {
-        await Core.Blacklist.check(namespace)
-        await Core.Whitelist.check(namespace)
-        await Core.TBAC.checkReadPermission(namespace, token)
+        await api.Blacklist.check(namespace)
+        await api.Whitelist.check(namespace)
+        await api.TBAC.checkReadPermission(namespace, token)
       } catch (e) {
-        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
+        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
-      const logs = Core.Logger.query(namespace, range)
+      const logs = api.Logger.query(namespace, range)
       const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
       if (accept === 'application/x-ndjson') {
         return reply
           .status(200)
           .header('Content-Type', 'application/x-ndjson')
-          .send(Readable.from(stringifyNDJSONStreamAsync(logs)))
+          .send(Readable.from(stringifyNDJSONStream(logs)))
       } else {
         return reply
           .status(200)
           .header('Content-Type', 'application/json')
-          .send(Readable.from(stringifyJSONStreamAsync(logs)))
+          .send(Readable.from(stringifyJSONStream(logs)))
       }
     }
   )
