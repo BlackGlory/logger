@@ -1,5 +1,3 @@
-export { AccessControlDAO } from './config/access-control/index.js'
-export { JSONSchemaDAO } from './config/json-schema/index.js'
 export { PurgePolicyDAO } from './config/purge-policy/index.js'
 export { LoggerDAO } from './data/logger/index.js'
 export { PubSubDAO } from './data/pubsub/index.js'

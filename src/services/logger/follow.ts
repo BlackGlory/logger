@@ -1,8 +1,7 @@
 import * as http from 'http'
 import * as net from 'net'
-import { go } from '@blackglory/go'
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema } from '@src/schema.js'
+import { namespaceSchema } from '@src/schema.js'
 import { waitForEventEmitter } from '@blackglory/wait-for'
 import { sse } from 'extra-generator'
 import { SSE_HEARTBEAT_INTERVAL, WS_HEARTBEAT_INTERVAL } from '@env/index.js'
@@ -67,24 +66,6 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
 
     const namespace = result.groups!.namespace
-    const token = parseQuerystring<{ token?: string }>(url).token
-
-    try {
-      api.Blacklist.check(namespace)
-      api.Whitelist.check(namespace)
-      api.TBAC.checkReadPermission(namespace, token)
-    } catch (e) {
-      if (e instanceof api.Blacklist.Forbidden) {
-        socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
-      }
-      if (e instanceof api.Whitelist.Forbidden) {
-        socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
-      }
-      if (e instanceof api.TBAC.Unauthorized) {
-        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
-      }
-      return socket.destroy()
-    }
 
     wss.handleUpgrade(req, socket, head, ws => {
       wss.emit('connection', ws, req, { namespace })
@@ -101,33 +82,21 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
 
   server.get<{
     Params: { namespace: string }
-    Querystring: { token?: string; since?: string }
+    Querystring: { since?: string }
     Headers: { 'Last-Event-ID'?: string }
   }>(
     '/logger/:namespace'
   , {
       schema: {
         params: { namespace: namespaceSchema }
-      , querystring: { token: tokenSchema, since: namespaceSchema }
+      , querystring: { since: namespaceSchema }
       , headers: { 'Last-Event-ID': namespaceSchema }
       }
     }
     // Server-Sent Events handler
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const token = req.query.token
       const lastEventId = req.headers['Last-Event-ID']
-
-      try {
-        api.Blacklist.check(namespace)
-        api.Whitelist.check(namespace)
-        api.TBAC.checkReadPermission(namespace, token)
-      } catch (e) {
-        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
-        throw e
-      }
 
       reply.raw.setHeader('Content-Type','text/event-stream')
       reply.raw.setHeader('Connection', 'keep-alive')

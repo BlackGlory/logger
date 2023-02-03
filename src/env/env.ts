@@ -1,5 +1,5 @@
 import { ValueGetter } from 'value-getter'
-import { isNumber, isPlainObject, JSONValue } from '@blackglory/prelude'
+import { isNumber } from '@blackglory/prelude'
 import { Getter } from '@blackglory/prelude'
 import { assert } from '@blackglory/errors'
 import * as path from 'path'
@@ -70,59 +70,6 @@ export const ADMIN_PASSWORD: Getter<string | undefined> =
     .memoize(getCache)
     .get()
 
-export const LIST_BASED_ACCESS_CONTROL: Getter<ListBasedAccessControl> =
-  env('LOGGER_LIST_BASED_ACCESS_CONTROL')
-    .convert(val => {
-      switch (val) {
-        case 'whitelist': return ListBasedAccessControl.Whitelist
-        case 'blacklist': return ListBasedAccessControl.Blacklist
-        default: return ListBasedAccessControl.Disable
-      }
-    })
-    .memoize(getCache)
-    .get()
-
-export const TOKEN_BASED_ACCESS_CONTROL: Getter<boolean> =
-  env('LOGGER_TOKEN_BASED_ACCESS_CONTROL')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const WRITE_TOKEN_REQUIRED: Getter<boolean> =
-  env('LOGGER_WRITE_TOKEN_REQUIRED')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const READ_TOKEN_REQUIRED: Getter<boolean> =
-  env('LOGGER_READ_TOKEN_REQUIRED')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const DELETE_TOKEN_REQUIRED: Getter<boolean> =
-  env('LOGGER_DELETE_TOKEN_REQUIRED')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const JSON_VALIDATION: Getter<boolean> =
-  env('LOGGER_JSON_VALIDATION')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const DEFAULT_JSON_SCHEMA: Getter<object | undefined> =
-  env('LOGGER_DEFAULT_JSON_SCHEMA')
-    .convert(toJSONObject)
-    .memoize(getCache)
-    .get()
-
 export const JSON_PAYLOAD_ONLY: Getter<boolean> =
   env('LOGGER_JSON_PAYLOAD_ONLY')
     .convert(toBool)
@@ -172,15 +119,6 @@ function toBool(val: string | boolean | undefined): boolean | undefined {
 function toInteger(val: string | number | undefined ): number | undefined {
   if (isNumber(val)) return val
   if (val) return Number.parseInt(val, 10)
-}
-
-function toJSONObject(val: string | undefined): object | undefined {
-  if (val) {
-    const value = JSON.parse(val) as JSONValue
-    assert(isPlainObject(value), 'The value should be a JSON object')
-
-    return value
-  }
 }
 
 function shouldBePositive(val: number) {
