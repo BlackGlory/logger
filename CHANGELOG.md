@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/BlackGlory/logger/compare/v0.5.2...v0.6.0) (2023-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* The APIs have been redesigned
+* - Removed JSON schema validation.
+- Removed access control.
+
+* remove JSON schema validation, access control ([8e20646](https://github.com/BlackGlory/logger/commit/8e206464f550a4da53e006e397b001adb9bb8327))
+* the APIs have been redesigned ([8ac1a77](https://github.com/BlackGlory/logger/commit/8ac1a7785dc5c8817706a795fa6a85841d9eae5b))
+
 ### [0.5.2](https://github.com/BlackGlory/logger/compare/v0.5.1...v0.5.2) (2023-02-02)
 
 ### [0.5.1](https://github.com/BlackGlory/logger/compare/v0.5.0...v0.5.1) (2023-01-31)
