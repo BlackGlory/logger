@@ -1,102 +1,39 @@
-import * as http from 'http'
-import * as net from 'net'
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema } from '@src/schema.js'
+import { loggerIdSchema, logIdSchema } from '@src/schema.js'
 import { waitForEventEmitter } from '@blackglory/wait-for'
 import { sse } from 'extra-generator'
-import { SSE_HEARTBEAT_INTERVAL, WS_HEARTBEAT_INTERVAL } from '@env/index.js'
+import { SSE_HEARTBEAT_INTERVAL } from '@env/index.js'
 import { setDynamicTimeoutLoop } from 'extra-timers'
-import { WebSocket, WebSocketServer, createWebSocketStream } from 'ws'
-import { IAPI } from '@api/contract.js'
+import { IAPI, Order, LogId, LoggerNotFound } from '@src/contract.js'
+import { go } from '@blackglory/prelude'
+import { SyncDestructor } from 'extra-defer'
 
-export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
-  const wss = new WebSocketServer({ noServer: true })
-
-  // WebSocket handler
-  wss.on('connection', (
-    ws: WebSocket
-  , req: http.IncomingMessage
-  , params: { namespace: string }
-  ) => {
-    const namespace = params.namespace
-
-    const unfollow = api.Logger.follow(namespace, log => {
-      const data = JSON.stringify(log)
-      ws.send(data)
-    })
-
-    let cancelHeartbeatTimer: (() => void) | null = null
-    if (WS_HEARTBEAT_INTERVAL() > 0) {
-      cancelHeartbeatTimer = setDynamicTimeoutLoop(WS_HEARTBEAT_INTERVAL(), () => {
-        ws.ping()
-      })
-    }
-
-    ws.on('close', () => {
-      if (cancelHeartbeatTimer) cancelHeartbeatTimer()
-      unfollow()
-    })
-    ws.on('message', message => {
-      if (message.toString() !== '') ws.close()
-    })
-
-    const since = parseQuerystring<{ since?: string }>(req.url!).since
-    if (since) {
-      const logs = api.Logger.query(namespace, { from: since })
-      for (const log of logs) {
-        if (log.id === since) continue
-        const data = JSON.stringify(log)
-        ws.send(data)
-      }
-    }
-  })
-
-  // WebSocket upgrade handler
-  server.server.on('upgrade', (
-    req: http.IncomingMessage
-  , socket: net.Socket
-  , head: Buffer
-  ) => {
-    const url = req.url!
-    const pathnameRegExp = /^\/logger\/(?<namespace>[a-zA-Z0-9\.\-_]{1,256})$/
-    const result = getPathname(url).match(pathnameRegExp)
-    if (!result) {
-      socket.write('HTTP/1.1 404 Not Found\r\n\r\n')
-      return socket.destroy()
-    }
-
-    const namespace = result.groups!.namespace
-
-    wss.handleUpgrade(req, socket, head, ws => {
-      wss.emit('connection', ws, req, { namespace })
-
-      const connection = createWebSocketStream(ws, { encoding: 'utf8' })
-      ws.on('newListener', event => {
-        if (event === 'message') connection.resume()
-      })
-
-      const GOING_AWAY = 1001
-      ws.close(GOING_AWAY)
-    })
-  })
-
+export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
-    Params: { namespace: string }
-    Querystring: { since?: string }
-    Headers: { 'Last-Event-ID'?: string }
+    Params: { id: string }
+    Querystring: { since?: LogId }
+    Headers: { 'last-event-id'?: LogId }
   }>(
-    '/logger/:namespace'
+    '/loggers/:id/follow'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
-      , querystring: { since: namespaceSchema }
-      , headers: { 'Last-Event-ID': namespaceSchema }
+        params: { id: loggerIdSchema }
+      , querystring: { since: logIdSchema }
+      , headers: { 'last-event-id': logIdSchema }
       }
     }
     // Server-Sent Events handler
   , async (req, reply) => {
-      const namespace = req.params.namespace
-      const lastEventId = req.headers['Last-Event-ID']
+      const loggerId = req.params.id
+      const lastEventId = req.headers['last-event-id'] ?? req.query.since
+
+      const destructor = new SyncDestructor()
+      let isConnectionClosed = false
+      req.raw.on('close', () => {
+        isConnectionClosed = true
+
+        destructor.execute()
+      })
 
       reply.raw.setHeader('Content-Type','text/event-stream')
       reply.raw.setHeader('Connection', 'keep-alive')
@@ -104,58 +41,95 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       if (req.headers.origin) {
         reply.raw.setHeader('Access-Control-Allow-Origin', req.headers.origin)
       }
-      reply.raw.flushHeaders()
 
-      // eslint-disable-next-line
-      const unfollow = api.Logger.follow(namespace, async log => {
-        const data = JSON.stringify(log)
-        for (const line of sse({ id: log.id, data })) {
-          if (!reply.raw.write(line)) {
-            await waitForEventEmitter(reply.raw, 'drain')
-          }
-        }
-      })
-
-      let cancelHeartbeatTimer: (() => void) | null = null
-      const heartbeatInterval = SSE_HEARTBEAT_INTERVAL()
-      if (heartbeatInterval > 0) {
-        cancelHeartbeatTimer = setDynamicTimeoutLoop(heartbeatInterval, async () => {
-          for (const line of sse({ event: 'heartbeat', data: '' })) {
-            if (!reply.raw.write(line)) {
-              await waitForEventEmitter(reply.raw, 'drain')
-            }
-          }
-        })
+      if (API.getLogger(loggerId)) {
+        reply.raw.flushHeaders()
+      } else {
+        reply.statusCode = 404
+        reply.raw.end()
+        return
       }
-      req.raw.on('close', () => {
-        if (cancelHeartbeatTimer) cancelHeartbeatTimer()
-        unfollow()
-      })
 
-      const since = lastEventId ?? req.query.since
-      if (since) {
-        const logs = api.Logger.query(namespace, { from: since })
-        for (const log of logs) {
-          if (log.id === req.query.since) continue
-          const data = JSON.stringify(log)
-          for (const line of sse({ data })) {
-            if (!reply.raw.write(line)) {
-              await waitForEventEmitter(reply.raw, 'drain')
+      const cancelHeartbeatTimer: (() => void) | undefined = go(() => {
+        const heartbeatInterval = SSE_HEARTBEAT_INTERVAL()
+        if (heartbeatInterval > 0) {
+          return setDynamicTimeoutLoop(heartbeatInterval, async () => {
+            for (const line of sse({ event: 'heartbeat', data: '' })) {
+              if (isConnectionClosed) {
+                break
+              }
+
+              if (!reply.raw.write(line)) {
+                await waitForEventEmitter(reply.raw, 'drain')
+              }
             }
+          })
+        }
+      })
+      if (cancelHeartbeatTimer) {
+        destructor.defer(cancelHeartbeatTimer)
+      }
+
+      if (lastEventId) {
+        let lastLogId = lastEventId
+        while (!isConnectionClosed) {
+          const logs = API
+            .queryLogs(loggerId, {
+              order: Order.Asc
+            , from: lastLogId
+            })
+            ?.filter(x => x.id !== lastLogId)
+
+          if (logs) {
+            if (logs.length) {
+              for (const log of logs) {
+                const data = JSON.stringify(log)
+                for (const line of sse({ id: log.id, data })) {
+                  if (!reply.raw.write(line)) {
+                    await waitForEventEmitter(reply.raw, 'drain')
+                  }
+                }
+              }
+
+              lastLogId = logs[logs.length - 1].id
+            } else {
+              break
+            }
+          } else {
+            reply.raw.end()
+            return
           }
         }
+      }
+
+      if (isConnectionClosed) return
+
+      try {
+        const subscription = API
+          .follow(loggerId)
+          .subscribe({
+            async next(log) {
+              const data = JSON.stringify(log)
+              for (const line of sse({ id: log.id, data })) {
+                if (!reply.raw.write(line)) {
+                  await waitForEventEmitter(reply.raw, 'drain')
+                }
+              }
+            }
+          , complete() {
+              destructor.execute()
+              reply.raw.end()
+            }
+          })
+        destructor.defer(() => subscription.unsubscribe())
+      } catch (e) {
+        if (e instanceof LoggerNotFound) {
+          reply.raw.end()
+          return
+        }
+
+        throw e
       }
     }
   )
-}
-
-function getPathname(url: string): string {
-  const urlObject = new URL(url, 'http://localhost/')
-  return urlObject.pathname
-}
-
-function parseQuerystring<T extends NodeJS.Dict<string | string[]>>(url: string): T {
-  const urlObject = new URL(url, 'http://localhost/')
-  const result = Object.fromEntries(urlObject.searchParams.entries()) as T
-  return result
 }

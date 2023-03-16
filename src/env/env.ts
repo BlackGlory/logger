@@ -3,14 +3,8 @@ import { isNumber } from '@blackglory/prelude'
 import { Getter } from '@blackglory/prelude'
 import { assert } from '@blackglory/errors'
 import * as path from 'path'
-import { getAppRoot } from '@src/utils.js'
+import { getAppRoot } from '@utils/get-app-root.js'
 import { getCache } from './cache.js'
-
-export enum ListBasedAccessControl {
-  Disable
-, Whitelist
-, Blacklist
-}
 
 export enum NodeEnv {
   Test
@@ -49,58 +43,8 @@ export const PORT: Getter<number> =
     .memoize(getCache)
     .get()
 
-export const PAYLOAD_LIMIT: Getter<number> =
-  env('LOGGER_PAYLOAD_LIMIT')
-    .convert(toInteger)
-    .default(1048576)
-    .assert(shouldBePositive)
-    .memoize(getCache)
-    .get()
-
-export const WRITE_PAYLOAD_LIMIT: Getter<number> =
-  env('LOGGER_WRITE_PAYLOAD_LIMIT')
-    .convert(toInteger)
-    .default(PAYLOAD_LIMIT())
-    .assert(shouldBePositive)
-    .memoize(getCache)
-    .get()
-
-export const ADMIN_PASSWORD: Getter<string | undefined> =
-  env('LOGGER_ADMIN_PASSWORD')
-    .memoize(getCache)
-    .get()
-
-export const JSON_PAYLOAD_ONLY: Getter<boolean> =
-  env('LOGGER_JSON_PAYLOAD_ONLY')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
-export const LOGGER_LOGS_TIME_TO_LIVE: Getter<number> =
-  env('LOGGER_LOGS_TIME_TO_LIVE')
-    .convert(toInteger)
-    .default(0)
-    .memoize(getCache)
-    .get()
-
-export const LOGGER_LOGS_LIMIT: Getter<number> =
-  env('LOGGER_LOGS_LIMIT')
-    .convert(toInteger)
-    .default(0)
-    .memoize(getCache)
-    .get()
-
 export const SSE_HEARTBEAT_INTERVAL: Getter<number> =
   env('LOGGER_SSE_HEARTBEAT_INTERVAL')
-    .convert(toInteger)
-    .default(0)
-    .assert(shouldBePositiveOrZero)
-    .memoize(getCache)
-    .get()
-
-export const WS_HEARTBEAT_INTERVAL: Getter<number> =
-  env('LOGGER_WS_HEARTBEAT_INTERVAL')
     .convert(toInteger)
     .default(0)
     .assert(shouldBePositiveOrZero)
@@ -111,18 +55,9 @@ function env(name: string): ValueGetter<string | undefined> {
   return new ValueGetter(name, () => process.env[name])
 }
 
-function toBool(val: string | boolean | undefined): boolean | undefined {
-  if (val) return val === 'true'
-  return false
-}
-
 function toInteger(val: string | number | undefined ): number | undefined {
   if (isNumber(val)) return val
   if (val) return Number.parseInt(val, 10)
-}
-
-function shouldBePositive(val: number) {
-  assert(val > 0, 'Value should be positive')
 }
 
 function shouldBePositiveOrZero(val: number) {

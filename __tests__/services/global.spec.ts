@@ -3,7 +3,7 @@ import { fetch } from 'extra-fetch'
 import { url, header, pathname } from 'extra-request/transformers'
 import { get } from 'extra-request'
 import { readJSONFile } from 'extra-filesystem'
-import { getAppRoot } from '@src/utils.js'
+import { getAppRoot } from '@utils/get-app-root.js'
 import path from 'path'
 
 beforeEach(startService)

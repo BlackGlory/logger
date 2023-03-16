@@ -1,29 +1,29 @@
 import fastify from 'fastify'
 import cors from '@fastify/cors'
 import { routes as logger } from '@services/logger/index.js'
-import { routes as admin } from '@services/admin/index.js'
 import { routes as robots } from '@services/robots/index.js'
 import { routes as health } from '@services/health/index.js'
-import { PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env/index.js'
-import { api } from '@api/index.js'
-import path from 'path'
-import { readJSONFileSync } from 'extra-filesystem'
+import { NODE_ENV, NodeEnv } from '@env/index.js'
+import { API } from '@apis/index.js'
+import { readJSONFile } from 'extra-filesystem'
 import { isntUndefined, isString } from '@blackglory/prelude'
 import { assert } from '@blackglory/errors'
-import { getAppRoot } from '@src/utils.js'
+import { getPackageFilename } from '@utils/get-package-filename.js'
 import semver from 'semver'
-
-const pkg = readJSONFileSync<{ version: string }>(
-  path.join(getAppRoot(), 'package.json')
-)
 
 type LoggerLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
 
 export async function buildServer() {
+  const KiB = 1024
+  const MiB = 1024 * KiB
+  const GiB = 1024 * MiB
+
+  const pkg = await readJSONFile<{ version: string }>(getPackageFilename())
+
   const server = fastify({
     logger: getLoggerOptions()
   , maxParamLength: 600
-  , bodyLimit: PAYLOAD_LIMIT()
+  , bodyLimit: GiB
   , forceCloseConnections: true
   })
 
@@ -42,8 +42,7 @@ export async function buildServer() {
   })
 
   await server.register(cors, { origin: true })
-  await server.register(logger, { api })
-  await server.register(admin, { api })
+  await server.register(logger, { API })
   await server.register(robots)
   await server.register(health)
 
