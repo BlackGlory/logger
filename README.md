@@ -195,7 +195,7 @@ await fetch(`http://localhost:8080/loggers/${id}/log`, {
 
 日志的顺序受到强制保证, 若在接收完旧日志前就有新日志被写入, 则新日志会阻塞直至旧日志都传输结束.
 
-接收到的日志格式如下:
+收到的每条JSON:
 ```ts
 {
   id: string
