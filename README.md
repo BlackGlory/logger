@@ -126,7 +126,7 @@ await fetch(`http://localhost:8080/loggers/${id}`, {
 , headers: {
     'Content-Type': 'application/json'
   }
-, body: JSON.stringify(payload)
+, body: JSON.stringify(config)
 })
 ```
 
@@ -175,7 +175,7 @@ await fetch(`http://localhost:8080/loggers/${id}/log`, {
 , headers: {
     'Content-Type': 'application/json'
   }
-, body: payload
+, body: JSON.stringify(content)
 })
 ```
 
@@ -213,7 +213,9 @@ sse-cat "http://localhost:8080/loggers/$id/follow"
 ```js
 const es = new EventSource(`http://localhost:8080/loggers/${id}`)
 es.addEventListener('message', event => {
-  console.log(event.data)
+  const paylaod = event.data
+  const log = JSON.parse(payload)
+  console.log(log)
 })
 ```
 
