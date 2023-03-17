@@ -7,6 +7,7 @@ import { setDynamicTimeoutLoop } from 'extra-timers'
 import { IAPI, Order, LogId, LoggerNotFound } from '@src/contract.js'
 import { go } from '@blackglory/prelude'
 import { SyncDestructor } from 'extra-defer'
+import { AbortController } from 'extra-abort'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
@@ -28,10 +29,10 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
       const lastEventId = req.headers['last-event-id'] ?? req.query.since
 
       const destructor = new SyncDestructor()
-      let isConnectionClosed = false
+      const controller = new AbortController()
+      const signal = controller.signal
       req.raw.on('close', () => {
-        isConnectionClosed = true
-
+        controller.abort()
         destructor.execute()
       })
 
@@ -55,9 +56,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
         if (heartbeatInterval > 0) {
           return setDynamicTimeoutLoop(heartbeatInterval, async () => {
             for (const line of sse({ event: 'heartbeat', data: '' })) {
-              if (isConnectionClosed) {
-                break
-              }
+              if (signal.aborted) break
 
               if (!reply.raw.write(line)) {
                 await waitForEventEmitter(reply.raw, 'drain')
@@ -72,7 +71,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
 
       if (lastEventId) {
         let lastLogId = lastEventId
-        while (!isConnectionClosed) {
+        while (!signal.aborted) {
           const logs = API
             .queryLogs(loggerId, {
               order: Order.Asc
@@ -85,8 +84,10 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
               for (const log of logs) {
                 const data = JSON.stringify(log)
                 for (const line of sse({ id: log.id, data })) {
+                  if (signal.aborted) break
+
                   if (!reply.raw.write(line)) {
-                    await waitForEventEmitter(reply.raw, 'drain')
+                    await waitForEventEmitter(reply.raw, 'drain', signal)
                   }
                 }
               }
@@ -102,7 +103,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
         }
       }
 
-      if (isConnectionClosed) return
+      if (signal.aborted) return
 
       try {
         const subscription = API
@@ -111,8 +112,10 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
             async next(log) {
               const data = JSON.stringify(log)
               for (const line of sse({ id: log.id, data })) {
+                if (signal.aborted) break
+
                 if (!reply.raw.write(line)) {
-                  await waitForEventEmitter(reply.raw, 'drain')
+                  await waitForEventEmitter(reply.raw, 'drain', signal)
                 }
               }
             }
