@@ -59,7 +59,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
               if (signal.aborted) break
 
               if (!reply.raw.write(line)) {
-                await waitForEventEmitter(reply.raw, 'drain')
+                await waitForEventEmitter(reply.raw, 'drain', signal)
               }
             }
           })
