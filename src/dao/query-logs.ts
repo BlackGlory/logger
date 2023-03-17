@@ -3,21 +3,24 @@ import { getDatabase } from '@src/database.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 import { parseLogId } from './utils/parse-log-id.js'
 import { convertOrderToSQLOrder } from './utils/convert-order-to-sql-order.js'
-import { LogId, IRange } from '@src/contract.js'
+import { LogId, IRange, LoggerNotFound } from '@src/contract.js'
 import { hasLogger } from './has-logger.js'
 
+/**
+ * @throw {LoggerNotFound}
+ */
 export const queryLogs = withLazyStatic((loggerId: string, range: IRange): Array<{
   id: LogId
   payload: string
-}> | null => {
+}> => {
   return lazyStatic(() => getDatabase().transaction((
     loggerId: string
   , range: IRange
   ): Array<{
     id: LogId
     payload: string
-  }> | null => {
-    if (!hasLogger(loggerId)) return null
+  }> => {
+    if (!hasLogger(loggerId)) throw new LoggerNotFound()
 
     const from = range.from && parseLogId(range.from)
     const to = range.to && parseLogId(range.to)

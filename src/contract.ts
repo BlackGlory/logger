@@ -44,10 +44,18 @@ export interface IAPI {
    */
   follow(loggerId: string): Observable<ILog>
 
-  getLogs(loggerId: string, logIds: LogId[]): Array<ILog | null> | null
+  /**
+   * @throws {LoggerNotFound}
+   */
+  getLogs(loggerId: string, logIds: LogId[]): Array<ILog | null>
+
   removeLogs(loggerId: string, logIds: LogId[]): void
 
-  queryLogs(loggerId: string, range: IRange): ILog[] | null
+  /**
+   * @throws {LoggerNotFound}
+   */
+  queryLogs(loggerId: string, range: IRange): ILog[]
+
   clearLogs(loggerId: string, range: IRange): void
 }
 

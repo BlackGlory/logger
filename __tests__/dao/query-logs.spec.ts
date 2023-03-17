@@ -1,18 +1,19 @@
 import { queryLogs } from '@dao/query-logs.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawLogger, setRawLog } from '@test/dao.js'
-import { Order } from '@src/contract.js'
+import { LoggerNotFound, Order } from '@src/contract.js'
+import { getError } from 'return-style'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
 describe('queryLogs', () => {
   test('logger does not exist', () => {
-    const result = queryLogs('id', {
+    const err = getError(() => queryLogs('id', {
       order: Order.Asc
-    })
+    }))
 
-    expect(result).toBe(null)
+    expect(err).toBeInstanceOf(LoggerNotFound)
   })
 
   describe('logger exists', () => {

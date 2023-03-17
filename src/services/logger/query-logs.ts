@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { loggerIdSchema, logIdSchema } from '@src/schema.js'
-import { IAPI, IRange, LogId, Order } from '@src/contract.js'
+import { IAPI, IRange, LoggerNotFound, LogId, Order } from '@src/contract.js'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
@@ -61,13 +61,14 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
       , skip
       }
 
-      const logs = API.queryLogs(id, range)
-      if (logs) {
+      try {
+        const logs = API.queryLogs(id, range)
+
         return reply.send(logs)
-      } else {
-        return reply
-          .status(404)
-          .send()
+      } catch (e) {
+        if (e instanceof LoggerNotFound) return reply.status(404).send()
+
+        throw e
       }
     }
   )
