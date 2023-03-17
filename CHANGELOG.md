@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/BlackGlory/logger/compare/v0.6.1...v0.6.2) (2023-03-17)
+
+
+### Bug Fixes
+
+* missing cases ([bc762ff](https://github.com/BlackGlory/logger/commit/bc762ff87fa096143d53b3a65044353e635c0db0))
+
 ### [0.6.1](https://github.com/BlackGlory/logger/compare/v0.6.0...v0.6.1) (2023-03-17)
 
 ## [0.6.0](https://github.com/BlackGlory/logger/compare/v0.5.2...v0.6.0) (2023-03-16)
