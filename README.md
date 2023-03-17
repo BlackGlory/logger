@@ -259,7 +259,7 @@ await fetch(`http://localhost:8080/loggers/${id}/logs/${logIds}`, {
 })
 ```
 
-### query
+### query logs
 `GET /loggers/<id>/logs`
 
 按范围查询日志.
@@ -294,7 +294,7 @@ await fetch(`http://localhost:8080/loggers/${id}/logs?order=asc`)
   .then(res => res.json())
 ```
 
-### clear
+### clear logs
 `DELETE /loggers/<id>/logs`
 
 按范围查询日志.
