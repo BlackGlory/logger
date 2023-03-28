@@ -1,11 +1,11 @@
 import { FastifyPluginAsync } from 'fastify'
 import { loggerIdSchema } from '@src/schema.js'
-import { IAPI, ILoggerConfiguration } from '@src/contract.js'
+import { IAPI, ILoggerConfig } from '@src/contract.js'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
     Params: { id: string }
-    Reply: ILoggerConfiguration
+    Reply: ILoggerConfig
   }>(
     '/loggers/:id'
   , {

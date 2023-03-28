@@ -1,10 +1,10 @@
 import { getDatabase } from '@src/database.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
-import { ILoggerConfiguration } from '@src/contract.js'
+import { ILoggerConfig } from '@src/contract.js'
 
 export const getLoggerConfiguration = withLazyStatic((
   id: string
-): ILoggerConfiguration | null => {
+): ILoggerConfig | null => {
   const row = lazyStatic(() => getDatabase().prepare(`
     SELECT time_to_live
          , quantity_limit

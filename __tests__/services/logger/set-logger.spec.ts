@@ -2,7 +2,7 @@ import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { put } from 'extra-request'
 import { url, pathname, json } from 'extra-request/transformers'
-import { ILoggerConfiguration } from '@src/contract.js'
+import { ILoggerConfig } from '@src/contract.js'
 import { getLogger } from '@apis/get-logger.js'
 import { setLogger } from '@apis/set-logger.js'
 import { getLogs } from '@apis/get-logs.js'
@@ -18,7 +18,7 @@ describe('setLogger', () => {
     const res = await fetch(put(
       url(getAddress())
     , pathname(`/loggers/${loggerId}`)
-    , json<ILoggerConfiguration>({
+    , json<ILoggerConfig>({
         limit: 100
       , timeToLive: 200
       })
@@ -44,7 +44,7 @@ describe('setLogger', () => {
       const res = await fetch(put(
         url(getAddress())
       , pathname(`/loggers/${loggerId}`)
-      , json<ILoggerConfiguration>({
+      , json<ILoggerConfig>({
           limit: 10
         , timeToLive: null
         })
@@ -73,7 +73,7 @@ describe('setLogger', () => {
       const res = await fetch(put(
         url(getAddress())
       , pathname(`/loggers/${loggerId}`)
-      , json<ILoggerConfiguration>({
+      , json<ILoggerConfig>({
           limit: 1
         , timeToLive: null
         })

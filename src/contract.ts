@@ -17,7 +17,7 @@ export enum Order {
 , Desc = 'desc'
 }
 
-export interface ILoggerConfiguration extends JSONObject {
+export interface ILoggerConfig extends JSONObject {
   timeToLive: number | null
   limit: number | null
 }
@@ -30,8 +30,8 @@ export interface ILog {
 export interface IAPI {
   getAllLoggerIds(): string[]
 
-  setLogger(loggerId: string, config: ILoggerConfiguration): void
-  getLogger(loggerId: string): ILoggerConfiguration | null
+  setLogger(loggerId: string, config: ILoggerConfig): void
+  getLogger(loggerId: string): ILoggerConfig | null
   removeLogger(loggerId: string): void
 
   /**
