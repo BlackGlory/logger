@@ -28,9 +28,9 @@ describe('queryLogs', () => {
       limit: null
     , timeToLive: null
     })
-    writeLog(loggerId, JSON.stringify('content-1'), 0)
-    writeLog(loggerId, JSON.stringify('content-2'), 0)
-    writeLog(loggerId, JSON.stringify('content-3'), 1)
+    writeLog(loggerId, JSON.stringify('value-1'), 0)
+    writeLog(loggerId, JSON.stringify('value-2'), 0)
+    writeLog(loggerId, JSON.stringify('value-3'), 1)
 
     const res = await fetch(get(
       url(getAddress())
@@ -42,15 +42,15 @@ describe('queryLogs', () => {
     expect(await toJSON(res)).toStrictEqual([
       {
         id: '1-0'
-      , content: 'content-3'
+      , value: 'value-3'
       }
     , {
         id: '0-1'
-      , content: 'content-2'
+      , value: 'value-2'
       }
     , {
         id: '0-0'
-      , content: 'content-1'
+      , value: 'value-1'
       }
     ])
   })

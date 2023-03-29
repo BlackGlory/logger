@@ -10,6 +10,6 @@ export function queryLogs(loggerId: string, range: IRange): ILog[] {
 
   return logs.map(x => ({
     id: x.id
-  , content: JSON.parse(x.payload) as JSONValue
+  , value: JSON.parse(x.payload) as JSONValue
   }))
 }

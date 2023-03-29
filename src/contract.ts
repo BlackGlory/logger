@@ -24,7 +24,7 @@ export interface ILoggerConfig extends JSONObject {
 
 export interface ILog {
   id: LogId
-  content: JSONValue
+  value: JSONValue
 }
 
 export interface IAPI {
@@ -47,7 +47,7 @@ export interface IAPI {
   /**
    * @throws {LoggerNotFound}
    */
-  getLogs(loggerId: string, logIds: LogId[]): Array<ILog | null>
+  getLogs(loggerId: string, logIds: LogId[]): Array<JSONValue | null>
 
   removeLogs(loggerId: string, logIds: LogId[]): void
 

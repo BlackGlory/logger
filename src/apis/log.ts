@@ -11,7 +11,7 @@ export function log(loggerId: string, content: JSONValue): LogId {
 
   eventHub.emit(loggerId, Event.LogWritten, {
     id: logId
-  , content
+  , value: content
   })
 
   return logId

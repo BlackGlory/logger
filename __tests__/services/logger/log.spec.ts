@@ -17,14 +17,14 @@ describe('log', () => {
     const res = await fetch(post(
       url(getAddress())
     , pathname(`/loggers/${loggerId}/log`)
-    , json('content')
+    , json('value')
     ))
 
     expect(res.status).toBe(404)
   })
 
   describe('logger exists', () => {
-    describe('content-type', () => {
+    describe('value-type', () => {
       test('json', async () => {
         const loggerId = 'id'
         setLogger(loggerId, {
@@ -35,7 +35,7 @@ describe('log', () => {
         const res = await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , json('content')
+        , json('value')
         ))
 
         expect(res.status).toBe(204)
@@ -51,7 +51,7 @@ describe('log', () => {
         const res = await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , text('content')
+        , text('value')
         ))
 
         expect(res.status).toBe(415)
@@ -70,18 +70,18 @@ describe('log', () => {
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , json('content-1')
+        , json('value-1')
         ))
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , json('content-2')
+        , json('value-2')
         ))
 
         expect(queryLogs(loggerId, { order: Order.Asc })).toStrictEqual([
           {
             id: '0-1'
-          , content: 'content-2'
+          , value: 'value-2'
           }
         ])
       } finally {
@@ -101,19 +101,19 @@ describe('log', () => {
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , json('content-1')
+        , json('value-1')
         ))
         jest.setSystemTime(1100)
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
-        , json('content-2')
+        , json('value-2')
         ))
 
         expect(queryLogs(loggerId, { order: Order.Asc })).toStrictEqual([
           {
             id: '1100-0'
-          , content: 'content-2'
+          , value: 'value-2'
           }
         ])
       } finally {

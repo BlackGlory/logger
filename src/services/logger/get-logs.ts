@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
-import { IAPI, ILog, LoggerNotFound, LogId } from '@src/contract.js'
+import { IAPI, LoggerNotFound, LogId } from '@src/contract.js'
 import { loggerIdSchema, logIdsSchema } from '@src/schema.js'
+import { JSONValue } from '@blackglory/prelude'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
@@ -8,7 +9,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
       loggerId: string
       logIds: string
     }
-    Reply: Array<ILog | null>
+    Reply: Array<JSONValue | null>
   }>(
     '/loggers/:loggerId/logs/:logIds'
   , {

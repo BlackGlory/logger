@@ -36,14 +36,14 @@ describe('follow', () => {
         await waitForEventTarget(es as EventTarget, 'open')
         let logId: LogId
         queueMicrotask(() => {
-          logId = log(loggerId, 'content')
+          logId = log(loggerId, 'value')
         })
         const event = await waitForEventTarget(es as EventTarget, 'message') as MessageEvent
 
         expect(event.lastEventId).toBe(logId!)
         expect(event.data).toStrictEqual(JSON.stringify({
           id: logId!
-        , content: 'content'
+        , value: 'value'
         }))
       } finally {
         es.close()
@@ -75,8 +75,8 @@ describe('follow', () => {
         limit: null
       , timeToLive: null
       })
-      const logId1 = log(loggerId, 'content-1')
-      const logId2 = log(loggerId, 'content-2')
+      const logId1 = log(loggerId, 'value-1')
+      const logId2 = log(loggerId, 'value-2')
 
       const es = new EventSource(
         `${getAddress()}/loggers/${loggerId}/follow?since=${logId1}`
@@ -85,20 +85,20 @@ describe('follow', () => {
         const listener = jest.fn()
         es.addEventListener('message', listener)
         await waitForEventTarget(es as EventTarget, 'open')
-        const logId3 = log(loggerId, 'content-3')
+        const logId3 = log(loggerId, 'value-3')
         await delay(1000)
 
         expect(listener).toBeCalledTimes(2)
         const event1 = listener.mock.calls[0][0] as MessageEvent
         expect(event1.data).toStrictEqual(JSON.stringify({
           id: logId2
-        , content: 'content-2'
+        , value: 'value-2'
         }))
         expect(event1.lastEventId).toBe(logId2)
         const event2 = listener.mock.calls[1][0] as MessageEvent
         expect(event2.data).toStrictEqual(JSON.stringify({
           id: logId3
-        , content: 'content-3'
+        , value: 'value-3'
         }))
         expect(event2.lastEventId).toBe(logId3)
       } finally {
@@ -112,8 +112,8 @@ describe('follow', () => {
         limit: null
       , timeToLive: null
       })
-      const logId1 = log(loggerId, 'content-1')
-      const logId2 = log(loggerId, 'content-2')
+      const logId1 = log(loggerId, 'value-1')
+      const logId2 = log(loggerId, 'value-2')
 
       const es = new EventSource(
         `${getAddress()}/loggers/${loggerId}/follow`
@@ -127,20 +127,20 @@ describe('follow', () => {
         const listener = jest.fn()
         es.addEventListener('message', listener)
         await waitForEventTarget(es as EventTarget, 'open')
-        const logId3 = log(loggerId, 'content-3')
+        const logId3 = log(loggerId, 'value-3')
         await delay(1000)
 
         expect(listener).toBeCalledTimes(2)
         const event1 = listener.mock.calls[0][0] as MessageEvent
         expect(event1.data).toStrictEqual(JSON.stringify({
           id: logId2
-        , content: 'content-2'
+        , value: 'value-2'
         }))
         expect(event1.lastEventId).toBe(logId2)
         const event2 = listener.mock.calls[1][0] as MessageEvent
         expect(event2.data).toStrictEqual(JSON.stringify({
           id: logId3
-        , content: 'content-3'
+        , value: 'value-3'
         }))
         expect(event2.lastEventId).toBe(logId3)
       } finally {

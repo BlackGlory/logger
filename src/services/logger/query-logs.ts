@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { loggerIdSchema, logIdSchema } from '@src/schema.js'
-import { IAPI, IRange, LoggerNotFound, LogId, Order } from '@src/contract.js'
+import { IAPI, ILog, IRange, LoggerNotFound, LogId, Order } from '@src/contract.js'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
@@ -12,6 +12,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
       limit?: number
       skip?: number
     }
+    Reply: ILog[]
   }>(
     '/loggers/:id/logs'
   , {
@@ -37,7 +38,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
               type: 'object'
             , properties: {
                 id: logIdSchema
-              , content: {}
+              , value: {}
               }
             }
           }

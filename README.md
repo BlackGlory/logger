@@ -199,7 +199,7 @@ await fetch(`http://localhost:8080/loggers/${id}/log`, {
 ```ts
 {
   id: string
-  content: JSONValue
+  value: JSONValue
 }
 ```
 
@@ -280,7 +280,7 @@ await fetch(`http://localhost:8080/loggers/${id}/logs/${logIds}`, {
 ```ts
 Array<{
   id: string
-  content: string
+  value: string
 }>
 ```
 
