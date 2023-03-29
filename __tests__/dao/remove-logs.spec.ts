@@ -23,13 +23,13 @@ describe('removeLogs', () => {
       logger_id: 'id'
     , timestamp: 0
     , number: 0
-    , payload: JSON.stringify('content-1')
+    , value: JSON.stringify('content-1')
     })
     setRawLog({
       logger_id: 'id'
     , timestamp: 0
     , number: 1
-    , payload: JSON.stringify('content-2')
+    , value: JSON.stringify('content-2')
     })
 
     removeLogs('id', ['0-1', '0-2'])

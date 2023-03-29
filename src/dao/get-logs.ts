@@ -16,7 +16,7 @@ export const getLogs = withLazyStatic((
   , logIds: LogId[]
   ): Array<string | null> => {
     const getLogStatement = lazyStatic(() => getDatabase().prepare(`
-      SELECT payload
+      SELECT value
         FROM log
        WHERE logger_id = $loggerId
          AND timestamp = $timestamp
@@ -32,9 +32,9 @@ export const getLogs = withLazyStatic((
         loggerId
       , timestamp
       , number
-      }) as { payload: string } | undefined
+      }) as { value: string } | undefined
 
-      return row?.payload ?? null
+      return row?.value ?? null
     })
   }), [getDatabase()])(loggerId, logIds)
 })

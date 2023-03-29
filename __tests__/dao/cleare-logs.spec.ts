@@ -21,13 +21,13 @@ describe('clearLogs', () => {
         })
         setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-1')
+        , value: JSON.stringify('content-1')
         , timestamp: 0
         , number: 0
         })
         setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-2')
+        , value: JSON.stringify('content-2')
         , timestamp: 1
         , number: 0
         })
@@ -49,13 +49,13 @@ describe('clearLogs', () => {
         })
         setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-1')
+        , value: JSON.stringify('content-1')
         , timestamp: 0
         , number: 0
         })
         setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-2')
+        , value: JSON.stringify('content-2')
         , timestamp: 1
         , number: 0
         })
@@ -78,13 +78,13 @@ describe('clearLogs', () => {
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -106,13 +106,13 @@ describe('clearLogs', () => {
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -134,13 +134,13 @@ describe('clearLogs', () => {
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -162,13 +162,13 @@ describe('clearLogs', () => {
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })

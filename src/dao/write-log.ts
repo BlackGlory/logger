@@ -5,17 +5,17 @@ import { LogId, LoggerNotFound } from '@src/contract.js'
 
 export const writeLog = withLazyStatic((
   loggerId: string
-, payload: string
+, value: string
 , timestamp: number
 ): LogId => {
   return lazyStatic(() => getDatabase().transaction((
     loggerId: string
-  , payload: string
+  , value: string
   , timestamp: number
   ): LogId => {
     const insertStatement = lazyStatic(() => getDatabase().prepare(`
-      INSERT INTO log (logger_id, timestamp, number, payload)
-      VALUES ($loggerId, $timestamp, $number, $payload)
+      INSERT INTO log (logger_id, timestamp, number, value)
+      VALUES ($loggerId, $timestamp, $number, $value)
     `), [getDatabase()])
 
     const lastLogStatement = lazyStatic(() => getDatabase().prepare(`
@@ -43,9 +43,9 @@ export const writeLog = withLazyStatic((
       loggerId
     , timestamp
     , number
-    , payload
+    , value
     })
 
     return `${timestamp}-${number}`
-  }), [getDatabase()])(loggerId, payload, timestamp)
+  }), [getDatabase()])(loggerId, value, timestamp)
 })

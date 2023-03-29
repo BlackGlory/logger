@@ -35,19 +35,19 @@ describe('getFirstLogTimestamp', () => {
         logger_id: 'id'
       , timestamp: 0
       , number: 0
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       })
       setRawLog({
         logger_id: 'id'
       , timestamp: 0
       , number: 1
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       })
       setRawLog({
         logger_id: 'id'
       , timestamp: 1
       , number: 0
-      , payload: JSON.stringify('content-3')
+      , value: JSON.stringify('content-3')
       })
 
       const result = getFirstLogTimestamp('id')

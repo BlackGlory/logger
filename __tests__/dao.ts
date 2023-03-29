@@ -4,7 +4,7 @@ interface IRawLog {
   logger_id: string
   timestamp: number
   number: number
-  payload: string
+  value: string
 }
 
 interface IRawLogger {
@@ -56,13 +56,13 @@ export function setRawLog(raw: IRawLog): IRawLog {
       logger_id
     , timestamp
     , number
-    , payload
+    , value
     )
     VALUES (
       $logger_id
     , $timestamp
     , $number
-    , $payload
+    , $value
     );
   `)
     .run(raw)

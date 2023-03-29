@@ -37,7 +37,7 @@ export interface IAPI {
   /**
    * @throws {LoggerNotFound}
    */
-  log(loggerId: string, content: JSONValue): LogId
+  log(loggerId: string, value: JSONValue): LogId
 
   /**
    * @throws {LoggerNotFound}

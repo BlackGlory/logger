@@ -6,12 +6,12 @@ import { LogId } from '@src/contract.js'
 /**
  * @throws {LoggerNotFound}
  */
-export function log(loggerId: string, content: JSONValue): LogId {
-  const logId = writeLog(loggerId, JSON.stringify(content), Date.now())
+export function log(loggerId: string, value: JSONValue): LogId {
+  const logId = writeLog(loggerId, JSON.stringify(value), Date.now())
 
   eventHub.emit(loggerId, Event.LogWritten, {
     id: logId
-  , value: content
+  , value
   })
 
   return logId

@@ -13,7 +13,7 @@ CREATE TABLE log (
   logger_id VARCHAR(255) NOT NULL
 , timestamp DATETIME     NOT NULL
 , number    INTEGER      NOT NULL
-, payload   TEXT         NOT NULL
+, value     TEXT         NOT NULL
 , PRIMARY KEY (logger_id, timestamp, number)
 , FOREIGN KEY (logger_id) REFERENCES logger(id) ON DELETE CASCADE
 );

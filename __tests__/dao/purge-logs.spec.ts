@@ -21,13 +21,13 @@ describe('purgeLogs', () => {
       })
       const log1 = setRawLog({
         logger_id: 'id'
-      , payload: 'payload1'
+      , value: 'value1'
       , timestamp: 0
       , number: 0
       })
       const log2 = setRawLog({
         logger_id: 'id'
-      , payload: 'payload2'
+      , value: 'value2'
       , timestamp: 1
       , number: 0
       })
@@ -46,13 +46,13 @@ describe('purgeLogs', () => {
       })
       setRawLog({
         logger_id: 'id'
-      , payload: 'payload1'
+      , value: 'value1'
       , timestamp: 0
       , number: 0
       })
       setRawLog({
         logger_id: 'id'
-      , payload: 'payload2'
+      , value: 'value2'
       , timestamp: 1
       , number: 0
       })

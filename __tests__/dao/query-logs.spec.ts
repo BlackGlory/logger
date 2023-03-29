@@ -26,13 +26,13 @@ describe('queryLogs', () => {
         })
         const log1 = setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-1')
+        , value: JSON.stringify('content-1')
         , timestamp: 0
         , number: 0
         })
         const log2 = setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-2')
+        , value: JSON.stringify('content-2')
         , timestamp: 0
         , number: 1
         })
@@ -42,8 +42,8 @@ describe('queryLogs', () => {
         })
 
         expect(result).toEqual([
-          { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
-        , { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+          { id: `${log1.timestamp}-${log1.number}`, value: log1.value }
+        , { id: `${log2.timestamp}-${log2.number}`, value: log2.value }
         ])
       })
 
@@ -55,13 +55,13 @@ describe('queryLogs', () => {
         })
         const log1 = setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-1')
+        , value: JSON.stringify('content-1')
         , timestamp: 0
         , number: 0
         })
         const log2 = setRawLog({
           logger_id: 'id'
-        , payload: JSON.stringify('content-2')
+        , value: JSON.stringify('content-2')
         , timestamp: 0
         , number: 1
         })
@@ -71,8 +71,8 @@ describe('queryLogs', () => {
         })
 
         expect(result).toEqual([
-          { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
-        , { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+          { id: `${log2.timestamp}-${log2.number}`, value: log2.value }
+        , { id: `${log1.timestamp}-${log1.number}`, value: log1.value }
         ])
       })
     })
@@ -85,13 +85,13 @@ describe('queryLogs', () => {
       })
       const log1 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       const log2 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -102,7 +102,7 @@ describe('queryLogs', () => {
       })
 
       expect(result).toEqual([
-        { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        { id: `${log2.timestamp}-${log2.number}`, value: log2.value }
       ])
     })
 
@@ -114,13 +114,13 @@ describe('queryLogs', () => {
       })
       const log1 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       const log2 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -131,7 +131,7 @@ describe('queryLogs', () => {
       })
 
       expect(result).toEqual([
-        { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+        { id: `${log1.timestamp}-${log1.number}`, value: log1.value }
       ])
     })
 
@@ -143,13 +143,13 @@ describe('queryLogs', () => {
       })
       const log1 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       const log2 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -160,7 +160,7 @@ describe('queryLogs', () => {
       })
 
       expect(result).toEqual([
-        { id: `${log2.timestamp}-${log2.number}`, payload: log2.payload }
+        { id: `${log2.timestamp}-${log2.number}`, value: log2.value }
       ])
     })
 
@@ -172,13 +172,13 @@ describe('queryLogs', () => {
       })
       const log1 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       , timestamp: 0
       , number: 0
       })
       const log2 = setRawLog({
         logger_id: 'id'
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       , timestamp: 1
       , number: 0
       })
@@ -189,7 +189,7 @@ describe('queryLogs', () => {
       })
 
       expect(result).toEqual([
-        { id: `${log1.timestamp}-${log1.number}`, payload: log1.payload }
+        { id: `${log1.timestamp}-${log1.number}`, value: log1.value }
       ])
     })
   })

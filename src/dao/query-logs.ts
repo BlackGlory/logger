@@ -11,14 +11,14 @@ import { hasLogger } from './has-logger.js'
  */
 export const queryLogs = withLazyStatic((loggerId: string, range: IRange): Array<{
   id: LogId
-  payload: string
+  value: string
 }> => {
   return lazyStatic(() => getDatabase().transaction((
     loggerId: string
   , range: IRange
   ): Array<{
     id: LogId
-    payload: string
+    value: string
   }> => {
     if (!hasLogger(loggerId)) throw new LoggerNotFound()
 
@@ -28,7 +28,7 @@ export const queryLogs = withLazyStatic((loggerId: string, range: IRange): Array
     const rows = getDatabase()
       .prepare(sql`
         SELECT timestamp || '-' || number AS id
-            , payload
+            , value
           FROM log
         WHERE logger_id = $loggerId
 
@@ -69,7 +69,7 @@ export const queryLogs = withLazyStatic((loggerId: string, range: IRange): Array
       , offset: range.skip ?? 0
       }) as Array<{
         id: LogId
-        payload: string
+        value: string
       }>
 
     return rows

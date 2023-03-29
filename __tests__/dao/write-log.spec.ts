@@ -31,13 +31,13 @@ describe('writeLog', () => {
         logger_id: 'id'
       , timestamp: 0
       , number: 0
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       })
       expect(getRawLog('id', 0, 1)).toStrictEqual({
         logger_id: 'id'
       , timestamp: 0
       , number: 1
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       })
     })
 
@@ -57,13 +57,13 @@ describe('writeLog', () => {
         logger_id: 'id'
       , timestamp: 0
       , number: 0
-      , payload: JSON.stringify('content-1')
+      , value: JSON.stringify('content-1')
       })
       expect(getRawLog('id', 1, 0)).toStrictEqual({
         logger_id: 'id'
       , timestamp: 1
       , number: 0
-      , payload: JSON.stringify('content-2')
+      , value: JSON.stringify('content-2')
       })
     })
   })

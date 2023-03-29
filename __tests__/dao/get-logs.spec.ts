@@ -24,13 +24,13 @@ describe('getLogs', () => {
       logger_id: 'id'
     , timestamp: 0
     , number: 0
-    , payload: JSON.stringify('content')
+    , value: JSON.stringify('content')
     })
 
     const result = getLogs('id', ['0-0', '0-1'])
 
     expect(result).toStrictEqual([
-      log.payload
+      log.value
     , null
     ])
   })
