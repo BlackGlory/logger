@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "logger",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "repository": "git@github.com:BlackGlory/logger.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
