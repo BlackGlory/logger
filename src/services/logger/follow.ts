@@ -82,8 +82,10 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
           if (logs) {
             if (logs.length) {
               for (const log of logs) {
-                const data = JSON.stringify(log)
-                for (const line of sse({ id: log.id, data })) {
+                for (const line of sse({
+                  id: log.id
+                , data: JSON.stringify(log.value)
+                })) {
                   if (signal.aborted) break
 
                   if (!reply.raw.write(line)) {
@@ -110,8 +112,10 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
           .follow(loggerId)
           .subscribe({
             async next(log) {
-              const data = JSON.stringify(log)
-              for (const line of sse({ id: log.id, data })) {
+              for (const line of sse({
+                id: log.id
+              , data: JSON.stringify(log.value)
+              })) {
                 if (signal.aborted) break
 
                 if (!reply.raw.write(line)) {

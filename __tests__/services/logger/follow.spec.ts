@@ -41,10 +41,7 @@ describe('follow', () => {
         const event = await waitForEventTarget(es as EventTarget, 'message') as MessageEvent
 
         expect(event.lastEventId).toBe(logId!)
-        expect(event.data).toStrictEqual(JSON.stringify({
-          id: logId!
-        , value: 'value'
-        }))
+        expect(event.data).toStrictEqual(JSON.stringify('value'))
       } finally {
         es.close()
       }
@@ -90,16 +87,10 @@ describe('follow', () => {
 
         expect(listener).toBeCalledTimes(2)
         const event1 = listener.mock.calls[0][0] as MessageEvent
-        expect(event1.data).toStrictEqual(JSON.stringify({
-          id: logId2
-        , value: 'value-2'
-        }))
+        expect(event1.data).toStrictEqual(JSON.stringify('value-2'))
         expect(event1.lastEventId).toBe(logId2)
         const event2 = listener.mock.calls[1][0] as MessageEvent
-        expect(event2.data).toStrictEqual(JSON.stringify({
-          id: logId3
-        , value: 'value-3'
-        }))
+        expect(event2.data).toStrictEqual(JSON.stringify('value-3'))
         expect(event2.lastEventId).toBe(logId3)
       } finally {
         es.close()
@@ -132,16 +123,10 @@ describe('follow', () => {
 
         expect(listener).toBeCalledTimes(2)
         const event1 = listener.mock.calls[0][0] as MessageEvent
-        expect(event1.data).toStrictEqual(JSON.stringify({
-          id: logId2
-        , value: 'value-2'
-        }))
+        expect(event1.data).toStrictEqual(JSON.stringify('value-2'))
         expect(event1.lastEventId).toBe(logId2)
         const event2 = listener.mock.calls[1][0] as MessageEvent
-        expect(event2.data).toStrictEqual(JSON.stringify({
-          id: logId3
-        , value: 'value-3'
-        }))
+        expect(event2.data).toStrictEqual(JSON.stringify('value-3'))
         expect(event2.lastEventId).toBe(logId3)
       } finally {
         es.close()

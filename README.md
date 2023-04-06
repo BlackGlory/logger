@@ -164,7 +164,7 @@ JSONValue
 curl \
   --request POST \
   --header "Content-Type: application/json" \
-  --data "$payload" \
+  --data "$value" \
   "http://localhost:8080/loggers/$id/log"
 ```
 
@@ -175,7 +175,7 @@ await fetch(`http://localhost:8080/loggers/${id}/log`, {
 , headers: {
     'Content-Type': 'application/json'
   }
-, body: JSON.stringify(content)
+, body: JSON.stringify(value)
 })
 ```
 
@@ -197,10 +197,7 @@ await fetch(`http://localhost:8080/loggers/${id}/log`, {
 
 收到的每条JSON:
 ```ts
-{
-  id: string
-  value: JSONValue
-}
+JSONValue
 ```
 
 #### Example
@@ -213,9 +210,8 @@ sse-cat "http://localhost:8080/loggers/$id/follow"
 ```js
 const es = new EventSource(`http://localhost:8080/loggers/${id}`)
 es.addEventListener('message', event => {
-  const paylaod = event.data
-  const log = JSON.parse(payload)
-  console.log(log)
+  const value = JSON.parse(event.data)
+  console.log(value)
 })
 ```
 
