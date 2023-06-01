@@ -652,6 +652,21 @@
     iterable-operator "^4.0.5"
     justypes "^4.2.0"
 
+"@blackglory/prelude@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@blackglory/prelude/-/prelude-0.3.3.tgz#bbf838c253a4371485a89fb0ee7047e61dc7fa9b"
+  integrity sha512-6UVwqcMhiP+p5meIMhM15WikY0hSVfdR31989boB2ShX6goWi2juCEallxpbTBc+J3k8eakeSQ5qUjcLeq6NqA==
+  dependencies:
+    "@blackglory/errors" "^3.0.2"
+    "@blackglory/go" "^1.1.2"
+    "@blackglory/log" "^2.0.1"
+    "@blackglory/pass" "^1.1.0"
+    extra-lazy "^2.0.1"
+    extra-promise "^6.0.6"
+    extra-utils "^5.2.0"
+    iterable-operator "^4.0.6"
+    justypes "^4.2.0"
+
 "@blackglory/structures@^0.11.4":
   version "0.11.5"
   resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.11.5.tgz#660fcf67827a8d9bb17e03e6b39b55908c39475c"
@@ -2148,6 +2163,11 @@ chalk@4, chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chalk@5.2.0, chalk@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.2.0.tgz#249623b7d66869c673699fb66d65723e54dfcfb3"
+  integrity sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==
+
 chalk@^2.0.0, chalk@^2.4.1, chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
@@ -2156,11 +2176,6 @@ chalk@^2.0.0, chalk@^2.4.1, chalk@^2.4.2:
     ansi-styles "^3.2.1"
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
-
-chalk@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.2.0.tgz#249623b7d66869c673699fb66d65723e54dfcfb3"
-  integrity sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==
 
 char-regex@^1.0.2:
   version "1.0.2"
@@ -3056,6 +3071,23 @@ extra-fetch@^4.0.5:
     return-style "^3.0.0"
     value-getter "^0.3.0"
 
+extra-fetch@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/extra-fetch/-/extra-fetch-4.0.6.tgz#289de489b9c66082c6e7c7fa97b513c42d30fa75"
+  integrity sha512-9b0fENhtZXU/uC56kFP8y6GLnZLASA8hghmrshHk+44ywgpQJfzkzhr1JAu1XURN/w/7DSb5kYIjQo3DU0CxFA==
+  dependencies:
+    "@blackglory/prelude" "^0.3.2"
+    chalk "^5.2.0"
+    eventsource "^2.0.2"
+    extra-abort "^0.3.6"
+    extra-lazy "^2.0.1"
+    extra-logger "^0.7.0"
+    justypes "^4.2.0"
+    lodash-es "^4.17.21"
+    node-fetch "^3.3.1"
+    return-style "^3.0.0"
+    value-getter "^0.3.1"
+
 extra-filesystem@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/extra-filesystem/-/extra-filesystem-0.5.0.tgz#f63bb0a3b392e4ab9882ed490876b177a2431eea"
@@ -3145,6 +3177,14 @@ extra-logger@^0.6.9:
     "@blackglory/types" "^1.1.0"
     chalk "4"
     justypes "^2.0.0"
+
+extra-logger@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/extra-logger/-/extra-logger-0.7.0.tgz#5079c27fbee4d1f86c9a0c3d0fa0c335d2141f39"
+  integrity sha512-sc67J6Pa6MIhvq3O1oBHqfj6w7XVYTTTfj3QbjjTHAyS0SQq+9EAA8WMTcRo1UYY6uU6skHp1G/HaXWKzzmSag==
+  dependencies:
+    "@blackglory/prelude" "^0.3.2"
+    chalk "5.2.0"
 
 extra-promise@^4.1.0, extra-promise@^4.4.0:
   version "4.4.0"
@@ -3242,6 +3282,17 @@ extra-request@^8.4.0:
     papaparse "^5.4.0"
     url-operator "^0.3.0"
 
+extra-request@^8.5.0:
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/extra-request/-/extra-request-8.5.0.tgz#0a2f551af4a945742f79f5325eea041327e78516"
+  integrity sha512-q68viatY8nz5S/ymGSxxWga40TQbaQCKCu4I2LGJBlFcFAnjLD04auicTq84uvNzGMWxoKde/FCLiLmmfEPSyA==
+  dependencies:
+    "@blackglory/prelude" "^0.3.2"
+    extra-utils "^5.1.1"
+    justypes "^4.2.0"
+    papaparse "^5.4.1"
+    url-operator "^0.3.0"
+
 extra-response@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/extra-response/-/extra-response-0.5.1.tgz#afc9ec6735d29d37e1296524bdc8bf92fa6d3c4b"
@@ -3263,6 +3314,25 @@ extra-sql-builder@^0.3.1:
     extra-tags "^0.3.0"
     justypes "^3.1.2"
     lodash "^4.17.21"
+
+extra-sse@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/extra-sse/-/extra-sse-0.1.0.tgz#32b37a7832e9812fd2876c3b9b934c379f4df30b"
+  integrity sha512-Pc5ML5yOw0dtyXr5GuNzPQcUkG+tkV7GcsHVVWTwonF2+ljt6wvjaFVMDhqdU7t05R+9tnNZPampN+tfV29Iyg==
+  dependencies:
+    "@blackglory/prelude" "^0.3.3"
+    extra-fetch "^4.0.6"
+    extra-promise "^6.0.6"
+    extra-request "^8.5.0"
+    extra-stream "^0.3.0"
+
+extra-stream@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/extra-stream/-/extra-stream-0.3.0.tgz#0222579faa1d4b736ff3387da795f5a8053c7acb"
+  integrity sha512-NO65mBnXvkM6C/8nOOtlbfrNZiiXs8p9TSWAVfRRdW2HrBvSlFa5JFwlf+9yktU0hBrqqHormflz+bAskny6vw==
+  dependencies:
+    "@blackglory/go" "^1.1.2"
+    extra-utils "^5.2.0"
 
 extra-tags@^0.3.0:
   version "0.3.1"
@@ -3325,6 +3395,14 @@ extra-utils@^5.1.1:
   integrity sha512-5Bog1r7c7Kj0UynIz2UlCb66741OcMHwBZYe87/YekDwE8e+9z0f2dzyqEaVxpykVQy8GcgGmsENZmH5K7pCfg==
   dependencies:
     justypes "^4.1.0"
+    lodash-es "^4.17.21"
+
+extra-utils@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/extra-utils/-/extra-utils-5.2.0.tgz#2bb98f46a938610e00e37633885df98e306dd836"
+  integrity sha512-pDRPtYvMrwWeZMVRuSRx/EdOCdE0+FRV+asHLKd2ASwfodn+W5VeMRjrVstQXwVO/EYruGGdyj6MjbFSYcvGSQ==
+  dependencies:
+    justypes "^4.2.0"
     lodash-es "^4.17.21"
 
 fast-content-type-parse@^1.0.0:
@@ -5341,6 +5419,11 @@ papaparse@^5.4.0:
   resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.0.tgz#a3e47c32f32466d30af67ce2fef7910b3c3d4d91"
   integrity sha512-ZBQABWG09p+u8rFoJVl/GhgxZ5zy9Zh1Lu/LVc7VX5T4nljjC14/YTcpebYwqP218B9X307eBOP7Tuhoqv7v7w==
 
+papaparse@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.1.tgz#f45c0f871853578bd3a30f92d96fdcfb6ebea127"
+  integrity sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-1.0.1.tgz#691d2709e78c79fae3a156622452d00762caaaa2"
@@ -6661,6 +6744,15 @@ value-getter@^0.3.0:
     extra-utils "^5.0.1"
     hotypes "^0.5.1"
     justypes "^4.1.0"
+
+value-getter@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/value-getter/-/value-getter-0.3.1.tgz#e1cc5c2a5ec849a2e491215ff024d7900c43e241"
+  integrity sha512-w3ENCvg9fH3fjlRGmicXO2lYa5VWIWwnZlW48FwBU0lPwFG3eEhYPMRSxHyldY1D8/mjwu+sn7+5a0DpUlbO6A==
+  dependencies:
+    extra-utils "^5.1.1"
+    hotypes "^0.6.1"
+    justypes "^4.2.0"
 
 walker@^1.0.8:
   version "1.0.8"

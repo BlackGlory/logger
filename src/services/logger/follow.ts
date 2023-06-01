@@ -1,13 +1,13 @@
 import { FastifyPluginAsync } from 'fastify'
 import { loggerIdSchema, logIdSchema } from '@src/schema.js'
 import { waitForEventEmitter } from '@blackglory/wait-for'
-import { sse } from 'extra-generator'
 import { SSE_HEARTBEAT_INTERVAL } from '@env/index.js'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import { IAPI, Order, LogId, LoggerNotFound } from '@src/contract.js'
 import { go } from '@blackglory/prelude'
 import { SyncDestructor } from 'extra-defer'
 import { AbortController } from 'extra-abort'
+import { stringifyEvent } from 'extra-sse'
 
 export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API }) => {
   server.get<{
@@ -56,7 +56,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
         const heartbeatInterval = SSE_HEARTBEAT_INTERVAL()
         if (heartbeatInterval > 0) {
           return setDynamicTimeoutLoop(heartbeatInterval, async () => {
-            for (const line of sse({ event: 'heartbeat', data: '' })) {
+            for (const line of stringifyEvent({ event: 'heartbeat', data: '' })) {
               if (signal.aborted) break
 
               if (!reply.raw.write(line)) {
@@ -83,7 +83,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
           if (logs) {
             if (logs.length) {
               for (const log of logs) {
-                for (const line of sse({
+                for (const line of stringifyEvent({
                   id: log.id
                 , data: JSON.stringify(log.value)
                 })) {
@@ -113,7 +113,7 @@ export const routes: FastifyPluginAsync<{ API: IAPI }> = async (server, { API })
           .follow(loggerId)
           .subscribe({
             async next(log) {
-              for (const line of sse({
+              for (const line of stringifyEvent({
                 id: log.id
               , data: JSON.stringify(log.value)
               })) {
