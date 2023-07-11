@@ -3282,17 +3282,6 @@ extra-request@^8.4.0:
     papaparse "^5.4.0"
     url-operator "^0.3.0"
 
-extra-request@^8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/extra-request/-/extra-request-8.5.0.tgz#0a2f551af4a945742f79f5325eea041327e78516"
-  integrity sha512-q68viatY8nz5S/ymGSxxWga40TQbaQCKCu4I2LGJBlFcFAnjLD04auicTq84uvNzGMWxoKde/FCLiLmmfEPSyA==
-  dependencies:
-    "@blackglory/prelude" "^0.3.2"
-    extra-utils "^5.1.1"
-    justypes "^4.2.0"
-    papaparse "^5.4.1"
-    url-operator "^0.3.0"
-
 extra-response@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/extra-response/-/extra-response-0.5.1.tgz#afc9ec6735d29d37e1296524bdc8bf92fa6d3c4b"
@@ -3315,15 +3304,14 @@ extra-sql-builder@^0.3.1:
     justypes "^3.1.2"
     lodash "^4.17.21"
 
-extra-sse@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/extra-sse/-/extra-sse-0.1.0.tgz#32b37a7832e9812fd2876c3b9b934c379f4df30b"
-  integrity sha512-Pc5ML5yOw0dtyXr5GuNzPQcUkG+tkV7GcsHVVWTwonF2+ljt6wvjaFVMDhqdU7t05R+9tnNZPampN+tfV29Iyg==
+extra-sse@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/extra-sse/-/extra-sse-0.3.0.tgz#2f70eced97ee6c3f7b0708ace824344e231cb48f"
+  integrity sha512-w5yKEUecf+b67Tm+LMGBaj8DNhTJmw+YqnMmhHA+dB2Pg+6J3+PY6PYeHL2eu+G2IchWOcyhtNxHPsFZwL4pdw==
   dependencies:
     "@blackglory/prelude" "^0.3.3"
     extra-fetch "^4.0.6"
     extra-promise "^6.0.6"
-    extra-request "^8.5.0"
     extra-stream "^0.3.0"
 
 extra-stream@^0.3.0:
@@ -5418,11 +5406,6 @@ papaparse@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.0.tgz#a3e47c32f32466d30af67ce2fef7910b3c3d4d91"
   integrity sha512-ZBQABWG09p+u8rFoJVl/GhgxZ5zy9Zh1Lu/LVc7VX5T4nljjC14/YTcpebYwqP218B9X307eBOP7Tuhoqv7v7w==
-
-papaparse@^5.4.1:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.4.1.tgz#f45c0f871853578bd3a30f92d96fdcfb6ebea127"
-  integrity sha512-HipMsgJkZu8br23pW15uvo6sib6wne/4woLZPlFf3rpDyMe9ywEXUsuD7+6K9PRkJlVT51j/sCOYDKGGS3ZJrw==
 
 parent-module@^1.0.0:
   version "1.0.1"

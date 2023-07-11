@@ -1,12 +1,15 @@
 import { startService, stopService, getAddress } from '@test/utils.js'
-import EventSource from 'eventsource'
-import { waitForEventTarget, waitForFunction } from '@blackglory/wait-for'
+import { IEvent, fetchEvents } from 'extra-sse'
+import { getErrorAsyncIterable } from 'return-style'
 import { log } from '@apis/log.js'
 import { setLogger } from '@apis/set-logger.js'
 import { removeLogger } from '@apis/remove-logger.js'
-import { LogId } from '@src/contract.js'
 import { delay } from 'extra-promise'
-import { jest } from '@jest/globals'
+import { NotFound } from '@blackglory/http-status'
+import { firstAsync, toArrayAsync } from 'iterable-operator'
+import { AbortController } from 'extra-abort'
+import { go, pass } from '@blackglory/prelude'
+import { Request } from 'extra-fetch'
 
 beforeEach(startService)
 afterEach(stopService)
@@ -15,12 +18,13 @@ describe('follow', () => {
   test('logger does not exist', async () => {
     const loggerId = 'id'
 
-    const es = new EventSource(`${getAddress()}/loggers/${loggerId}/follow`)
-    try {
-      await waitForEventTarget(es as EventTarget, 'error')
-    } finally {
-      es.close()
-    }
+    const err = await getErrorAsyncIterable(
+      fetchEvents(`${getAddress()}/loggers/${loggerId}/follow`, {
+        autoReconnect: false
+      })
+    )
+
+    expect(err).toBeInstanceOf(NotFound)
   })
 
   describe('logger exists', () => {
@@ -31,20 +35,21 @@ describe('follow', () => {
       , timeToLive: null
       })
 
-      const es = new EventSource(`${getAddress()}/loggers/${loggerId}/follow`)
-      try {
-        await waitForEventTarget(es as EventTarget, 'open')
-        let logId: LogId
-        queueMicrotask(() => {
-          logId = log(loggerId, 'value')
-        })
-        const event = await waitForEventTarget(es as EventTarget, 'message') as MessageEvent
+      const iter = fetchEvents(`${getAddress()}/loggers/${loggerId}/follow`, {
+        autoReconnect: false
+      })
+      const promise = firstAsync(iter)
+      await delay(500)
+      const logId = log(loggerId, 'value')
+      const result = await promise
 
-        expect(event.lastEventId).toBe(logId!)
-        expect(event.data).toStrictEqual(JSON.stringify('value'))
-      } finally {
-        es.close()
-      }
+      expect(result).toStrictEqual({
+        comment: undefined
+      , event: undefined
+      , data: JSON.stringify('value')
+      , id: logId
+      , retry: undefined
+      })
     })
 
     test('remove logger while following', async () => {
@@ -54,16 +59,15 @@ describe('follow', () => {
       , timeToLive: null
       })
 
-      const es = new EventSource(`${getAddress()}/loggers/${loggerId}/follow`)
-      try {
-        await waitForEventTarget(es as EventTarget, 'open')
-        queueMicrotask(() => {
-          removeLogger(loggerId)
-        })
-        await waitForFunction(() => es.readyState === es.CLOSED)
-      } finally {
-        es.close()
-      }
+      const iter = fetchEvents(`${getAddress()}/loggers/${loggerId}/follow`, {
+        autoReconnect: false
+      })
+      const promise = toArrayAsync(iter)
+      await delay(500)
+      removeLogger(loggerId)
+      const results = await promise
+
+      expect(results).toStrictEqual([])
     })
 
     test('since', async () => {
@@ -75,25 +79,41 @@ describe('follow', () => {
       const logId1 = log(loggerId, 'value-1')
       const logId2 = log(loggerId, 'value-2')
 
-      const es = new EventSource(
-        `${getAddress()}/loggers/${loggerId}/follow?since=${logId1}`
-      )
+      const controller = new AbortController()
       try {
-        const listener = jest.fn()
-        es.addEventListener('message', listener)
-        await waitForEventTarget(es as EventTarget, 'open')
+        const iter = fetchEvents(
+          () => new Request(`${getAddress()}/loggers/${loggerId}/follow?since=${logId1}`, {
+            signal: controller.signal
+          })
+        , { autoReconnect: false }
+        )
+        const results: IEvent[] = []
+        go(async () => {
+          for await (const result of iter) {
+            results.push(result)
+          }
+        }).catch(pass)
+        await delay(500)
         const logId3 = log(loggerId, 'value-3')
-        await delay(1000)
+        await delay(500)
 
-        expect(listener).toBeCalledTimes(2)
-        const event1 = listener.mock.calls[0][0] as MessageEvent
-        expect(event1.data).toStrictEqual(JSON.stringify('value-2'))
-        expect(event1.lastEventId).toBe(logId2)
-        const event2 = listener.mock.calls[1][0] as MessageEvent
-        expect(event2.data).toStrictEqual(JSON.stringify('value-3'))
-        expect(event2.lastEventId).toBe(logId3)
+        expect(results.length).toBe(2)
+        expect(results[0]).toStrictEqual({
+          comment: undefined
+        , event: undefined
+        , data: JSON.stringify('value-2')
+        , id: logId2
+        , retry: undefined
+        })
+        expect(results[1]).toStrictEqual({
+          comment: undefined
+        , event: undefined
+        , data: JSON.stringify('value-3')
+        , id: logId3
+        , retry: undefined
+        })
       } finally {
-        es.close()
+        controller.abort()
       }
     })
 
@@ -106,30 +126,44 @@ describe('follow', () => {
       const logId1 = log(loggerId, 'value-1')
       const logId2 = log(loggerId, 'value-2')
 
-      const es = new EventSource(
-        `${getAddress()}/loggers/${loggerId}/follow`
-      , {
-          headers: {
-            'Last-Event-ID': logId1
-          }
-        }
-      )
+      const controller = new AbortController()
       try {
-        const listener = jest.fn()
-        es.addEventListener('message', listener)
-        await waitForEventTarget(es as EventTarget, 'open')
+        const iter = fetchEvents(
+          () => new Request(`${getAddress()}/loggers/${loggerId}/follow`, {
+            signal: controller.signal
+          })
+        , {
+            autoReconnect: false
+          , lastEventId: logId1
+          }
+        )
+        const results: IEvent[] = []
+        go(async () => {
+          for await (const result of iter) {
+            results.push(result)
+          }
+        }).catch(pass)
+        await delay(500)
         const logId3 = log(loggerId, 'value-3')
-        await delay(1000)
+        await delay(500)
 
-        expect(listener).toBeCalledTimes(2)
-        const event1 = listener.mock.calls[0][0] as MessageEvent
-        expect(event1.data).toStrictEqual(JSON.stringify('value-2'))
-        expect(event1.lastEventId).toBe(logId2)
-        const event2 = listener.mock.calls[1][0] as MessageEvent
-        expect(event2.data).toStrictEqual(JSON.stringify('value-3'))
-        expect(event2.lastEventId).toBe(logId3)
+        expect(results.length).toBe(2)
+        expect(results[0]).toStrictEqual({
+          comment: undefined
+        , event: undefined
+        , data: JSON.stringify('value-2')
+        , id: logId2
+        , retry: undefined
+        })
+        expect(results[1]).toStrictEqual({
+          comment: undefined
+        , event: undefined
+        , data: JSON.stringify('value-3')
+        , id: logId3
+        , retry: undefined
+        })
       } finally {
-        es.close()
+        controller.abort()
       }
     })
   })
