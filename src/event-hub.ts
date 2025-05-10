@@ -8,7 +8,7 @@ export enum Event {
 , LogRemoved
 }
 
-type LoggerEventToArgs = {
+type EventToArgs = {
   [Event.LoggerSet]: []
   [Event.LoggerRemoved]: []
   [Event.LogWritten]: [log: ILog]
@@ -16,36 +16,36 @@ type LoggerEventToArgs = {
 }
 
 type GlobalEventToArgs = {
-  [Key in Event]: [loggerId: string, ...args: LoggerEventToArgs[Key]]
+  [Key in Event]: [loggerId: string, ...args: EventToArgs[Key]]
 }
 
 class EventHub {
-  private idToEmitter: Map<string, Emitter<LoggerEventToArgs>> = new Map()
+  private loggerIdToEmitter: Map<string, Emitter<EventToArgs>> = new Map()
   private globalEmitter: Emitter<GlobalEventToArgs> = new Emitter()
 
   onLogger<T extends Event>(
-    id: string
+    loggerId: string
   , event: T
-  , listener: (...args: LoggerEventToArgs[T]) => void
+  , listener: (...args: EventToArgs[T]) => void
   ): () => void {
-    if (!this.idToEmitter.has(id)) {
-      this.idToEmitter.set(id, new Emitter())
+    if (!this.loggerIdToEmitter.has(loggerId)) {
+      this.loggerIdToEmitter.set(loggerId, new Emitter())
     }
 
-    const emitter = this.idToEmitter.get(id)!
+    const emitter = this.loggerIdToEmitter.get(loggerId)!
     return emitter.on(event, listener)
   }
 
   onceLogger<T extends Event>(
-    id: string
+    loggerId: string
   , event: T
-  , listener: (...args: LoggerEventToArgs[T]) => void
+  , listener: (...args: EventToArgs[T]) => void
   ) {
-    if (!this.idToEmitter.has(id)) {
-      this.idToEmitter.set(id, new Emitter())
+    if (!this.loggerIdToEmitter.has(loggerId)) {
+      this.loggerIdToEmitter.set(loggerId, new Emitter())
     }
 
-    const emitter = this.idToEmitter.get(id)!
+    const emitter = this.loggerIdToEmitter.get(loggerId)!
     return emitter.once(event, listener)
   }
 
@@ -59,9 +59,9 @@ class EventHub {
   emit<T extends Event>(
     loggerId: string
   , event: T
-  , ...args: LoggerEventToArgs[T]
+  , ...args: EventToArgs[T]
   ): void {
-    this.idToEmitter.get(loggerId)?.emit(event, ...args)
+    this.loggerIdToEmitter.get(loggerId)?.emit(event, ...args)
 
     const globalArgs = [loggerId, ...args] as GlobalEventToArgs[T]
     this.globalEmitter.emit(event, ...globalArgs)
