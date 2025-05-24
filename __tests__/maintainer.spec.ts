@@ -1,34 +1,82 @@
 import { jest } from '@jest/globals'
-import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { startService, stopService } from '@test/utils.js'
 import { startMaintainer } from '@src/maintainer.js'
 import { SyncDestructor } from 'extra-defer'
-import { writeLog } from '@dao/write-log.js'
-import { hasRawLog, setRawLogger } from './dao.js'
-
-beforeEach(initializeDatabases)
-afterEach(clearDatabases)
+import { setLogger } from '@apis/set-logger.js'
+import { log } from '@apis/log.js'
+import { hasRawLog } from './dao.js'
 
 describe('maintainer', () => {
-  test('remove outdated logs on startup', () => {
-    const destructor = new SyncDestructor()
-    try {
-      const loggerId = 'logger-id'
-      setRawLogger({
-        id: loggerId
-      , quantity_limit: null
-      , time_to_live: 50
-      })
-      writeLog(loggerId, JSON.stringify('foo'), 100)
-      writeLog(loggerId, JSON.stringify('bar'), 200)
+  describe('behaviors on startup', () => {
+    beforeEach(() => startService({ maintainer: false }))
+    afterEach(stopService)
 
-      jest.useFakeTimers({ now: 151 })
-      destructor.defer(startMaintainer())
+    test('remove outdated logs', () => {
+      const destructor = new SyncDestructor()
+      try {
+        jest.useFakeTimers({ now: 0 })
+        const loggerId = 'logger-id'
+        setLogger(loggerId, {
+          timeToLive: 100
+        , limit: null
+        })
+        jest.advanceTimersByTime(100)
+        log(loggerId, 'log-1')
+        jest.advanceTimersByTime(100)
+        log(loggerId, 'log-2')
 
-      expect(hasRawLog(loggerId, 100, 0)).toBe(false)
-      expect(hasRawLog(loggerId, 200, 0)).toBe(true)
-    } finally {
-      jest.useRealTimers()
-      destructor.execute()
-    }
+        jest.advanceTimersByTime(1)
+        const log1Exists1 = hasRawLog(loggerId, 100, 0)
+        destructor.defer(startMaintainer())
+        const log1Exists2 = hasRawLog(loggerId, 100, 0)
+        const log2Exists1 = hasRawLog(loggerId, 200, 0)
+        jest.advanceTimersByTime(100)
+        const log2Exists2 = hasRawLog(loggerId, 200, 0)
+
+        expect(log1Exists1).toBe(true)
+        expect(log1Exists2).toBe(false)
+        expect(log2Exists1).toBe(true)
+        expect(log2Exists2).toBe(false)
+      } finally {
+        jest.useRealTimers()
+        destructor.execute()
+      }
+    })
+  })
+
+  describe('behaviors after startup', () => {
+    beforeEach(startService)
+    afterEach(stopService)
+
+    test('remove oudated logs', async () => {
+      const destructor = new SyncDestructor()
+      try {
+        jest.useFakeTimers({ now: 0 })
+        const loggerId = 'logger-id'
+        setLogger(loggerId, {
+          timeToLive: 100
+        , limit: null
+        })
+
+        jest.advanceTimersByTime(100)
+        log(loggerId, 'log-1')
+        jest.advanceTimersByTime(100)
+        const log1Exists1 = hasRawLog(loggerId, 100, 0)
+        log(loggerId, 'log-2')
+        jest.advanceTimersByTime(1)
+        const log1Exists2 = hasRawLog(loggerId, 100, 0)
+        const log2Exists1 = hasRawLog(loggerId, 200, 0)
+        jest.advanceTimersByTime(100)
+        const log2Exists2 = hasRawLog(loggerId, 200, 0)
+
+        expect(log1Exists1).toBe(true)
+        expect(log1Exists2).toBe(false)
+        expect(log2Exists1).toBe(true)
+        expect(log2Exists2).toBe(false)
+      } finally {
+        jest.useRealTimers()
+        destructor.execute()
+      }
+    })
   })
 })

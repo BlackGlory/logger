@@ -5,23 +5,25 @@ import { startMaintainer } from '@src/maintainer.js'
 import { UnpackedPromise } from 'hotypes'
 
 let server: UnpackedPromise<ReturnType<typeof buildServer>>
-let stopMaintainer: ReturnType<typeof startMaintainer>
+let stopMaintainer: ReturnType<typeof startMaintainer> | undefined
 let address: string
 
 export function getAddress(): string {
   return address
 }
 
-export async function startService(): Promise<void> {
+export async function startService(
+  { maintainer = true }: { maintainer?: boolean } = {}
+): Promise<void> {
   await initializeDatabases()
-  stopMaintainer = startMaintainer()
+  if (maintainer) stopMaintainer = startMaintainer()
   server = await buildServer()
   address = await server.listen()
 }
 
 export async function stopService(): Promise<void> {
   await server.close()
-  stopMaintainer()
+  stopMaintainer?.()
   clearDatabases()
   resetEnvironment()
 }
