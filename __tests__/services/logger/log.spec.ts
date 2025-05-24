@@ -103,7 +103,7 @@ describe('log', () => {
         , pathname(`/loggers/${loggerId}/log`)
         , json('value-1')
         ))
-        jest.setSystemTime(1100)
+        jest.useFakeTimers({ now: 1100 })
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
