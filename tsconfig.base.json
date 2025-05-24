@@ -8,13 +8,13 @@
   , "skipLibCheck": true
   , "baseUrl": "."
   , "paths": {
-      "@src/*": ["src/*"]
+      "@test/*": ["__tests__/*"]
     , "@dao/*": ["src/dao/*"]
     , "@apis/*": ["src/apis/*"]
     , "@utils/*": ["src/utils/*"]
     , "@env/*": ["src/env/*"]
-    , "@test/*": ["__tests__/*"]
     , "@services/*": ["src/services/*"]
+    , "@src/*": ["src/*"]
     }
   , "plugins" : [
       {
