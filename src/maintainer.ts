@@ -8,7 +8,6 @@ import { getLoggerConfiguration } from '@dao/get-logger-configuration.js'
 import { isNumber } from '@blackglory/prelude'
 
 const loggerIdToCancelSchedule: Map<string, () => void> = new Map()
-const loggerIdToTimeToLive: Map<string, number> = new Map()
 
 export function startMaintainer(): () => void {
   const destructor = new SyncDestructor()
@@ -16,15 +15,13 @@ export function startMaintainer(): () => void {
   destructor.defer(eventHub.onGlobal(Event.LoggerSet, loggerId => {
     purgeLogs(loggerId, Date.now())
 
-    updateTimeToLive(loggerId)
     updateSchedule(loggerId)
   }))
 
   destructor.defer(eventHub.onGlobal(Event.LoggerRemoved, loggerId => {
     const cancelSchedule = loggerIdToCancelSchedule.get(loggerId)
     cancelSchedule?.()
-
-    loggerIdToTimeToLive.delete(loggerId)
+    loggerIdToCancelSchedule.delete(loggerId)
   }))
 
   destructor.defer(eventHub.onGlobal(Event.LogWritten, loggerId => {
@@ -41,7 +38,6 @@ export function startMaintainer(): () => void {
   const timestamp = Date.now()
   for (const loggerId of loggerIds) {
     purgeLogs(loggerId, timestamp)
-    updateTimeToLive(loggerId)
     updateSchedule(loggerId)
   }
 
@@ -50,28 +46,18 @@ export function startMaintainer(): () => void {
 
     loggerIdToCancelSchedule.forEach(cancel => cancel())
     loggerIdToCancelSchedule.clear()
-    loggerIdToTimeToLive.clear()
   }
 }
 
-function updateTimeToLive(loggerId: string): void {
-  const config = getLoggerConfiguration(loggerId)
-  if (config?.timeToLive) {
-    loggerIdToTimeToLive.set(loggerId, config.timeToLive)
-  } else {
-    loggerIdToTimeToLive.delete(loggerId)
-  }
-}
-
-/**
- * 出于性能考虑, 该函数依赖于loggerIdToTimeToLive, 而不是查询数据库.
- * 在调用此函数前, 请确保loggerIdToTimeToLive里的记录为最新.
- */
 function updateSchedule(loggerId: string): void {
   const cancelSchedule = loggerIdToCancelSchedule.get(loggerId)
   cancelSchedule?.()
+  loggerIdToCancelSchedule.delete(loggerId)
 
-  const timeToLive = loggerIdToTimeToLive.get(loggerId)
+  const config = getLoggerConfiguration(loggerId)
+  if (!config) return
+
+  const { timeToLive } = config
   if (
     isNumber(timeToLive) &&
     timeToLive > 0 &&
