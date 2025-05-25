@@ -38,6 +38,7 @@ export function startMaintainer(): () => void {
   const timestamp = Date.now()
   for (const loggerId of loggerIds) {
     purgeLogs(loggerId, timestamp)
+
     updateSchedule(loggerId)
   }
 

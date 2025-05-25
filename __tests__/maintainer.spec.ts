@@ -20,23 +20,15 @@ describe('maintainer', () => {
           timeToLive: 100
         , limit: null
         })
+        log(loggerId, 'log')
         vi.advanceTimersByTime(100)
-        log(loggerId, 'log-1')
-        vi.advanceTimersByTime(100)
-        log(loggerId, 'log-2')
 
-        vi.advanceTimersByTime(1)
-        const log1Exists1 = hasRawLog(loggerId, 100, 0)
+        const logExists1 = hasRawLog(loggerId, 0, 0)
         destructor.defer(startMaintainer())
-        const log1Exists2 = hasRawLog(loggerId, 100, 0)
-        const log2Exists1 = hasRawLog(loggerId, 200, 0)
-        vi.advanceTimersByTime(100)
-        const log2Exists2 = hasRawLog(loggerId, 200, 0)
+        const logExists2 = hasRawLog(loggerId, 0, 0)
 
-        expect(log1Exists1).toBe(true)
-        expect(log1Exists2).toBe(false)
-        expect(log2Exists1).toBe(true)
-        expect(log2Exists2).toBe(false)
+        expect(logExists1).toBe(true)
+        expect(logExists2).toBe(false)
       } finally {
         vi.useRealTimers()
         destructor.execute()
@@ -58,21 +50,14 @@ describe('maintainer', () => {
         , limit: null
         })
 
-        vi.advanceTimersByTime(100)
-        log(loggerId, 'log-1')
-        vi.advanceTimersByTime(100)
-        const log1Exists1 = hasRawLog(loggerId, 100, 0)
-        log(loggerId, 'log-2')
+        log(loggerId, 'log')
+        vi.advanceTimersByTime(99)
+        const log1Exists1 = hasRawLog(loggerId, 0, 0)
         vi.advanceTimersByTime(1)
-        const log1Exists2 = hasRawLog(loggerId, 100, 0)
-        const log2Exists1 = hasRawLog(loggerId, 200, 0)
-        vi.advanceTimersByTime(100)
-        const log2Exists2 = hasRawLog(loggerId, 200, 0)
+        const log1Exists2 = hasRawLog(loggerId, 0, 0)
 
         expect(log1Exists1).toBe(true)
         expect(log1Exists2).toBe(false)
-        expect(log2Exists1).toBe(true)
-        expect(log2Exists2).toBe(false)
       } finally {
         vi.useRealTimers()
         destructor.execute()

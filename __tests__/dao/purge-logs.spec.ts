@@ -33,7 +33,7 @@ describe('purgeLogs', () => {
       , number: 0
       })
 
-      purgeLogs('id', 2)
+      purgeLogs('id', 1)
 
       expect(hasRawLog('id', 0, 0)).toBe(false)
       expect(hasRawLog('id', 1, 0)).toBe(true)

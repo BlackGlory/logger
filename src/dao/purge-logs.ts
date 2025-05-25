@@ -1,4 +1,4 @@
-import { getDatabase } from '../database.js'
+import { getDatabase } from '@src/database.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 import { getLoggerConfiguration } from './get-logger-configuration.js'
 
@@ -10,7 +10,7 @@ export const purgeLogs = withLazyStatic((loggerId: string, timestamp: number): v
     const purgeByTimestampStatement = lazyStatic(() => getDatabase().prepare(`
       DELETE FROM log
        WHERE logger_id = $loggerId
-         AND timestamp < $timestamp;
+         AND timestamp <= $timestamp;
     `), [getDatabase()])
 
     const purgeByLimitStatement = lazyStatic(() => getDatabase().prepare(`
