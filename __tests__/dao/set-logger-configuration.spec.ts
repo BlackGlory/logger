@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import { setLoggerConfiguration } from '@dao/set-logger-configuration.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawLogger, getRawLogger } from '@test/dao.js'

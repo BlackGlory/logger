@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import { writeLog } from '@dao/write-log.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawLogger, getRawLog } from '@test/dao.js'

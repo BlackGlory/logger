@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { url, header, pathname } from 'extra-request/transformers'
@@ -19,7 +20,7 @@ describe('global', () => {
   })
 
   describe('request with accept-version', () => {
-    it('accept-version match', async () => {
+    test('accept-version match', async () => {
       const pkg = await readJSONFile<{ version: string }>(
         path.join(getAppRoot(), 'package.json')
       )
@@ -32,7 +33,7 @@ describe('global', () => {
       expect(res.status).toBe(200)
     })
 
-    it('accept-version not match', async () => {
+    test('accept-version not match', async () => {
       const res = await fetch(get(
         url(getAddress())
       , pathname('/health') // https://github.com/fastify/fastify/issues/3625

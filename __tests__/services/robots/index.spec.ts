@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { get } from 'extra-request'
@@ -9,7 +10,7 @@ afterEach(stopService)
 
 describe('robots', () => {
   describe('GET /robots.txt', () => {
-    it('200', async () => {
+    test('200', async () => {
       const res = await fetch(get(
         url(getAddress())
       , pathname('/robots.txt')

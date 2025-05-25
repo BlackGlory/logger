@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import { getFirstLogTimestamp } from '@dao/get-first-log-timestamp.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawLogger, setRawLog } from '@test/dao.js'

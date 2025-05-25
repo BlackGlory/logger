@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals'
+import { describe, test, beforeEach, afterEach, expect, vi } from 'vitest'
 import { startService, stopService } from '@test/utils.js'
 import { startMaintainer } from '@src/maintainer.js'
 import { SyncDestructor } from 'extra-defer'
@@ -14,23 +14,23 @@ describe('maintainer', () => {
     test('remove outdated logs', () => {
       const destructor = new SyncDestructor()
       try {
-        jest.useFakeTimers({ now: 0 })
+        vi.useFakeTimers({ now: 0 })
         const loggerId = 'logger-id'
         setLogger(loggerId, {
           timeToLive: 100
         , limit: null
         })
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         log(loggerId, 'log-1')
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         log(loggerId, 'log-2')
 
-        jest.advanceTimersByTime(1)
+        vi.advanceTimersByTime(1)
         const log1Exists1 = hasRawLog(loggerId, 100, 0)
         destructor.defer(startMaintainer())
         const log1Exists2 = hasRawLog(loggerId, 100, 0)
         const log2Exists1 = hasRawLog(loggerId, 200, 0)
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         const log2Exists2 = hasRawLog(loggerId, 200, 0)
 
         expect(log1Exists1).toBe(true)
@@ -38,7 +38,7 @@ describe('maintainer', () => {
         expect(log2Exists1).toBe(true)
         expect(log2Exists2).toBe(false)
       } finally {
-        jest.useRealTimers()
+        vi.useRealTimers()
         destructor.execute()
       }
     })
@@ -51,22 +51,22 @@ describe('maintainer', () => {
     test('remove oudated logs', async () => {
       const destructor = new SyncDestructor()
       try {
-        jest.useFakeTimers({ now: 0 })
+        vi.useFakeTimers({ now: 0 })
         const loggerId = 'logger-id'
         setLogger(loggerId, {
           timeToLive: 100
         , limit: null
         })
 
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         log(loggerId, 'log-1')
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         const log1Exists1 = hasRawLog(loggerId, 100, 0)
         log(loggerId, 'log-2')
-        jest.advanceTimersByTime(1)
+        vi.advanceTimersByTime(1)
         const log1Exists2 = hasRawLog(loggerId, 100, 0)
         const log2Exists1 = hasRawLog(loggerId, 200, 0)
-        jest.advanceTimersByTime(100)
+        vi.advanceTimersByTime(100)
         const log2Exists2 = hasRawLog(loggerId, 200, 0)
 
         expect(log1Exists1).toBe(true)
@@ -74,7 +74,7 @@ describe('maintainer', () => {
         expect(log2Exists1).toBe(true)
         expect(log2Exists2).toBe(false)
       } finally {
-        jest.useRealTimers()
+        vi.useRealTimers()
         destructor.execute()
       }
     })

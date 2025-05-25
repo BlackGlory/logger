@@ -1,3 +1,4 @@
+import { describe, test, beforeEach, afterEach, expect, vi } from 'vitest'
 import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { post } from 'extra-request'
@@ -5,7 +6,6 @@ import { url, pathname, json, text } from 'extra-request/transformers'
 import { setLogger } from '@apis/set-logger.js'
 import { queryLogs } from '@apis/query-logs.js'
 import { Order } from '@src/contract.js'
-import { jest } from '@jest/globals'
 
 beforeEach(startService)
 afterEach(stopService)
@@ -59,7 +59,7 @@ describe('log', () => {
     })
 
     test('limit', async () => {
-      jest.useFakeTimers({ now: 0 })
+      vi.useFakeTimers({ now: 0 })
       try {
         const loggerId = 'id'
         setLogger(loggerId, {
@@ -85,13 +85,13 @@ describe('log', () => {
           }
         ])
       } finally {
-        jest.useRealTimers()
+        vi.useRealTimers()
       }
     })
 
     test('time to live', async () => {
-      jest.useFakeTimers({ now: 0 })
       try {
+        vi.useFakeTimers({ now: 0 })
         const loggerId = 'id'
         setLogger(loggerId, {
           limit: null
@@ -103,7 +103,7 @@ describe('log', () => {
         , pathname(`/loggers/${loggerId}/log`)
         , json('value-1')
         ))
-        jest.useFakeTimers({ now: 1100 })
+        vi.advanceTimersByTime(1100)
         await fetch(post(
           url(getAddress())
         , pathname(`/loggers/${loggerId}/log`)
@@ -117,7 +117,7 @@ describe('log', () => {
           }
         ])
       } finally {
-        jest.useRealTimers()
+        vi.useRealTimers()
       }
     })
   })
