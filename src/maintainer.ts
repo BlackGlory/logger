@@ -19,9 +19,7 @@ export function startMaintainer(): () => void {
   }))
 
   destructor.defer(eventHub.onGlobal(Event.LoggerRemoved, loggerId => {
-    const cancelSchedule = loggerIdToCancelSchedule.get(loggerId)
-    cancelSchedule?.()
-    loggerIdToCancelSchedule.delete(loggerId)
+    updateSchedule(loggerId)
   }))
 
   destructor.defer(eventHub.onGlobal(Event.LogWritten, loggerId => {
@@ -68,6 +66,7 @@ function updateSchedule(loggerId: string): void {
     if (isNumber(timestamp)) {
       const cancelSchedule = setSchedule(timestamp + timeToLive, () => {
         purgeLogs(loggerId, Date.now())
+
         updateSchedule(loggerId)
       })
       loggerIdToCancelSchedule.set(loggerId, cancelSchedule)
