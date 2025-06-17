@@ -46,7 +46,7 @@ export function clearLogs(loggerId: string, range: IRange): void {
     , fromNumber: from?.number
     , toTimestamp: to?.timestamp
     , toNumber: to?.number
-    , limit: range.limit ?? -1
+    , limit: range.limit ?? -1 // SQLite里负LIMIT值表示无限制
     , offset: range.skip ?? 0
     })
 }
