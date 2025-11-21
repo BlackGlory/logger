@@ -86,7 +86,7 @@ curl "http://localhost:8080/loggers/$id"
 
 ##### fetch
 ```js
-await fetch(`http://localhost:8080/loggers${id}`)
+await fetch(`http://localhost:8080/loggers/${id}`)
   .then(res => res.json())
 ```
 
