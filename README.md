@@ -104,7 +104,7 @@ await fetch(`http://localhost:8080/loggers/${id}`)
   timeToLive: number | null
 
   // 记录器的日志数量限制, 当日志数量超出此值时, 较早的日志会被删除.
-  // null表示Infinity, 配置为0通常没有意义
+  // null表示Infinity, 配置为0通常没有意义.
   limit: number | null
 }
 ```
