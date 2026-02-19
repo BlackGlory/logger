@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.3](https://github.com/BlackGlory/logger/compare/v0.9.2...v0.9.3) (2026-02-19)
+
+
+### Features
+
+* **set-logger:** add parameter validators ([3178c97](https://github.com/BlackGlory/logger/commit/3178c970d164ac27ce0cb0e40052323e9312c44f))
+
 ### [0.9.2](https://github.com/BlackGlory/logger/compare/v0.9.1...v0.9.2) (2026-02-16)
 
 
