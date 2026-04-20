@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.9.4](https://github.com/BlackGlory/logger/compare/v0.9.3...v0.9.4) (2026-04-20)
+
+
+### Features
+
+* relax the regex associated with logger ids ([f62d77f](https://github.com/BlackGlory/logger/commit/f62d77f6cbec2654c49393bf9f0b41fee24dd92e))
+
 ### [0.9.3](https://github.com/BlackGlory/logger/compare/v0.9.2...v0.9.3) (2026-02-19)
 
 
